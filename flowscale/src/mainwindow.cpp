@@ -26,8 +26,14 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(scale, SIGNAL(receivedWeight(int)),         this, SLOT(displayReceivedWeight(int)));
     connect(this, SIGNAL(avgWeight(int)),               mosq, SLOT(processReceivedWeight(int)));
     connect(scale, SIGNAL(receivedWeight(int)),         this, SLOT(recordWeight(int)));
+
+    ///////////////////////////
+    //FIXME: For Simulation
+    connect(this, SIGNAL(reply(unsigned char, bool)),             dio, SLOT(updateInputSim(unsigned char, bool)));
+    ///////////////////////////
+
     connect(dio,   SIGNAL(inputValue(unsigned long)),   this, SLOT(displayInputValue(unsigned long)));
-    //connect(dio,   SIGNAL(tachoSignal(unsigned long)),         this, SLOT(displayTachoCount(unsigned long)));
+    //connect(dio,   SIGNAL(tachoSignal(unsigned long)),  this, SLOT(displayTachoCount(unsigned long)));
 }
 
 MainWindow::~MainWindow()
@@ -144,6 +150,24 @@ void MainWindow::displayReceivedWeight(int weightValueFromScale)
 
 }
 
+///////////////////////////
+//FIXME: For Simulation - Þetta þarf að laga t.d. ... local _breytur
+///////////////////////////
+void MainWindow::on_chkDIN_00_clicked()
+{
+    int n = 0;
+    bool status;
+
+    if (ui->chkDIN_00->isChecked() == true)
+        status = 1;
+    else
+        status = 0;
+
+    emit reply(n, status);
+}
+
+///////////////////////////
+
 void MainWindow::displayInputValue(unsigned long)
 {
     ui->lblDIN_00->setText(QString::number(dio->value[0]));
@@ -201,4 +225,5 @@ void MainWindow::on_btnNetWeight_clicked()
 {
     scale->netWeight();
 }
+
 

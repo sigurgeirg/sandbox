@@ -47,6 +47,21 @@ MyDio::~MyDio()
     //
 }
 
+///////////////////////////
+//FIXME: For Simulation
+void MyDio::updateInputSim(unsigned char n, bool state)
+{
+    _inputAddress = n;
+    _inputStatus = state;
+
+    qDebug() << _inputAddress << " AND " << _inputStatus << endl;
+
+    io.DISetSim(_inputAddress, _inputStatus);
+    io.DIUpdate();
+    io.DIWrSim();
+}
+///////////////////////////
+
 void MyDio::updateInputs()
 {
     io.DIRd();
@@ -162,6 +177,10 @@ void MyDio::run()
 //		lastTime = tim.tv_usec;
 
         io.DOSet(1, 1);
+
+        //FIXME: If simulation
+        //io.DISetSim(1, 1);
+        ///////////////////////////
 
         updateInputs();
         updateOutputs();

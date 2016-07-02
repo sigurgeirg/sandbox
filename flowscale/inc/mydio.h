@@ -17,6 +17,8 @@ public:
     ~MyDio();
 
     int tickBeltProfile;
+    unsigned char _inputAddress;
+    bool _inputStatus;
 
     void updateInputs();
     void updateOutputs();
@@ -44,6 +46,9 @@ signals:
 
 
 public slots:
+    ///////////////////////////
+    void updateInputSim(unsigned char, bool);
+    ///////////////////////////
 
 };
 
