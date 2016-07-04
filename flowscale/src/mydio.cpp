@@ -57,8 +57,11 @@ void MyDio::updateInputSim(unsigned char n, bool state)
     qDebug() << _inputAddress << " AND " << _inputStatus << endl;
 
     io.DISetSim(_inputAddress, _inputStatus);
-    io.DIUpdate();
     io.DIWrSim();
+
+    io.DIRd();
+    io.DIUpdate();
+    //io.DIWrSim();
 }
 ///////////////////////////
 
