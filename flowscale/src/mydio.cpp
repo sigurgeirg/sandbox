@@ -157,8 +157,9 @@ void MyDio::run()
         io.DIRd();
         io.DIUpdate();
         value[i] = (unsigned char)io.DIGet(i);
+
+        emit inputValue(value[i]);
     }
-    emit inputValue(value[0]);
 
     //*
 //	struct timeval tim;
@@ -194,6 +195,7 @@ void MyDio::run()
             falling[i] = 0;
 
             newInput(i);
+            value[i] = (unsigned char)io.DIGet(i);
         }
 
         // Here we assume that input[1] is one pulse per round periodic sensor of conveyor belt
@@ -223,7 +225,9 @@ void MyDio::run()
         // once for every scan (every 20ms), that should cover all changes on initialized inputs.
         if (trigger == true)
         {
-            emit inputValue(value[0]);
+            for (int i = 0; i < _NUMBER_OF_USED_INPUTS; i++) {
+                emit inputValue(value[i]);
+            }
             trigger = false;
         }
     }

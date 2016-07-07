@@ -166,12 +166,27 @@ void MainWindow::on_chkDIN_00_clicked()
     emit reply(n, status);
 }
 
+void MainWindow::on_chkDIN_01_clicked()
+{
+    int n = 1;
+    bool status;
+
+    if (ui->chkDIN_01->isChecked() == true)
+        status = 1;
+    else
+        status = 0;
+
+    emit reply(n, status);
+}
 ///////////////////////////
 
 void MainWindow::displayInputValue(unsigned long)
 {
-    ui->lblDIN_00->setText(QString::number(dio->value[0]));
-    ui->lblDIN_01->setText(QString::number(dio->value[1]));
+    //ui->lblDIN_00->setText(QString::number(dio->value[0]));
+    //ui->lblDIN_01->setText(QString::number(dio->value[1]));
+    //Fixme: For simulation
+    ui->lblDIN_00->setText(QString::number(io.DIGet(0)));
+    ui->lblDIN_01->setText(QString::number(io.DIGet(1)));
 
     ui->lblDOUT_00->setText(QString::number(io.DOGet(0)));
     ui->lblDOUT_01->setText(QString::number(io.DOGet(1)));
@@ -225,5 +240,3 @@ void MainWindow::on_btnNetWeight_clicked()
 {
     scale->netWeight();
 }
-
-

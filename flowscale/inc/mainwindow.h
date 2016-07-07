@@ -62,6 +62,7 @@ private slots:
 
     ///////////////////////////
     void on_chkDIN_00_clicked();
+    void on_chkDIN_01_clicked();
     ///////////////////////////
 
 public slots:

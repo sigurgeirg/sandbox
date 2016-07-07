@@ -974,7 +974,7 @@
         </rect>
        </property>
        <property name="text">
-        <string>Input 00</string>
+        <string>Input 01</string>
        </property>
       </widget>
       <widget class="QLabel" name="lblDIN_00">
@@ -1052,7 +1052,7 @@
         </rect>
        </property>
        <property name="text">
-        <string>Output 00</string>
+        <string>Output 01</string>
        </property>
       </widget>
       <widget class="QCheckBox" name="chkDIN_00">
