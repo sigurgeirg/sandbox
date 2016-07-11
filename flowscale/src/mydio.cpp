@@ -47,14 +47,14 @@ MyDio::~MyDio()
     //
 }
 
-///////////////////////////
-//FIXME: For Simulation
-void MyDio::updateInputSim(unsigned char n, bool state)
-{
+// /////////////////////////
+// Simulation
+void MyDio::updateInputSim(unsigned char n, bool state) {
+
     _inputAddress = n;
     _inputStatus = state;
 
-    qDebug() << _inputAddress << " AND " << _inputStatus << endl;
+    qDebug() << "Input:" << _inputAddress+1 << " is " << _inputStatus << endl;
 
     io.DISetSim(_inputAddress, _inputStatus);
     io.DIWrSim();
@@ -63,22 +63,21 @@ void MyDio::updateInputSim(unsigned char n, bool state)
     io.DIUpdate();
     //io.DIWrSim();
 }
-///////////////////////////
+// /////////////////////////
 
-void MyDio::updateInputs()
-{
+void MyDio::updateInputs() {
+
     io.DIRd();
     io.DIUpdate();
 }
 
-void MyDio::updateOutputs()
-{
+void MyDio::updateOutputs() {
+
     io.DOUpdate();
     io.DOWr();
 }
 
-void MyDio::newInput(unsigned char address)
-{
+void MyDio::newInput(unsigned char address) {
 
     newValue[address] = (unsigned char)io.DIGet(address);
 
@@ -143,8 +142,8 @@ void MyDio::newInput(unsigned char address)
 
 }
 
-void MyDio::run()
-{
+void MyDio::run() {
+
     int _NUMBER_OF_USED_INPUTS = 16;
 
     // Only runs once
@@ -171,7 +170,6 @@ void MyDio::run()
 
     while (1)
     {
-
         msleep(10);
         // Activate trigger on scantime, comment out and use the one below instead if you plan
         // to trigger when INPUT sensor (period/conveyor tacho) is used to monitor tacho
@@ -182,9 +180,10 @@ void MyDio::run()
 
         io.DOSet(1, 1);
 
-        //FIXME: If simulation
-        //io.DISetSim(1, 1);
-        ///////////////////////////
+        // ////////////////////////
+        // FIXME: If simulation
+        // io.DISetSim(1, 1);
+        // /////////////////////////
 
         updateInputs();
         updateOutputs();
@@ -198,17 +197,27 @@ void MyDio::run()
             value[i] = (unsigned char)io.DIGet(i);
         }
 
-        // Here we assume that input[1] is one pulse per round periodic sensor of conveyor belt
-        if (rising[1] == 1){
-            qDebug() << "Input " << 1 << " is rising!";
+        // Here we assume that input[0] is one pulse per round periodic sensor of conveyor belt
+        if (rising[0] == 1) {
+            qDebug() << "Input 1:" << 1 << " is rising!";
             tickBeltProfile = 0;
         }
 
-        // Here we assume that input[2] is tacho pulse listener input, many pulses per belt period.
-        if (rising[2] == 1){
-            qDebug() << "Input " << 2 << " is rising!";
+        // Here we assume that input[1] is tacho pulse listener input, many pulses per belt period.
+        if (rising[1] == 1) {
+            qDebug() << "Input 2:" << 2 << " is rising!";
             tickBeltProfile++;
             tacho = true;
+        }
+
+        // Here we assume that input[2] is available input signal
+        if (rising[2] == 1) {
+            qDebug() << "Input 3:" << 3 << " is rising!";
+        }
+
+        // Here we assume that input[3] is available input signal
+        if (rising[3] == 1) {
+            qDebug() << "Input 4:" << 4 << " is rising!";
         }
 
         if (tacho == true)
@@ -223,8 +232,8 @@ void MyDio::run()
 
         // emit instance or value does not matter, only the fact that we trigger emit a signal (one for all)
         // once for every scan (every 20ms), that should cover all changes on initialized inputs.
-        if (trigger == true)
-        {
+        if (trigger == true) {
+
             for (int i = 0; i < _NUMBER_OF_USED_INPUTS; i++) {
                 emit inputValue(value[i]);
             }

@@ -17,9 +17,7 @@ MyMessages::~MyMessages()
 }
 
 
-void MyMessages::processReceivedWeight(int weightValueFromScale)
-{
-
+void MyMessages::processReceivedWeight(int weightValueFromScale) {
 
     //if ( dio->falling[4] == 1	&& weightValueFromScale > 100) {
 
@@ -50,11 +48,9 @@ void MyMessages::processReceivedWeight(int weightValueFromScale)
         }
         mosqpp::lib_cleanup();
     //}
-
 }
 
 
-void MyMessages::run()
-{
+void MyMessages::run() {
 
 }

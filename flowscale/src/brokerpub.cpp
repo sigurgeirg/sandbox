@@ -3,7 +3,7 @@
 
 using namespace std;
 
-BrokerPub::BrokerPub(const char* id) : mosquittopp(id){
+BrokerPub::BrokerPub(const char* id) : mosquittopp(id) {
 
 }
 

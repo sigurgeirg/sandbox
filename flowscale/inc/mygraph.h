@@ -3,7 +3,7 @@
 
 #include <QThread>
 #include <QDebug>
-#include "../../qcustomplot/qcustomplot.h"
+#include "../../QCustomPlot/qcustomplot.h"
 #include <fstream>
 #include <sstream>
 #include <iostream>

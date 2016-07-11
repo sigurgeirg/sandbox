@@ -14,8 +14,8 @@ MyGraph::~MyGraph()
     //
 }
 
-void MyGraph::setupPlot(QCustomPlot *customPlot)
-{
+void MyGraph::setupPlot(QCustomPlot *customPlot) {
+
     std::ifstream inputfile("weight.csv");
     std::string line = "";
     std::string delimiter = ",";
@@ -71,7 +71,6 @@ void MyGraph::setupPlot(QCustomPlot *customPlot)
 
 
 
-void MyGraph::run()
-{
+void MyGraph::run() {
 
 }

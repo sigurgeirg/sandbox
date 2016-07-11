@@ -27,10 +27,10 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(this, SIGNAL(avgWeight(int)),               mosq, SLOT(processReceivedWeight(int)));
     connect(scale, SIGNAL(receivedWeight(int)),         this, SLOT(recordWeight(int)));
 
-    ///////////////////////////
-    //FIXME: For Simulation
+    // /////////////////////////
+    // Simulation
     connect(this, SIGNAL(reply(unsigned char, bool)),             dio, SLOT(updateInputSim(unsigned char, bool)));
-    ///////////////////////////
+    // /////////////////////////
 
     connect(dio,   SIGNAL(inputValue(unsigned long)),   this, SLOT(displayInputValue(unsigned long)));
     //connect(dio,   SIGNAL(tachoSignal(unsigned long)),  this, SLOT(displayTachoCount(unsigned long)));
@@ -131,7 +131,7 @@ void MainWindow::recordWeight(int weightValueFromScale)
     }
     else if ( _step == 3 ) {
 
-        // with sensor to trigger weight reading - not activer now
+        // with sensor to trigger weight reading - not active now
         if ( dio->value[5] == 0 ) {
             _step = 0;
         }
@@ -150,46 +150,46 @@ void MainWindow::displayReceivedWeight(int weightValueFromScale)
 
 }
 
-///////////////////////////
-//FIXME: For Simulation - Þetta þarf að laga t.d. ... local _breytur
-///////////////////////////
-void MainWindow::on_chkDIN_00_clicked()
-{
-    int n = 0;
-    bool status;
-
-    if (ui->chkDIN_00->isChecked() == true)
-        status = 1;
-    else
-        status = 0;
-
-    emit reply(n, status);
+// /////////////////////////
+// Simulation
+void MainWindow::on_chkDIN_01_clicked() {
+    emit reply(0, ui->chkDIN_01->isChecked());
 }
 
-void MainWindow::on_chkDIN_01_clicked()
-{
-    int n = 1;
-    bool status;
-
-    if (ui->chkDIN_01->isChecked() == true)
-        status = 1;
-    else
-        status = 0;
-
-    emit reply(n, status);
+void MainWindow::on_chkDIN_02_clicked() {
+    emit reply(1, ui->chkDIN_02->isChecked());
 }
-///////////////////////////
+
+void MainWindow::on_chkDIN_03_clicked() {
+    emit reply(2, ui->chkDIN_03->isChecked());
+}
+
+void MainWindow::on_chkDIN_04_clicked() {
+    emit reply(3, ui->chkDIN_04->isChecked());
+}
+// /////////////////////////
 
 void MainWindow::displayInputValue(unsigned long)
 {
-    //ui->lblDIN_00->setText(QString::number(dio->value[0]));
-    //ui->lblDIN_01->setText(QString::number(dio->value[1]));
-    //Fixme: For simulation
-    ui->lblDIN_00->setText(QString::number(io.DIGet(0)));
-    ui->lblDIN_01->setText(QString::number(io.DIGet(1)));
+    //Fixme: Real IO module
+    //ui->lblDIN_01->setText(QString::number(dio->value[0]));
+    //ui->lblDIN_02->setText(QString::number(dio->value[1]));
+    //ui->lblDIN_03->setText(QString::number(dio->value[2]));
+    //ui->lblDIN_04->setText(QString::number(dio->value[3]));
 
-    ui->lblDOUT_00->setText(QString::number(io.DOGet(0)));
-    ui->lblDOUT_01->setText(QString::number(io.DOGet(1)));
+    // /////////////////////////
+    // Simulation
+    ui->lblDIN_01->setText(QString::number(io.DIGet(0)));
+    ui->lblDIN_02->setText(QString::number(io.DIGet(1)));
+    ui->lblDIN_03->setText(QString::number(io.DIGet(2)));
+    ui->lblDIN_04->setText(QString::number(io.DIGet(3)));
+    // /////////////////////////
+
+    ui->lblDOUT_01->setText(QString::number(io.DOGet(0)));
+    ui->lblDOUT_02->setText(QString::number(io.DOGet(1)));
+    ui->lblDOUT_03->setText(QString::number(io.DOGet(2)));
+    ui->lblDOUT_04->setText(QString::number(io.DOGet(3)));
+
 }
 
 void MainWindow::on_btnConnect_clicked()
@@ -240,3 +240,5 @@ void MainWindow::on_btnNetWeight_clicked()
 {
     scale->netWeight();
 }
+
+

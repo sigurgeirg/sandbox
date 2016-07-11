@@ -7,7 +7,7 @@
 #include <ctime>
 #include <sys/time.h>
 
-#define NUMBER_OF_USED_INPUTS 16	//Number of Used    Digital Inputs in: MODE_DIRECT
+#define NUMBER_OF_USED_INPUTS 16	// Number of Used    Digital Inputs in: MODE_DIRECT
 
 class MyDio : public QThread
 {
@@ -46,9 +46,10 @@ signals:
 
 
 public slots:
-    ///////////////////////////
+    // /////////////////////////
+    // Simulation
     void updateInputSim(unsigned char, bool);
-    ///////////////////////////
+    // /////////////////////////
 
 };
 

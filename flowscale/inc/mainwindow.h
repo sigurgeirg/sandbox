@@ -7,7 +7,7 @@
 #include "mymessages.h"
 #include <QMainWindow>
 #include <QtCore>
-#include "../../qcustomplot/qcustomplot.h"
+#include "../../QCustomPlot/qcustomplot.h"
 #include <QDebug>
 #include <string>
 #include <sstream>
@@ -45,9 +45,11 @@ public:
 
 signals:
     void avgWeight(int);
-    ///////////////////////////
+
+    // /////////////////////////
+    // Simulation
     void reply(unsigned char, bool);
-    ///////////////////////////
+    // /////////////////////////
 
 private slots:
     void on_btnConnect_clicked();
@@ -60,10 +62,13 @@ private slots:
     void on_btnGrossWeight_clicked();
     void on_btnNetWeight_clicked();
 
-    ///////////////////////////
-    void on_chkDIN_00_clicked();
+    // /////////////////////////
+    // Simulation
     void on_chkDIN_01_clicked();
-    ///////////////////////////
+    void on_chkDIN_02_clicked();
+    void on_chkDIN_03_clicked();
+    void on_chkDIN_04_clicked();
+    // /////////////////////////
 
 public slots:
     void recordWeight(int);
