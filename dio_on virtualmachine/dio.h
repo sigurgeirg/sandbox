@@ -14,8 +14,8 @@
 *********************************************************************************************************
 */
 
-#ifndef DIO_H
-#define DIO_H
+#ifndef DIO
+#define DIO
 
 
 /*
@@ -103,7 +103,12 @@
 //#define poke8(adr, val) POKE8((unsigned long)&syscon8[(adr)],(val))
 #define peek8(adr) 	PEEK8(adr)
 #define poke8(adr, val) POKE8(adr,val)
+#define pokeIn8Sim(adr, val) POKEIN8SIM(adr,val)
 
+// For simulation //
+//#define Addr_DIn (unsigned long)&Value_DIn
+//#define Addr_DOut (unsigned long)&Value_DOut
+///////////////////
 
 /*
 *************************************************************************************************$
@@ -111,11 +116,12 @@
 *************************************************************************************************$
 */
 typedef struct dio_di {			/* DISCRETE INPUT CHANNEL DATA STRUCTURE		*/
-	bool            DIIn;		/* Current state of sensor input  			*/
-	unsigned long   DIVal;		/* State of discrete input channel (or # of transitions)*/
-	bool            DIPrev;		/* Previous state of DIIn for edge detection		*/
-	bool            DIBypassEn;	/* Bypass enable switch (Bypass when TRUE)		*/
-	unsigned char   DIModeSel;	/* Discrete input channel mode selector			*/
+    bool            DIIn;		/* Current state of sensor input  			*/
+        bool            DICtrl;         /* Discrete input control request                       */
+    unsigned long   DIVal;		/* State of discrete input channel (or # of transitions)*/
+    bool            DIPrev;		/* Previous state of DIIn for edge detection		*/
+    bool            DIBypassEn;	/* Bypass enable switch (Bypass when TRUE)		*/
+    unsigned char   DIModeSel;	/* Discrete input channel mode selector			*/
     #if DI_EDGE_EN
         void (*DITrigFnct)(void *); /* Function to execute if edge triggered                        */
         void *DITrigFnctArg;        /* arguments passed to function when edge detected              */
@@ -169,16 +175,17 @@ extern  DIO_DO DOTbl[DIO_MAX_DO];
 */
 class Dio {
         private:
-        	int devmem;
+            int devmem;
 
         public:
-        	Dio();
-        	~Dio();
+            Dio();
+            ~Dio();
 
-		static unsigned long Addr_DOut[4];
-		static unsigned long Addr_DIn[4];
-		static unsigned char Value_DOut[4];
-		static unsigned char Value_DIn[4];
+                static unsigned char Value_DOut[4];
+                static unsigned char Value_DIn[4];
+                //For simulation
+                //static unsigned long Addr_DOut[4];
+                //static unsigned long Addr_DIn[4];
 
 
     /*
@@ -187,12 +194,14 @@ class Dio {
     *********************************************************************************************************
     */
 
-	inline unsigned char PEEK8(unsigned long addr);
-	inline void POKE8(unsigned long addr, unsigned char dat);
+    inline unsigned char PEEK8(unsigned long addr);
+    inline void POKE8(unsigned long addr, unsigned char dat);
+        inline void POKEIN8SIM(unsigned long addr, unsigned char dat);
 
         void DIOInit(void);
 
         void DICfgMode(unsigned char n, unsigned char mode);
+        void DISetSim (unsigned char n, bool state);
         unsigned short DIGet(unsigned char n);
         void DISetBypass(unsigned char n, unsigned short val);
         void DISetBypassEn(unsigned char n, bool state);
@@ -215,28 +224,30 @@ class Dio {
 
 
 
-	/*
-	*********************************************************************************************************
-	*                                      LOCAL FUNCTION PROTOTYPES
-	*********************************************************************************************************
-	*/
-	static void DIIsTrig(DIO_DI *pdi);
+    /*
+    *********************************************************************************************************
+    *                                      LOCAL FUNCTION PROTOTYPES
+    *********************************************************************************************************
+    */
+    static void DIIsTrig(DIO_DI *pdi);
 
-      	static void DIOTask(void *data);
+        static void DIOTask(void *data);
 
-	static void DIUpdate(void);
+    static void DIUpdate(void);
 
-      	static bool DOIsBlinkEn(DIO_DO *pdo);
-      	static void DOUpdate(void);
+        static bool DOIsBlinkEn(DIO_DO *pdo);
+        static void DOUpdate(void);
 
-	/*
-	*********************************************************************************************************
-	*                                          FUNCTION PROTOTYPES
-	*                                           HARDWARE SPECIFIC
-	*********************************************************************************************************
-	*/
-      	void DIOInitIO(void);
-	void DIRd(void);
-      	void DOWr(void);
+    /*
+    *********************************************************************************************************
+    *                                          FUNCTION PROTOTYPES
+    *                                           HARDWARE SPECIFIC
+    *********************************************************************************************************
+    */
+        void DIOInitIO(void);
+        void DIWrSim(void);
+    void DIRd(void);
+        void DOWr(void);
 };
-#endif
+#endif // DIO
+

@@ -22,6 +22,29 @@
 
 #define  DIO_GLOBALS
 #include "dio.h"
+#include <bitset>
+
+
+
+
+
+/*
+*********************************************************************************************************
+*                                     CONSTRUCTOR AND DESTRUCTOR
+*********************************************************************************************************
+*/
+Dio::Dio() {
+    // Map the Syscon core
+    //devmem = open("/dev/mem", O_RDWR|O_SYNC);
+    //assert(devmem != -1);
+    //syscon8  = (unsigned char *)  mmap(0, 4096, PROT_READ | PROT_WRITE, MAP_SHARED, devmem, 0x81008000);
+
+
+}
+
+Dio::~Dio() {
+
+}
 
 
 /*
@@ -31,31 +54,18 @@
 */
 bool TRUE  = 1;
 bool FALSE = 0;
+
 DIO_DI DITbl[DIO_MAX_DI];
 DIO_DO DOTbl[DIO_MAX_DO];
 
-unsigned long Dio::Addr_DOut[] 	= {0x104, 0x105, 0x106, 0x107};
-unsigned long Dio::Addr_DIn[] 	= {0x108, 0x109, 0x10a, 0x10b};
 unsigned char Dio::Value_DOut[] = {0x00, 0x00, 0x00, 0x00};
-unsigned char Dio::Value_DIn[] 	= {0xFF, 0xFF, 0xFF, 0xFF};
+unsigned char Dio::Value_DIn[] 	= {0xff, 0xff, 0xff, 0xff};
 
+//unsigned long Dio::Addr_DOut[] 	= {0x104, 0x105, 0x106, 0x107};
+//unsigned long Dio::Addr_DIn[] 	= {0x108, 0x109, 0x10a, 0x10b};
 
-/*
-*********************************************************************************************************
-*                                     CONSTRUCTOR AND DESTRUCTOR
-*********************************************************************************************************
-*/
-Dio::Dio() {
-	// Map the Syscon core
-	//devmem = open("/dev/mem", O_RDWR|O_SYNC);
-	//assert(devmem != -1);
-	//syscon8  = (unsigned char *)  mmap(0, 4096, PROT_READ | PROT_WRITE, MAP_SHARED, devmem, 0x81008000);
-}
-
-Dio::~Dio() {
-
-}
-
+#define Addr_DIn  (unsigned long)&Value_DIn
+#define Addr_DOut (unsigned long)&Value_DOut
 
 /*
 *********************************************************************************************************
@@ -72,13 +82,46 @@ inline
 unsigned char Dio::PEEK8(unsigned long addr) {
         unsigned char ret;
 
-	for (int i=0; i<4; i++) {
-		if (addr == Addr_DIn[i]) {
-			ret = Value_DIn[i];
-		}
-	}
+    for (int i=0; i<4; i++) {
+                if (addr == Addr_DIn[i]) {
+            ret = Value_DIn[i];
+        }
+//        std::cout << "Inputs: " << Addr_DIn[i] << " " << std::endl;
+    }
 
-	return ret;
+    return ret;
+}
+
+
+/*
+*********************************************************************************************************
+*                               				POKESIN8SIM
+*
+* Description : This function is used to write to specific controller registry addresses.
+*
+* Arguments   : addr  is the specified 8 bit registry address intended to write to.
+*               dat   is a value to be written to the 8 bit registry address, sets 8 outputs at once.
+*
+* Returns     : None.
+*********************************************************************************************************
+*/
+inline
+void Dio::POKEIN8SIM(unsigned long addr, unsigned char dat) {
+
+
+        if (addr == Addr_DIn[0]) {
+            Value_DIn[0] = dat;
+
+        } else if (addr == Addr_DIn[1]) {
+            Value_DIn[1] = dat;
+
+        } else if (addr == Addr_DIn[2]) {
+            Value_DIn[2] = dat;
+
+        } else if (addr == Addr_DIn[3]) {
+            Value_DIn[3] = dat;
+
+        }
 }
 
 
@@ -97,16 +140,11 @@ unsigned char Dio::PEEK8(unsigned long addr) {
 inline
 void Dio::POKE8(unsigned long addr, unsigned char dat) {
 
-	const char* address;
-	address = reinterpret_cast<const char*>(addr);
-	const char* data;
-	data = reinterpret_cast<const char*>(dat);
-
-	for (int i=0; i<4; i++) {
-		if (addr == Addr_DOut[i]) {
-			Value_DOut[i] = dat;
-		}
-	}
+    for (int i=0; i<4; i++) {
+        if (addr == Addr_DOut[i]) {
+            Value_DOut[i] = dat;
+        }
+    }
 }
 
 
@@ -205,6 +243,66 @@ void  Dio::DIClr (unsigned char n)
 
 /*
 *********************************************************************************************************
+*                                 SET THE STATE OF THE DISCRETE INPUT (SIMULATION)
+*
+* Description : This function is used to set the state of the discrete input.
+* Arguments   : n     is the discrete input channel (0..DIO_MAX_DO-1).
+*               state is the desired state of the input:
+*                         FALSE indicates a  negated  input
+*                         TRUE  indicates an asserted input
+* Returns     : None.
+* Notes       : The actual input will be complemented if 'DIInv' is set to TRUE.
+*********************************************************************************************************
+*/
+
+void Dio::DISetSim (unsigned char n, bool state)
+{
+    if (n < DIO_MAX_DI) {
+
+        unsigned char number0, number1, number2, number3;
+        int x;
+
+        x = (int)state;
+        number0 = peek8(Addr_DIn[0]);
+        number1 = peek8(Addr_DIn[1]);
+        number2 = peek8(Addr_DIn[2]);
+        number3 = peek8(Addr_DIn[3]);
+
+        for (int address = 0; address < 32; address++) { /* Map first 8 DO to 8 bit port image                      */
+            //if (pdi->DIIn == TRUE) {
+            if (address == n) {
+                if (address < 8) {
+                    pokeIn8Sim(Addr_DIn[0], (number0 ^= (-x ^ number0) & (1 << n)));
+                    //std::cout << "Bitfield_0: " << std::bitset<8>(number0) << std::endl;
+//                    std::cout << (int)address << " -> " << (std::bitset<8>(peek8(Addr_DIn[0])))
+//                              << " - " << (int)state << std::endl;
+
+                } else if (address < 16) {
+                    pokeIn8Sim(Addr_DIn[1], (number1 ^= (-x ^ number1) & (1 << n)));
+                    //std::cout << "Bitfield_1: " << std::bitset<8>(number1) << std::endl;
+//                    std::cout << (int)address << " -> " << (std::bitset<8>(peek8(Addr_DIn[1])))
+//                              << " - " << (int)state << std::endl;
+
+                } else if (address < 24) {
+                    pokeIn8Sim(Addr_DIn[2], (number2 ^= (-x ^ number2) & (1 << n)));
+                    //std::cout << "Bitfield_2: " << std::bitset<8>(number2) << std::endl;
+//                    std::cout << (int)address << " -> " << (std::bitset<8>(peek8(Addr_DIn[2])))
+//                              << " - " << (int)state << std::endl;
+
+                } else if (address < 32) {
+                    pokeIn8Sim(Addr_DIn[3], (number3 ^= (-x ^ number3) & (1 << n)));
+                    //std::cout << "Bitfield_3: " << std::bitset<8>(number3) << std::endl;
+//                    std::cout << (int)address << " -> " << (std::bitset<8>(peek8(Addr_DIn[3])))
+//                              << " - " << (int)state << std::endl;
+                }
+            }
+        }
+    }
+}
+
+
+/*
+*********************************************************************************************************
 *                                GET THE STATE OF A DISCRETE INPUT CHANNEL
 *
 * Description : This function is used to get the current state of a discrete input channel.  If the input
@@ -217,17 +315,68 @@ void  Dio::DIClr (unsigned char n)
 */
 unsigned short  Dio::DIGet (unsigned char n)
 {
-    unsigned short  val;
-
+    //////////////////////////////////////////////////////////
 
     if (n < DIO_MAX_DI) {
-        //OS_ENTER_CRITICAL();
-        val = DITbl[n].DIVal;                              /* Get state of DI channel                  */
-        //OS_EXIT_CRITICAL();
-        return (val);
+
+        unsigned char number0, number1, number2, number3;
+        unsigned short out;
+
+        number0 = peek8(Addr_DIn[0]);
+        number1 = peek8(Addr_DIn[1]);
+        number2 = peek8(Addr_DIn[2]);
+        number3 = peek8(Addr_DIn[3]);
+
+        for (int address = 0; address < 32; address++) { /* Map first 8 DO to 8 bit port image                      */
+            //if (pdi->DIIn == TRUE) {
+            if (address == n) {
+                if (address < 8) {
+//                    std::cout << (int)address << " -> " << (std::bitset<8>(number0))
+//                              << " - " << !!(number0 & (1 << n)) << std::endl;
+                    out = !!(number0 & (1 << n));
+
+                } else if (address < 16) {
+//                    std::cout << (int)address << " -> " << (std::bitset<8>(number1))
+//                              << " - " << !!(number1 & (1 << n)) << std::endl;
+                    out = !!(number1 & (1 << n));
+
+                } else if (address < 24) {
+//                    std::cout << (int)address << " -> " << (std::bitset<8>(number2))
+//                              << " - " << !!(number2 & (1 << n)) << std::endl;
+                    out = !!(number2 & (1 << n));
+
+                } else if (address < 32) {
+//                    std::cout << (int)address << " -> " << (std::bitset<8>(number3))
+//                              << " - " << !!(number3 & (1 << n)) << std::endl;
+                    out = !!(number3 & (1 << n));
+
+                }
+            }
+        }
+
+        return out;
+
     } else {
-        return (0);                                        /* Return negated for invalid channel       */
+
+        return (0);
+
     }
+
+    //////////////////////////////////////////////////////////
+
+
+
+
+//    unsigned short  val;
+
+//    if (n < DIO_MAX_DI) {
+//        //OS_ENTER_CRITICAL();
+//        val = DITbl[n].DIVal;                              /* Get state of DI channel                  */
+//        //OS_EXIT_CRITICAL();
+//        return (val);
+//    } else {
+//        return (0);                                        /* Return negated for invalid channel       */
+//    }
 }
 
 
@@ -291,51 +440,51 @@ void  Dio::DIIsTrig (DIO_DI *pdi){
 void Dio::DIUpdate(void) {
 
     unsigned short address;
-	DIO_DI *pdi;
+    DIO_DI *pdi;
 
-	pdi = &DITbl[0];
+    pdi = &DITbl[0];
 
-	for (address = 0; address < 32; address++) {
-		if (pdi->DIBypassEn == FALSE) {		/* See if discrete input channel is bypassed	*/
-			switch (pdi->DIModeSel) {	/* No, process channel                          */
-				case DI_MODE_LOW:	/* Input is forced low                          */
-					pdi->DIVal = 0;
-					break;
-				case DI_MODE_HIGH:	/* Input is forced high                         */
-					pdi->DIVal = 1;
-					break;
-				case DI_MODE_DIRECT:	/* Input is based on state of physical input     */
-					pdi->DIVal = (unsigned short)pdi->DIIn;	/* Obtain the state of the sensor	*/
-					break;
-				case DI_MODE_INV:
-					pdi->DIVal = (unsigned short)(pdi->DIIn ? 0 : 1);
-					break;
+    for (address = 0; address < 32; address++) {
+        if (pdi->DIBypassEn == FALSE) {		/* See if discrete input channel is bypassed	*/
+            switch (pdi->DIModeSel) {	/* No, process channel                          */
+                case DI_MODE_LOW:	/* Input is forced low                          */
+                    pdi->DIVal = 0;
+                    break;
+                case DI_MODE_HIGH:	/* Input is forced high                         */
+                    pdi->DIVal = 1;
+                    break;
+                case DI_MODE_DIRECT:	/* Input is based on state of physical input     */
+                    pdi->DIVal = (unsigned short)pdi->DIIn;	/* Obtain the state of the sensor	*/
+                    break;
+                case DI_MODE_INV:
+                    pdi->DIVal = (unsigned short)(pdi->DIIn ? 0 : 1);
+                    break;
 
-				#if DI_EDGE_EN
-				    case DI_MODE_EDGE_LOW_GOING:
-				    case DI_MODE_EDGE_HIGH_GOING:
-				    case DI_MODE_EDGE_BOTH:
-					    DIIsTrig(pdi);              /* Handle edge triggered mode                         */
-					    break;
-				#endif
+                #if DI_EDGE_EN
+                    case DI_MODE_EDGE_LOW_GOING:
+                    case DI_MODE_EDGE_HIGH_GOING:
+                    case DI_MODE_EDGE_BOTH:
+                        DIIsTrig(pdi);              /* Handle edge triggered mode                         */
+                        break;
+                #endif
 
-				case DI_MODE_TOGGLE_LOW_GOING:
-					if (pdi->DIPrev == 1 && pdi->DIIn == 0) {
-						pdi->DIVal = pdi->DIVal ? 0 : 1;
+                case DI_MODE_TOGGLE_LOW_GOING:
+                    if (pdi->DIPrev == 1 && pdi->DIIn == 0) {
+                        pdi->DIVal = pdi->DIVal ? 0 : 1;
                     }
-					pdi->DIPrev = pdi->DIIn;
-					break;
+                    pdi->DIPrev = pdi->DIIn;
+                    break;
 
-				case DI_MODE_TOGGLE_HIGH_GOING:
-					if (pdi->DIPrev == 0 && pdi->DIIn == 1) {
-						pdi->DIVal = pdi->DIVal ? 0 : 1;
-					}
-					pdi->DIPrev = pdi->DIIn;
-					break;
-			}
-		}
-		pdi++;		/* Point to next DIO_DO element                       */
-	}
+                case DI_MODE_TOGGLE_HIGH_GOING:
+                    if (pdi->DIPrev == 0 && pdi->DIIn == 1) {
+                        pdi->DIVal = pdi->DIVal ? 0 : 1;
+                    }
+                    pdi->DIPrev = pdi->DIIn;
+                    break;
+            }
+        }
+        pdi++;		/* Point to next DIO_DO element                       */
+    }
 }
 
 
@@ -350,7 +499,7 @@ void Dio::DIUpdate(void) {
 */
 void  Dio::DIOInit (void)
 {
-    unsigned char err;
+
     unsigned char i;
     DIO_DI *pdi;
     DIO_DO *pdo;
@@ -825,6 +974,45 @@ void  Dio::DIOInitIO (void)
 
 /*
 *********************************************************************************************************
+*                                       UPDATE SIMULATED INPUTS
+*
+* Description : This function is called to map all of the discrete input channels to their appropriate
+*               simulated physical destinations.
+* Arguments   : None.
+* Returns     : None.
+*********************************************************************************************************
+*/
+
+void Dio::DIWrSim(void) {
+    DIO_DI          *pdi;
+    unsigned char   in;
+    unsigned char   msk;
+    unsigned char   address;
+
+
+    pdi = &DITbl[0];                            /* Point at first discrete input channel                  */
+    msk = 0x01;                                 /* First DI will be mapped to bit 0                        */
+    in = 0xff;
+
+
+    for (address = 0; address < 8; address++) { /* Map first 8 DI to 8 bit port image                      */
+        //std::cout << "DIWrSim_DIIn: " << pdi->DIIn << std::endl;
+        if (pdi->DIIn == TRUE) {
+            if (address < 8) {
+                msk = 0x00 + (pow(2,(address-0))+0.5);
+                pokeIn8Sim(Addr_DIn[0], ((unsigned char)msk & (unsigned char)in));
+            }
+            //std::cout << "DIWrSim: " << (unsigned long)pow(2,(address-0)) << std::endl;
+        }
+        pdi++;
+
+    }
+
+}
+
+
+/*
+*********************************************************************************************************
 *                                         READ PHYSICAL INPUTS
 *
 * Description : This function is called to read and map all of the physical inputs used for discrete
@@ -836,39 +1024,18 @@ void  Dio::DIOInitIO (void)
 
 void Dio::DIRd(void) {
 
-	DIO_DI          *pdi;
-	unsigned char   Value_DIn[4] = {peek8(Addr_DIn[0]), 
-					peek8(Addr_DIn[1]), 
-					peek8(Addr_DIn[2]), 
-					peek8(Addr_DIn[3])};
-
-    	unsigned char   msk;
-	unsigned short  address;
-
-	pdi = &DITbl[0];
-	//std::cout << "Inputs: ";
-
-	for (address = 0; address < 32; address++) {
-		if (address < 8) {
-			msk = 0x00 + (pow(2,(address-0))+0.5);
-            pdi->DIIn = (bool)(Value_DIn[0] & msk) ? 1 : 0;
-			//std::cout << pdi->DIIn << " ";
-        } else if (address < 16) {
-			msk = 0x00 + (pow(2,(address-8))+0.5);
-            pdi->DIIn = (bool)(Value_DIn[1] & msk) ? 1 : 0;
-			//std::cout << pdi->DIIn << " ";
-        } else if (address < 24) {
-			msk = 0x00 + (pow(2,(address-16))+0.5);
-            pdi->DIIn = (bool)(Value_DIn[2] & msk) ? 1 : 0;
-			//std::cout << pdi->DIIn << " ";
-        } else if (address < 32) {
-			msk = 0x00 + (pow(2,(address-24))+0.5);
-            pdi->DIIn = (bool)(Value_DIn[3] & msk) ? 1 : 0;
-			//std::cout << pdi->DIIn << " ";
+    for (int inputSet = 0; inputSet < 4; inputSet++) { /* Map first 8 DO to 8 bit port image                      */
+        if (inputSet < 1) {
+            //std::cout << "Bitfield: " << std::bitset<8>(number) << std::endl;
+            //std::cout << "Input 0-7 -> " << (std::bitset<8>(peek8(Addr_DIn[0]))) << std::endl;
+        } else if (inputSet < 2) {
+            //std::cout << "Input 8-15 -> " << (std::bitset<8>(peek8(Addr_DIn[1]))) << std::endl;
+        } else if (inputSet < 3) {
+            //std::cout << "Input 16-23 -> " << (std::bitset<8>(peek8(Addr_DIn[2]))) << std::endl;
+        } else if (inputSet < 4) {
+            //std::cout << "Input 24-31 -> " << (std::bitset<8>(peek8(Addr_DIn[3]))) << std::endl;
         }
-		pdi++;
-	}
-	//std::cout << std::endl;
+    }
 }
 /*
 *********************************************************************************************************
@@ -893,22 +1060,22 @@ void Dio::DOWr(void) {
 
     for (address = 0; address < 32; address++) { /* Map first 8 DO to 8 bit port image                      */
         if (pdo->DOOut == TRUE) {
-    		if (address < 8) {
-    			msk = 0x00 + (pow(2,(address-0))+0.5);
-                poke8(Addr_DOut[0], ((unsigned char)msk | (unsigned char)out));
-            } else if (address < 16) {
-    			msk = 0x00 + (pow(2,(address-8))+0.5);
-                poke8(Addr_DOut[1], ((unsigned char)msk | (unsigned char)out));
-            } else if (address < 24) {
-    			msk = 0x00 + (pow(2,(address-16))+0.5);
-                poke8(Addr_DOut[2], ((unsigned char)msk | (unsigned char)out));
-            } else if (address < 32) {
-    			msk = 0x00 + (pow(2,(address-24))+0.5);
-                poke8(Addr_DOut[3], ((unsigned char)msk | (unsigned char)out));
+            if (address < 8) {
+                    msk = 0x00 + (pow(2,(address-0))+0.5);
+                    poke8(Addr_DOut[0], ((unsigned char)msk | (unsigned char)out));
+                } else if (address < 16) {
+                    msk = 0x00 + (pow(2,(address-8))+0.5);
+                    poke8(Addr_DOut[1], ((unsigned char)msk | (unsigned char)out));
+                } else if (address < 24) {
+                    msk = 0x00 + (pow(2,(address-16))+0.5);
+                    poke8(Addr_DOut[2], ((unsigned char)msk | (unsigned char)out));
+                } else if (address < 32) {
+                    msk = 0x00 + (pow(2,(address-24))+0.5);
+                    poke8(Addr_DOut[3], ((unsigned char)msk | (unsigned char)out));
+                }
+                syslog(LOG_INFO, "New Output !! ");
             }
-            syslog(LOG_INFO, "New Output !! ");
-        }
-        pdo++;
+            pdo++;
 
     }
 //    for (address = 0; address < 8; address++) { /* Map first 8 DO to 8 bit port image                      */
@@ -934,25 +1101,50 @@ void Dio::DOWr(void) {
 
 int main()
 {
-	Dio io;
-	bool p;
+    Dio io;
+    bool p;
 
 
-        io.DICfgMode(2,DI_MODE_TOGGLE_HIGH_GOING);
-        io.DOCfgMode(2, DO_MODE_DIRECT, 0);
+        //io.DICfgMode(2,DI_MODE_TOGGLE_HIGH_GOING);
+        //io.DOCfgMode(2, DO_MODE_DIRECT, 0);
+        io.DICfgMode(0, DI_MODE_DIRECT);
+        io.DICfgMode(1, DI_MODE_DIRECT);
+        io.DICfgMode(2, DI_MODE_DIRECT);
+        io.DICfgMode(3, DI_MODE_DIRECT);
+        io.DICfgMode(4, DI_MODE_DIRECT);
+        io.DICfgMode(5, DI_MODE_DIRECT);
+        io.DICfgMode(6, DI_MODE_DIRECT);
+        io.DICfgMode(7, DI_MODE_DIRECT);
 
+//        io.DISetSim(0,0);
+//        io.DISetSim(1,0);
+//        io.DISetSim(2,0);
+//        io.DISetSim(3,0);
+//        io.DISetSim(4,1);
+//        io.DISetSim(5,1);
+//        io.DISetSim(6,1);
+//        io.DISetSim(7,1);
 
         while(1) {
-        
-            io.DIRd();
-            io.DIUpdate();
-            io.DOSet(2, 1);
-            io.DOUpdate();
-            io.DOWr();
+
+            //Fixme: Refactor DISetSim() -> DISet()
+            //Fixme: DIRd() les bara og prentar, en maetti jafnvel skrifa gildi i breytu ???
+
+            //io.DIUpdate();
+            //io.DIRd();
+            //io.DIWrSim();
+            //io.DIUpdate();
+            //io.DISetSim(2,1);
+            //io.DIGet(2);
+            //io.DISetSim(3,1);
+            //io.DIRd();
+            //io.DOSet(2, 1);
+            //io.DOUpdate();
+            //io.DOWr();
 
        }
 
 
-	return 0;
+    return 0;
 }
 
