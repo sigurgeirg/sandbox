@@ -31,16 +31,15 @@ MyScale::~MyScale()
 }
 
 
-int* MyScale::statusRegisterBinary(uint16_t number[])
-{
+int* MyScale::statusRegisterBinary(uint16_t number[]) {
+
     uint16_t remainder=0, i=0, decimal=number[0];
 
-    do
-    {
-	remainder = decimal%2;
-	decimal = decimal/2;
-    statusRegisterBinaryTempValue[i] = remainder;
-	i = i+1;
+    do {
+        remainder = decimal%2;
+        decimal = decimal/2;
+        statusRegisterBinaryTempValue[i] = remainder;
+        i = i+1;
 
     } while(decimal>0);
 
@@ -48,11 +47,10 @@ int* MyScale::statusRegisterBinary(uint16_t number[])
 }
 
 
-void MyScale::connectToSlaveDevice()
-{
+void MyScale::connectToSlaveDevice() {
 
-    try
-    {
+    try {
+
         ctx = modbus_new_rtu("/dev/ttyUSB0", 38400, 'N', 8, 1);
         setslave = modbus_set_slave(ctx, 0x01);
 
@@ -87,14 +85,13 @@ void MyScale::connectToSlaveDevice()
             start();
         }
     }
-    catch(...)
-    {
+        catch(...) {
     }
 }
 
 
-void MyScale::disconnectFromSlaveDevice()
-{
+void MyScale::disconnectFromSlaveDevice() {
+    
     try
     {
         modbusConnected = false;
@@ -113,8 +110,8 @@ void MyScale::disconnectFromSlaveDevice()
 }
 
 
-void MyScale::toggleWriteToLoadcell(bool checked)
-{
+void MyScale::toggleWriteToLoadcell(bool checked) {
+    
     if(checked == true)
         writeToLoadcell = true;
     else
@@ -122,51 +119,50 @@ void MyScale::toggleWriteToLoadcell(bool checked)
 }
 
 
-void MyScale::calibrateZERO()
-{
+void MyScale::calibrateZERO() {
+    
     writeToRegister = commandRegister;
     mbCommand[0] = zeroSettingForCalibration;
 }
 
 
-void MyScale::calibrateWEIGHT(int calibrationWeight)
-{
+void MyScale::calibrateWEIGHT(int calibrationWeight) {
 
     writeToRegister = sampleWeightForCalibrationL;
     mbCommand[0] = calibrationWeight;
 }
 
 
-void MyScale::storeCalibrationWEIGHT()
-{
+void MyScale::storeCalibrationWEIGHT() {
+    
     writeToRegister = commandRegister;
     mbCommand[0] = sampleWeightStorage;
 }
 
 
-void MyScale::semiAutoZERO()
-{
+void MyScale::semiAutoZERO() {
+    
     writeToRegister = commandRegister;
     mbCommand[0] = semiAutomaticZero;
 }
 
 
-void MyScale::grossWeight()
-{
+void MyScale::grossWeight() {
+    
     writeToRegister = commandRegister;
     mbCommand[0] = grossDisplay;
 }
 
 
-void MyScale::netWeight()
-{
+void MyScale::netWeight() {
+    
     writeToRegister = commandRegister;
     mbCommand[0] = netDisplay;
 }
 
 
-void MyScale::run()
-{
+void MyScale::run() {
+    
     int sign = 0;
 
     while(modbusConnected == true)

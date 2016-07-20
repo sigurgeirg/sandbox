@@ -13,24 +13,26 @@ TARGET = ReadFromLoadCell
 INCLUDEPATH += ./inc ./src ./forms ./images
 
 # Input
-HEADERS += inc/mainwindow.h \
-        inc/mydio.h \
-        inc/mygraph.h \
-        inc/myscale.h \
-        inc/mymessages.h \
-        inc/brokerpub.h \
-        inc/clientsub.h \
-        ../QCustomPlot/qcustomplot.h
+HEADERS +=  inc/mainwindow.h \
+            inc/mydio.h \
+            inc/mygraph.h \
+            inc/myscale.h \
+            inc/mymessages.h \
+            inc/brokerpub.h \
+            inc/clientsub.h \
+            inc/simulation.h \
+            ../QCustomPlot/qcustomplot.h \
 
-SOURCES += src/main.cpp \
-           src/mainwindow.cpp \
-           src/mydio.cpp \
-           src/mygraph.cpp \
-           src/myscale.cpp \
-           src/mymessages.cpp \
-           src/brokerpub.cpp \
-           src/clientsub.cpp \
-           ../QCustomPlot/qcustomplot.cpp
+SOURCES +=  src/main.cpp \
+            src/mainwindow.cpp \
+            src/mydio.cpp \
+            src/mygraph.cpp \
+            src/myscale.cpp \
+            src/mymessages.cpp \
+            src/brokerpub.cpp \
+            src/clientsub.cpp \
+            src/simulation.cpp \
+            ../QCustomPlot/qcustomplot.cpp \
 
 FORMS += forms/mainwindow.ui
 
