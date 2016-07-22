@@ -48,7 +48,7 @@ signals:
 public slots:
     // /////////////////////////
     // Simulation
-    void updateInputSim(unsigned char, bool);
+//    void updateInputSim(unsigned char, bool);
     // /////////////////////////
 
 };

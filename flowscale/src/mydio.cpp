@@ -49,20 +49,20 @@ MyDio::~MyDio()
 
 // /////////////////////////
 // Simulation
-void MyDio::updateInputSim(unsigned char n, bool state) {
+//void MyDio::updateInputSim(unsigned char n, bool state) {
 
-    _inputAddress = n;
-    _inputStatus = state;
+//    _inputAddress = n;
+//    _inputStatus = state;
 
-    qDebug() << "Input:" << _inputAddress+1 << " is " << _inputStatus << endl;
+//    qDebug() << "Input:" << _inputAddress+1 << " is " << _inputStatus << endl;
 
-    io.DISetSim(_inputAddress, _inputStatus);
-    io.DIWrSim();
+//    io.DISetSim(_inputAddress, _inputStatus);
+//    io.DIWrSim();
 
-    io.DIRd();
-    io.DIUpdate();
-    //io.DIWrSim();
-}
+//    io.DIRd();
+//    io.DIUpdate();
+//    //io.DIWrSim();
+//}
 // /////////////////////////
 
 void MyDio::updateInputs() {

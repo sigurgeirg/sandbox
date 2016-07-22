@@ -48,7 +48,7 @@ signals:
 
     // /////////////////////////
     // Simulation
-    void reply(unsigned char, bool);
+//    void reply(unsigned char, bool);
     // /////////////////////////
 
 private slots:
@@ -64,10 +64,10 @@ private slots:
 
     // /////////////////////////
     // Simulation
-    void on_chkDIN_01_clicked();
-    void on_chkDIN_02_clicked();
-    void on_chkDIN_03_clicked();
-    void on_chkDIN_04_clicked();
+//    void on_chkDIN_01_clicked();
+//    void on_chkDIN_02_clicked();
+//    void on_chkDIN_03_clicked();
+//    void on_chkDIN_04_clicked();
     // /////////////////////////
 
 public slots:

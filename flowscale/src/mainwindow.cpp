@@ -31,7 +31,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // /////////////////////////
     // Simulation
-    connect(this, SIGNAL(reply(unsigned char, bool)),             dio, SLOT(updateInputSim(unsigned char, bool)));
+//    connect(this, SIGNAL(reply(unsigned char, bool)),             dio, SLOT(updateInputSim(unsigned char, bool)));
     // /////////////////////////
 }
 
@@ -151,37 +151,37 @@ void MainWindow::displayReceivedWeight(int weightValueFromScale)
 
 // /////////////////////////
 // Simulation
-void MainWindow::on_chkDIN_01_clicked() {
-    emit reply(0, ui->chkDIN_01->isChecked());
-}
+//void MainWindow::on_chkDIN_01_clicked() {
+//    emit reply(0, ui->chkDIN_01->isChecked());
+//}
 
-void MainWindow::on_chkDIN_02_clicked() {
-    emit reply(1, ui->chkDIN_02->isChecked());
-}
+//void MainWindow::on_chkDIN_02_clicked() {
+//    emit reply(1, ui->chkDIN_02->isChecked());
+//}
 
-void MainWindow::on_chkDIN_03_clicked() {
-    emit reply(2, ui->chkDIN_03->isChecked());
-}
+//void MainWindow::on_chkDIN_03_clicked() {
+//    emit reply(2, ui->chkDIN_03->isChecked());
+//}
 
-void MainWindow::on_chkDIN_04_clicked() {
-    emit reply(3, ui->chkDIN_04->isChecked());
-}
+//void MainWindow::on_chkDIN_04_clicked() {
+//    emit reply(3, ui->chkDIN_04->isChecked());
+//}
 // /////////////////////////
 
 void MainWindow::displayInputValue(unsigned long)
 {
     //Fixme: Real IO module
-    //ui->lblDIN_01->setText(QString::number(dio->value[0]));
-    //ui->lblDIN_02->setText(QString::number(dio->value[1]));
-    //ui->lblDIN_03->setText(QString::number(dio->value[2]));
-    //ui->lblDIN_04->setText(QString::number(dio->value[3]));
+    ui->lblDIN_01->setText(QString::number(dio->value[0]));
+    ui->lblDIN_02->setText(QString::number(dio->value[1]));
+    ui->lblDIN_03->setText(QString::number(dio->value[2]));
+    ui->lblDIN_04->setText(QString::number(dio->value[3]));
 
     // /////////////////////////
     // Simulation
-    ui->lblDIN_01->setText(QString::number(io.DIGet(0)));
-    ui->lblDIN_02->setText(QString::number(io.DIGet(1)));
-    ui->lblDIN_03->setText(QString::number(io.DIGet(2)));
-    ui->lblDIN_04->setText(QString::number(io.DIGet(3)));
+//    ui->lblDIN_01->setText(QString::number(io.DIGet(0)));
+//    ui->lblDIN_02->setText(QString::number(io.DIGet(1)));
+//    ui->lblDIN_03->setText(QString::number(io.DIGet(2)));
+//    ui->lblDIN_04->setText(QString::number(io.DIGet(3)));
     // /////////////////////////
 
     ui->lblDOUT_01->setText(QString::number(io.DOGet(0)));
