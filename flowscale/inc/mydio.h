@@ -17,8 +17,11 @@ public:
     ~MyDio();
 
     int tickBeltProfile;
-    unsigned char _inputAddress;
-    bool _inputStatus;
+    // /////////////////////////
+    // Simulation
+//    unsigned char _inputAddress;
+//    bool _inputStatus;
+    // /////////////////////////
 
     void updateInputs();
     void updateOutputs();

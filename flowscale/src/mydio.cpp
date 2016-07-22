@@ -168,8 +168,8 @@ void MyDio::run() {
     bool tacho = 0;
     //*/
 
-    while (1)
-    {
+    while (1) {
+
         msleep(10);
         // Activate trigger on scantime, comment out and use the one below instead if you plan
         // to trigger when INPUT sensor (period/conveyor tacho) is used to monitor tacho

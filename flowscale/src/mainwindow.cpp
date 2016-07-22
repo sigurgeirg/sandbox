@@ -240,4 +240,3 @@ void MainWindow::on_btnNetWeight_clicked()
     scale->netWeight();
 }
 
-
