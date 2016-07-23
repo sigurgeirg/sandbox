@@ -30,7 +30,7 @@ public:
 
     int *statusRegisterBinaryTempValue;
     int *statusRegisterBinaryReturnValue;
-    uint16_t data[10];      // Incoming data values are stored for a moment in a vector of size 10
+    uint16_t data[64];      // Incoming data values are stored for a moment in a vector
     modbus_t *ctx;
     int setslave;
     bool modbusConnected;   // Flag that allows while loop to scan through incoming data
