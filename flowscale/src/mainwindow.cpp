@@ -18,6 +18,7 @@ MainWindow::MainWindow(QWidget *parent) :
     graph = new MyGraph(this);
     mosq = new MyMessages(this);
 
+    _beltRoundCounter = 0;
     _weightValueFromScale = 0;
     _counter = 0;
     _step = 0;
@@ -29,7 +30,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(scale, SIGNAL(receivedWeight(int)),         this, SLOT(recordWeight(int)));
     connect(dio,   SIGNAL(inputValue(unsigned long)),   this, SLOT(displayInputValue(unsigned long)));
 
-    //connect(dio,   SIGNAL(conveyorSignal(unsigned long)),  this, SLOT(displayTachoCount(unsigned long)));
+    connect(dio,   SIGNAL(conveyorSignal(unsigned long)),  this, SLOT(conveyorBeltCounter(int)));
     //connect(dio,   SIGNAL(tachoSignal(unsigned long)),  this, SLOT(displayTachoCount(unsigned long)));
 
     // /////////////////////////
@@ -45,14 +46,25 @@ MainWindow::~MainWindow()
     delete dio;
     delete graph;
     delete mosq;
+    delete _beltRoundCounter;
 }
 
-//Record measured weight
+void MainWindow::conveyorBeltCounter(int beltRoundCounter)
+{
+    // do nothing, just receive value to pointer temporarily
+    this->_beltRoundCounter = &beltRoundCounter;
+}
+
+
+// Record measured weight
 void MainWindow::recordWeight(int weightValueFromScale)
 {
     std::ofstream fout;
-
     QPixmap penguinObject("../images/penguin.png");
+
+    this->_beltRoundCounter;
+
+
 
     _weightValueFromScale = weightValueFromScale;
 

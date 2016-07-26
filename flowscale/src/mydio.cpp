@@ -204,7 +204,7 @@ void MyDio::run() {
         if (rising[0] == 1) {
             qDebug() << "Input 1:" << 1 << " is rising!";
             tickBeltProfile = 0;
-            conveyor = true
+            conveyor = true;
         }
 
         // Here we assume that input[1] is tacho pulse listener input, many pulses per belt period.
