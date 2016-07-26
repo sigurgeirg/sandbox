@@ -39,6 +39,7 @@ MyDio::MyDio(QObject *parent) :
     //io.DICfgMode(3,DI_MODE_EDGE_HIGH_GOING);
 
     address	= 0;
+    beltRounds = 0;
     tickBeltProfile = 0;
 }
 
@@ -166,6 +167,7 @@ void MyDio::run() {
 //	double currTime;
     bool trigger = 0;
     bool tacho = 0;
+    bool conveyor = 0;
     //*/
 
     while (1) {
@@ -174,6 +176,7 @@ void MyDio::run() {
         // Activate trigger on scantime, comment out and use the one below instead if you plan
         // to trigger when INPUT sensor (period/conveyor tacho) is used to monitor tacho
         trigger = true;
+        conveyor = true;
 
 //		gettimeofday(&tim, NULL);
 //		lastTime = tim.tv_usec;
@@ -201,6 +204,7 @@ void MyDio::run() {
         if (rising[0] == 1) {
             qDebug() << "Input 1:" << 1 << " is rising!";
             tickBeltProfile = 0;
+            conveyor = true
         }
 
         // Here we assume that input[1] is tacho pulse listener input, many pulses per belt period.
@@ -225,6 +229,15 @@ void MyDio::run() {
             emit tachoSignal(tickBeltProfile);
             tacho = false;
         }
+
+        if (conveyor == true)
+        {
+            emit conveyorSignal(beltRounds);
+            conveyor = false;
+            beltRounds++;
+        }
+
+
 
 //		gettimeofday(&tim, NULL);
 //		currTime = tim.tv_usec;

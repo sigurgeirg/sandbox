@@ -17,6 +17,7 @@ public:
     ~MyDio();
 
     int tickBeltProfile;
+    int beltRounds;
     // /////////////////////////
     // Simulation
 //    unsigned char _inputAddress;
@@ -45,6 +46,7 @@ public:
 
 signals:
     void inputValue(unsigned long);
+    void conveyorSignal(unsigned long);
     void tachoSignal(unsigned long);
 
 

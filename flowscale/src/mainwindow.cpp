@@ -25,8 +25,11 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(scale, SIGNAL(receivedWeight(int)),         this, SLOT(displayReceivedWeight(int)));
     connect(this, SIGNAL(avgWeight(int)),               mosq, SLOT(processReceivedWeight(int)));
+    //connect(scale, SIGNAL(receivedWeight(int)),         this, SLOT(recordWeight(int)));
     connect(scale, SIGNAL(receivedWeight(int)),         this, SLOT(recordWeight(int)));
     connect(dio,   SIGNAL(inputValue(unsigned long)),   this, SLOT(displayInputValue(unsigned long)));
+
+    //connect(dio,   SIGNAL(conveyorSignal(unsigned long)),  this, SLOT(displayTachoCount(unsigned long)));
     //connect(dio,   SIGNAL(tachoSignal(unsigned long)),  this, SLOT(displayTachoCount(unsigned long)));
 
     // /////////////////////////
