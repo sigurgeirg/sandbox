@@ -63,8 +63,6 @@ void MainWindow::recordWeight(int weightValueFromScale)
     std::ofstream fout;
     QPixmap penguinObject("../images/penguin.png");
 
-    this->_beltRoundCounter;
-
 
 
     _weightValueFromScale = weightValueFromScale;
@@ -77,7 +75,7 @@ void MainWindow::recordWeight(int weightValueFromScale)
         fout.open("weight.csv", std::ofstream::out | std::ofstream::app); // trunc changed to app, trunc clears the file while app appends it
         if (fout.is_open())
         {
-            fout << _beltRoundCounter  << "," <<  counter << "," << _weightValueFromScale << std::endl;
+            fout << *_beltRoundCounter  << "," <<  counter << "," << _weightValueFromScale << std::endl;
             counter = counter + 1;
 
 
