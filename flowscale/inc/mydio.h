@@ -17,7 +17,7 @@ public:
     ~MyDio();
 
     int tickBeltProfile;
-    int beltRounds;
+    unsigned long beltRounds;
     // /////////////////////////
     // Simulation
 //    unsigned char _inputAddress;

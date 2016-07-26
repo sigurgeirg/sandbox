@@ -37,11 +37,12 @@ public:
 
     std::ofstream fout;
 
-    int *_beltRoundCounter;
+    unsigned long *_beltRoundCounter;
     int _weightValueFromScale;
     long _counter;
     int _step;
     int array[NUMBER_OF_WEIGHT_SAMPLES][2];
+    long counter;
 
 
 signals:
@@ -72,7 +73,7 @@ private slots:
     // /////////////////////////
 
 public slots:
-    void conveyorBeltCounter(int);
+    void conveyorBeltCounter(unsigned long);
     void recordWeight(int);
     void displayReceivedWeight(int);
     void displayInputValue(unsigned long);
