@@ -63,7 +63,7 @@ void MainWindow::recordWeight(int weightValueFromScale)
     std::ofstream fout;
     QPixmap penguinObject("../images/penguin.png");
 
-    this->_beltRoundCounter;
+    *this->_beltRoundCounter;
 
 
 
