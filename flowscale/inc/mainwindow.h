@@ -3,7 +3,7 @@
 
 #include "myscale.h"
 #include "mydio.h"
-#include "mygraph.h"
+//#include "mygraph.h"
 #include "mymessages.h"
 #include <QMainWindow>
 #include <QtCore>
@@ -31,7 +31,7 @@ public:
 
     MyScale *scale;
     MyDio *dio;
-    MyGraph *graph;
+    //MyGraph *graph;
     MyMessages *mosq;
     Dio io;
 

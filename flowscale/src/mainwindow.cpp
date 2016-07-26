@@ -15,7 +15,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     scale = new MyScale(this);
     dio = new MyDio(this);
-    graph = new MyGraph(this);
+    //graph = new MyGraph(this);
     mosq = new MyMessages(this);
 
     _beltRoundCounter = 0;
@@ -45,7 +45,7 @@ MainWindow::~MainWindow()
     delete ui;
     delete scale;
     delete dio;
-    delete graph;
+    //delete graph;
     delete mosq;
     delete _beltRoundCounter;
 }
@@ -64,7 +64,6 @@ void MainWindow::recordWeight(int weightValueFromScale)
     QPixmap penguinObject("../images/penguin.png");
 
     *this->_beltRoundCounter;
-
 
 
     _weightValueFromScale = weightValueFromScale;
@@ -147,7 +146,7 @@ void MainWindow::recordWeight(int weightValueFromScale)
 
         ui->PenguinImage->clear();
 
-        graph->setupPlot(ui->customPlot);
+        //graph->setupPlot(ui->customPlot);
 
         int sumWeight, averageWeight, entryPosition, exitPosition;
         sumWeight = 0;
