@@ -7,7 +7,7 @@
 #include "mymessages.h"
 #include <QMainWindow>
 #include <QtCore>
-#include "../../QCustomPlot/qcustomplot.h"
+//#include "../../QCustomPlot/qcustomplot.h"
 #include <QDebug>
 #include <string>
 #include <sstream>

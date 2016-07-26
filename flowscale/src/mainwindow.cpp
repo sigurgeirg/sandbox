@@ -6,7 +6,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     //setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint); // This removes the Dialog TitleBar Title and min/max/quit buttons
-    ui->setupUi(this);
+    //ui->setupUi(this);
 
     QPixmap conveyorObject("../images/conveyor.png");
     ui->FlowScaleImage->setFixedSize(480,240);
@@ -53,7 +53,7 @@ MainWindow::~MainWindow()
 void MainWindow::conveyorBeltCounter(unsigned long beltRoundCounter)
 {
     // do nothing, just receive value to pointer temporarily
-    this->_beltRoundCounter = &beltRoundCounter;
+    _beltRoundCounter = &beltRoundCounter;
 }
 
 
@@ -62,8 +62,6 @@ void MainWindow::recordWeight(int weightValueFromScale)
 {
     std::ofstream fout;
     QPixmap penguinObject("../images/penguin.png");
-
-
 
 
     _weightValueFromScale = weightValueFromScale;
