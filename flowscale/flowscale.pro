@@ -15,7 +15,7 @@ INCLUDEPATH += ./inc ./src ./forms ./images
 # Input
 HEADERS +=  inc/mainwindow.h \
             inc/mydio.h \
-            inc/mygraph.h \
+            #inc/mygraph.h \
             inc/myscale.h \
             inc/mymessages.h \
             inc/brokerpub.h \
@@ -26,7 +26,7 @@ HEADERS +=  inc/mainwindow.h \
 SOURCES +=  src/main.cpp \
             src/mainwindow.cpp \
             src/mydio.cpp \
-            src/mygraph.cpp \
+            #src/mygraph.cpp \
             src/myscale.cpp \
             src/mymessages.cpp \
             src/brokerpub.cpp \
