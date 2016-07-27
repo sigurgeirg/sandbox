@@ -6,7 +6,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     //setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint); // This removes the Dialog TitleBar Title and min/max/quit buttons
-    //ui->setupUi(this);
+    ui->setupUi(this);
 
     QPixmap conveyorObject("../images/conveyor.png");
     ui->FlowScaleImage->setFixedSize(480,240);
@@ -15,7 +15,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     scale = new MyScale(this);
     dio = new MyDio(this);
-    //graph = new MyGraph(this);
+    graph = new MyGraph(this);
     mosq = new MyMessages(this);
 
     _beltRoundCounter = 0;
@@ -45,7 +45,7 @@ MainWindow::~MainWindow()
     delete ui;
     delete scale;
     delete dio;
-    //delete graph;
+    delete graph;
     delete mosq;
     delete _beltRoundCounter;
 }
@@ -61,10 +61,11 @@ void MainWindow::conveyorBeltCounter(unsigned long beltRoundCounter)
 void MainWindow::recordWeight(int weightValueFromScale)
 {
     std::ofstream fout;
+
     QPixmap penguinObject("../images/penguin.png");
 
 
-    _weightValueFromScale = weightValueFromScale;
+    //_weightValueFromScale = weightValueFromScale;
 
 
 
@@ -74,8 +75,8 @@ void MainWindow::recordWeight(int weightValueFromScale)
         fout.open("weight.csv", std::ofstream::out | std::ofstream::app); // trunc changed to app, trunc clears the file while app appends it
         if (fout.is_open())
         {
-            fout << *_beltRoundCounter  << "," <<  counter << "," << _weightValueFromScale << std::endl;
-            counter = counter + 1;
+            //fout << *_beltRoundCounter  << "," <<  counter << "," << _weightValueFromScale << std::endl;
+            //counter = counter + 1;
 
 
         }
@@ -144,7 +145,7 @@ void MainWindow::recordWeight(int weightValueFromScale)
 
         ui->PenguinImage->clear();
 
-        //graph->setupPlot(ui->customPlot);
+        graph->setupPlot(ui->customPlot);
 
         int sumWeight, averageWeight, entryPosition, exitPosition;
         sumWeight = 0;

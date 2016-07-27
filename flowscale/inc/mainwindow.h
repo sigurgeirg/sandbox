@@ -3,11 +3,11 @@
 
 #include "myscale.h"
 #include "mydio.h"
-//#include "mygraph.h"
+#include "mygraph.h"
 #include "mymessages.h"
 #include <QMainWindow>
 #include <QtCore>
-//#include "../../QCustomPlot/qcustomplot.h"
+#include "../../QCustomPlot/qcustomplot.h"
 #include <QDebug>
 #include <string>
 #include <sstream>
@@ -31,7 +31,7 @@ public:
 
     MyScale *scale;
     MyDio *dio;
-    //MyGraph *graph;
+    MyGraph *graph;
     MyMessages *mosq;
     Dio io;
 
