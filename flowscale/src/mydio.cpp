@@ -176,7 +176,7 @@ void MyDio::run() {
         // Activate trigger on scantime, comment out and use the one below instead if you plan
         // to trigger when INPUT sensor (period/conveyor tacho) is used to monitor tacho
         trigger = true;
-        conveyor = true;
+        conveyor = false;
 
 //		gettimeofday(&tim, NULL);
 //		lastTime = tim.tv_usec;

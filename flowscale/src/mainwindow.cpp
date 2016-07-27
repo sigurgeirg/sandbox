@@ -18,7 +18,6 @@ MainWindow::MainWindow(QWidget *parent) :
     graph = new MyGraph(this);
     mosq = new MyMessages(this);
 
-    _beltRoundCounter = 0;
     _weightValueFromScale = 0;
     _counter = 0;
     _step = 0;
@@ -47,13 +46,12 @@ MainWindow::~MainWindow()
     delete dio;
     delete graph;
     delete mosq;
-    delete _beltRoundCounter;
+    delete numberOfBeltRounds;
 }
 
 void MainWindow::conveyorBeltCounter(unsigned long beltRoundCounter)
 {
-    // do nothing, just receive value to pointer temporarily
-    _beltRoundCounter = &beltRoundCounter;
+    *numberOfBeltRounds = beltRoundCounter;
 }
 
 
@@ -61,12 +59,9 @@ void MainWindow::conveyorBeltCounter(unsigned long beltRoundCounter)
 void MainWindow::recordWeight(int weightValueFromScale)
 {
     std::ofstream fout;
-
     QPixmap penguinObject("../images/penguin.png");
 
-
-    //_weightValueFromScale = weightValueFromScale;
-
+    _weightValueFromScale = weightValueFromScale;
 
 
     // //////////////////////////////////
@@ -75,8 +70,8 @@ void MainWindow::recordWeight(int weightValueFromScale)
         fout.open("weight.csv", std::ofstream::out | std::ofstream::app); // trunc changed to app, trunc clears the file while app appends it
         if (fout.is_open())
         {
-            //fout << *_beltRoundCounter  << "," <<  counter << "," << _weightValueFromScale << std::endl;
-            //counter = counter + 1;
+            fout << *numberOfBeltRounds  << "," <<  counter << "," << _weightValueFromScale << std::endl;
+            counter = counter + 1;
 
 
         }

@@ -34,10 +34,10 @@ public:
     MyGraph *graph;
     MyMessages *mosq;
     Dio io;
+    unsigned long *numberOfBeltRounds;
 
     std::ofstream fout;
 
-    unsigned long *_beltRoundCounter;
     int _weightValueFromScale;
     long _counter;
     int _step;

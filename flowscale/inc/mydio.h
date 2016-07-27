@@ -2,6 +2,7 @@
 #define MYDIO_H
 
 #include <dio.h>
+#include <iostream>
 #include <QThread>
 #include <QDebug>
 #include <ctime>
@@ -16,7 +17,7 @@ public:
     explicit MyDio(QObject *parent = 0);
     ~MyDio();
 
-    int tickBeltProfile;
+    unsigned long tickBeltProfile;
     unsigned long beltRounds;
     // /////////////////////////
     // Simulation
