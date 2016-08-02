@@ -17,6 +17,9 @@ MainWindow::MainWindow(QWidget *parent) :
     dio = new MyDio(this);
     graph = new MyGraph(this);
     mosq = new MyMessages(this);
+    numberOfBeltRounds = new unsigned long;
+
+
 
     _weightValueFromScale = 0;
     _counter = 0;
