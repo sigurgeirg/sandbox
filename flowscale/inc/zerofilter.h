@@ -26,7 +26,7 @@ signals:
     void filteredZeroArray(int);
 
 public slots:
-   void processReceivedWeight(int);
+   void recordZeroWeight(int);
 
 };
 

@@ -28,25 +28,31 @@ MainWindow::MainWindow(QWidget *parent) :
     counter = 0;
 
 
-    connect(scale, SIGNAL(receivedWeight(int)),         this, SLOT(displayReceivedWeight(int)));
-    connect(this, SIGNAL(avgWeight(int)),               mosq, SLOT(processReceivedWeight(int)));
-    //connect(scale, SIGNAL(receivedWeight(int)),         this, SLOT(recordWeight(int)));
-    connect(scale, SIGNAL(receivedWeight(int)),         this, SLOT(recordWeight(int)));
+    // ZERO Filtering:
+        connect(scale, SIGNAL(receivedWeight(int)),         zero, SLOT(recordZeroWeight(int)));
+        //This is the output array from zerofilter, and it will be sent to destination when ready.
+        //connect(zero, SIGNAL(filteredZeroArray(int)),         this, SLOT(givethisnewnameandcreatefunction(int)));
 
-    connect(scale, SIGNAL(receivedWeight(int)),         zero, SLOT(recordWeight(int)));
-    //This is the output array from zerofilter, and it will be sent to destination when ready.
-    //connect(zero, SIGNAL(filteredZeroArray(int)),         this, SLOT(givethisnewnameandcreatefunction(int)));
+    // Show live weight on display:
+        connect(scale, SIGNAL(receivedWeight(int)),         this, SLOT(displayReceivedWeight(int)));
 
+    // Collect live weight to a csv-file:
+        connect(scale, SIGNAL(receivedWeight(int)),         this, SLOT(recordWeight(int)));
 
-    connect(dio,   SIGNAL(inputValue(unsigned long)),   this, SLOT(displayInputValue(unsigned long)));
+    // Return avg weight to next component:
+        connect(this, SIGNAL(avgWeight(int)),               mosq, SLOT(processReceivedWeight(int)));
 
-    connect(dio,   SIGNAL(conveyorSignal(unsigned long)),  this, SLOT(conveyorBeltCounter(unsigned long)));
-    //connect(dio,   SIGNAL(tachoSignal(unsigned long)),  this, SLOT(displayTachoCount(unsigned long)));
+    // Read from physical inputs and write to physical outputs:
+        connect(dio,   SIGNAL(inputValue(unsigned long)),   this, SLOT(displayInputValue(unsigned long)));
 
-    // /////////////////////////
-    // Simulation
-//    connect(this, SIGNAL(reply(unsigned char, bool)),             dio, SLOT(updateInputSim(unsigned char, bool)));
-    // /////////////////////////
+    // Read from physcial input from inductive metal sensor, increments for each beltround:
+        connect(dio,   SIGNAL(conveyorSignal(unsigned long)),  this, SLOT(conveyorBeltCounter(unsigned long)));
+
+    // Tick is calculated from number of ticks per beltround therefore no need for physical signal:
+        //connect(dio,   SIGNAL(tachoSignal(unsigned long)),  this, SLOT(displayTachoCount(unsigned long)));
+
+    // Simulation, still undone, maybe no use for this:
+        //connect(this, SIGNAL(reply(unsigned char, bool)),             dio, SLOT(updateInputSim(unsigned char, bool)));
 }
 
 MainWindow::~MainWindow()
