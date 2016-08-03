@@ -23,13 +23,14 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
     _weightValueFromScale = 0;
-    _counter = 0;
+    _sampleCount = 0;
     _step = 0;
-    counter = 0;
+    _sampleCount = 0;
 
 
     // ZERO Filtering:
         connect(scale, SIGNAL(receivedWeight(int)),         zero, SLOT(recordZeroWeight(int)));
+        connect(dio,   SIGNAL(conveyorSignal(unsigned long)),  zero, SLOT(conveyorBeltCounter(unsigned long)));
         //This is the output array from zerofilter, and it will be sent to destination when ready.
         //connect(zero, SIGNAL(filteredZeroArray(int)),         this, SLOT(givethisnewnameandcreatefunction(int)));
 
@@ -82,12 +83,12 @@ void MainWindow::recordWeight(int weightValueFromScale)
 
     // //////////////////////////////////
     // stream to file
-    if (counter < 1000000){
+    if (_sampleCount < 1000000){
         fout.open("weight.csv", std::ofstream::out | std::ofstream::app); // trunc changed to app, trunc clears the file while app appends it
         if (fout.is_open())
         {
-            fout << *numberOfBeltRounds  << "," <<  counter << "," << _weightValueFromScale << std::endl;
-            counter = counter + 1;
+            fout << *numberOfBeltRounds  << "," <<  _sampleCount << "," << _weightValueFromScale << std::endl;
+            _sampleCount = _sampleCount + 1;
 
 
         }

@@ -4,18 +4,43 @@
 Zerofilter::Zerofilter(QObject *parent) :
     QThread(parent)
 {
-
+    numberOfBeltRounds = new unsigned long;
 }
 
 
 Zerofilter::~Zerofilter()
 {
     //
+    delete numberOfBeltRounds;
 
 }
 
 
+void Zerofilter::conveyorBeltCounter(unsigned long beltRoundCounter)
+{
+    *numberOfBeltRounds = beltRoundCounter;
+}
+
+
 void Zerofilter::recordZeroWeight(int weightValueFromScale) {
+
+    // /////////////////////////
+    // Instead of this part, write data into array as mentioned in point nr. 1
+    // each numberOfBeltRounds value occupies one "row" array in matrix.
+    // /////////////////////////
+    _weightValueFromScale = weightValueFromScale;
+
+    if (_sampleCount < 1000000){
+        fout.open("weight.csv", std::ofstream::out | std::ofstream::app); // trunc changed to app, trunc clears the file while app appends it
+        if (fout.is_open())
+        {
+            fout << *numberOfBeltRounds  << "," <<  _sampleCount << "," << _weightValueFromScale << std::endl;
+            _sampleCount = _sampleCount + 1;
+        }
+        fout.close();
+    }
+    // /////////////////////////
+
 
     // 1. Write 10 rows of ~ 402 zeroWeightSamples
     //    Info: Weight, tickPosition(==posInArray), roundNumber(==rownumber)

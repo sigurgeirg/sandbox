@@ -44,7 +44,7 @@ public:
     long _counter;
     int _step;
     int array[NUMBER_OF_WEIGHT_SAMPLES][2];
-    long counter;
+    long _sampleCount;
 
 
 signals:
