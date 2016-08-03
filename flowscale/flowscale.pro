@@ -20,7 +20,7 @@ HEADERS +=  inc/mainwindow.h \
             inc/mymessages.h \
             inc/brokerpub.h \
             inc/clientsub.h \
-            inc/simulation.h \
+            inc/zerofilter.h \
             ../QCustomPlot/qcustomplot.h
 
 SOURCES +=  src/main.cpp \
@@ -31,7 +31,7 @@ SOURCES +=  src/main.cpp \
             src/mymessages.cpp \
             src/brokerpub.cpp \
             src/clientsub.cpp \
-            src/simulation.cpp \
+            src/zerofilter.cpp \
             ../QCustomPlot/qcustomplot.cpp
 
 FORMS += forms/mainwindow.ui

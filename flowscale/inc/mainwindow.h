@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include "myscale.h"
+#include "zerofilter.h"
 #include "mydio.h"
 #include "mygraph.h"
 #include "mymessages.h"
@@ -30,6 +31,7 @@ public:
     ~MainWindow();
 
     MyScale *scale;
+    Zerofilter *zero;
     MyDio *dio;
     MyGraph *graph;
     MyMessages *mosq;

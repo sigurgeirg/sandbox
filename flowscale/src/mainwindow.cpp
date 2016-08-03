@@ -14,6 +14,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
     scale = new MyScale(this);
+    zero = new Zerofilter(this);
     dio = new MyDio(this);
     graph = new MyGraph(this);
     mosq = new MyMessages(this);
@@ -31,6 +32,12 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(this, SIGNAL(avgWeight(int)),               mosq, SLOT(processReceivedWeight(int)));
     //connect(scale, SIGNAL(receivedWeight(int)),         this, SLOT(recordWeight(int)));
     connect(scale, SIGNAL(receivedWeight(int)),         this, SLOT(recordWeight(int)));
+
+    connect(scale, SIGNAL(receivedWeight(int)),         zero, SLOT(recordWeight(int)));
+    //This is the output array from zerofilter, and it will be sent to destination when ready.
+    //connect(zero, SIGNAL(filteredZeroArray(int)),         this, SLOT(givethisnewnameandcreatefunction(int)));
+
+
     connect(dio,   SIGNAL(inputValue(unsigned long)),   this, SLOT(displayInputValue(unsigned long)));
 
     connect(dio,   SIGNAL(conveyorSignal(unsigned long)),  this, SLOT(conveyorBeltCounter(unsigned long)));
