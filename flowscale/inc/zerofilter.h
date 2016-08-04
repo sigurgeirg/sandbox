@@ -25,7 +25,7 @@ public:
     int zeroUnfilteredArray[NUMBER_OF_WEIGHT_SAMPLES];
     int runningSmoothArray[10];
 
-    std::ofstream fout;
+    std::ofstream filezero;
 
     int _weightValueFromScale;
     long _sampleCount;
