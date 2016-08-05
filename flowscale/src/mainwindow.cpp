@@ -249,6 +249,7 @@ void MainWindow::displayInputValue(unsigned long)
 
 void MainWindow::on_btnConnect_clicked()
 {
+    zero->start();
     scale->connectToSlaveDevice();
     scale->start();
     dio->start();

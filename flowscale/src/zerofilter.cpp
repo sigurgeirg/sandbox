@@ -36,26 +36,7 @@ void Zerofilter::conveyorBeltCounter()
 
 void Zerofilter::recordZeroWeight(int weightValueFromScale) {
 
-    std::ofstream filezero;
-
-
-    if (runOnce == true) {
-        filezero.open("zeroweight.csv", std::ofstream::out | std::ofstream::app); // trunc changed to app, trunc clears the file while app appends it
-        filezero.close();
-
-        // initialize zeroUnfilteredArray with zeros
-        for (int _rounds = 0; _rounds < NUMBER_OF_BELTROUNDS; _rounds++) {
-            for (int _samples = 0; _samples < SAMPLES_PER_BELTROUND; _samples++) {
-                zeroUnfilteredArray[_rounds][_samples] = 0;
-            }
-        }
-        for (int _samples = 0; _samples < SAMPLES_PER_BELTROUND; _samples++) {
-            zeroArray[_samples] = 0;
-        }
-        runOnce = false;
-        phase = 0;
-    }
-
+    //std::ofstream filezero;
 
 
     // ////////////////////////////////
@@ -65,7 +46,7 @@ void Zerofilter::recordZeroWeight(int weightValueFromScale) {
 
 
     // FIND ZERO PATH
-    if (phase == 0) {
+    if (phase == 1) {
 
         if ((numberOfBeltRoundsZero > -1) && (numberOfBeltRoundsZero < NUMBER_OF_BELTROUNDS)) {
             // Assign weight value from scale in initializing matrix
@@ -76,7 +57,45 @@ void Zerofilter::recordZeroWeight(int weightValueFromScale) {
             }
         }
 
+        if (numberOfBeltRoundsZero >= NUMBER_OF_BELTROUNDS) {
+            phase = 2;
+        }
+    }
 
+
+    // Virkar hingað og þá fara hlutirnir að endurtaka sig .... hringeftirhring ...
+    // numberOfBeltRoundsZero virðist ekki verða stærra en 9 og þá hættir það að vaxa ?? af hverju ??
+
+    if (phase == 2) {
+
+
+        // Henda strax út eftir prófun
+        filezero.open("zeroweight.csv", std::ofstream::out | std::ofstream::app); // trunc changed to app, trunc clears the file while app appends it
+        if (filezero.is_open())
+        {
+            for (int _rounds = 0; _rounds < 10; _rounds++) {
+                for (int _samples = 0; _samples < 10; _samples++) {
+                    filezero << "BeltRounds: " << _rounds << " - Sample: " << _samples << " - Value: " << zeroUnfilteredArray[_rounds][_samples] << std::endl;
+                    // filezero << *numberOfBeltRounds  << "," <<  sampleCount << "," << weightValueFromScale << std::endl;
+                }
+                filezero << "\n";
+            }
+        }
+        filezero.close();
+
+        if (numberOfBeltRoundsZero >= NUMBER_OF_BELTROUNDS && sampleCount >= 1) {
+
+            filezero.open("zeroweight.csv", std::ofstream::out | std::ofstream::app); // trunc changed to app, trunc clears the file while app appends it
+            if (filezero.is_open())
+            {
+                filezero << "We have finished filling values into our arrays" << std::endl;
+            }
+            filezero.close();
+
+            phase = 3;
+        }
+
+/*
         if (sampleCount == 1 && numberOfBeltRoundsZero == NUMBER_OF_BELTROUNDS) {
             // Calculate median of rows in zeroUnfilteredArray
 
@@ -123,6 +142,9 @@ void Zerofilter::recordZeroWeight(int weightValueFromScale) {
         }
         filezero.close();
         numberOfBeltRoundsZero = 0;
+*/
+
+
 
 
         /*
@@ -144,15 +166,15 @@ void Zerofilter::recordZeroWeight(int weightValueFromScale) {
     }
 
     // SAVE ZERO PATH
-    if (phase == 1){
+    if (phase == 3){
         // CALCULATE ZERO
 
 
-        phase = 2;
+        phase = 4;
     }
 
     // PRODUCTION PHASE
-    if (phase == 2){
+    if (phase == 4){
 
     }
 
@@ -182,6 +204,19 @@ void Zerofilter::recordZeroWeight(int weightValueFromScale) {
 
 void Zerofilter::run() {
 
+    if (runOnce == true) {
+        // initialize zeroUnfilteredArray with zeros
+        for (int _rounds = 0; _rounds < NUMBER_OF_BELTROUNDS; _rounds++) {
+            for (int _samples = 0; _samples < SAMPLES_PER_BELTROUND; _samples++) {
+                zeroUnfilteredArray[_rounds][_samples] = 0;
+            }
+        }
+        for (int _samples = 0; _samples < SAMPLES_PER_BELTROUND; _samples++) {
+            zeroArray[_samples] = 0;
+        }
+        runOnce = false;
+        phase = 1;
+    }
 
     //if (zeroFilterHasBeenUpdated == 1) {
 
