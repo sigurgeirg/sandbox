@@ -4,11 +4,11 @@
 Zerofilter::Zerofilter(QObject *parent) :
     QThread(parent)
 {
-    numberOfBeltRounds = new int;
-
-    *numberOfBeltRounds = -1;
+    numberOfBeltRoundsZero = -2;
     sampleCount = 0;
     lastRound = 0;
+    phase = 0;
+    runOnce = true;
 
 }
 
@@ -16,7 +16,7 @@ Zerofilter::Zerofilter(QObject *parent) :
 Zerofilter::~Zerofilter()
 {
     //
-    delete numberOfBeltRounds;
+    //delete numberOfBeltRoundsZero;
 
 }
 
@@ -25,8 +25,8 @@ void Zerofilter::conveyorBeltCounter()
 {
     sampleCount = 0;
 
-    //*numberOfBeltRounds++;
-    this->numberOfBeltRounds++;
+    numberOfBeltRoundsZero++;
+    //this->numberOfBeltRounds++;
 
 //    if (*numberOfBeltRounds > INIT_MATRIX_COLUMNS) {
 //      *numberOfBeltRounds = 0;
@@ -36,37 +36,132 @@ void Zerofilter::conveyorBeltCounter()
 
 void Zerofilter::recordZeroWeight(int weightValueFromScale) {
 
-    weightValueFromScale = weightValueFromScale;
+
     std::ofstream filezero;
+
+
+
+    // INITIALIZATION - run only once
+    if (runOnce == true) {
+        filezero.open("zeroweight.csv", std::ofstream::out | std::ofstream::app); // trunc changed to app, trunc clears the file while app appends it
+        filezero.close();
+
+        // initialize zeroUnfilteredArray with zeros
+        for (int _rounds = 0; _rounds < NUMBER_OF_BELTROUNDS; _rounds++) {
+            for (int _samples = 0; _samples < SAMPLES_PER_BELTROUND; _samples++) {
+                zeroUnfilteredArray[_rounds][_samples] = 0;
+            }
+        }
+        for (int _samples = 0; _samples < SAMPLES_PER_BELTROUND; _samples++) {
+            zeroArray[_samples] = 0;
+        }
+        runOnce = false;
+    }
+
+
 
     // ////////////////////////////////
     // Prepare Zero-filter, collect weight from running empty conveyor for few rounds
     // By using "if" condition to set boundaries to collect data we lower the load on the CPU
     // ////////////////////////////////
 
-    if (*numberOfBeltRounds <= NUMBER_OF_BELTROUNDS) {
-        // Assign weight value from scale in initializing matrix
-        if (sampleCount <= SAMPLES_PER_BELTROUND) {
 
-            zeroUnfilteredArray[*numberOfBeltRounds][sampleCount] = weightValueFromScale;
-            sampleCount++;
-        }
+    // FIND ZERO PATH
+    if (phase == 0) {
+        if (numberOfBeltRoundsZero < NUMBER_OF_BELTROUNDS && numberOfBeltRoundsZero > -1) {
+            // Assign weight value from scale in initializing matrix
+            if (sampleCount < SAMPLES_PER_BELTROUND) {
 
-    } else {
-
-        filezero.open("zeroweight.csv", std::ofstream::out | std::ofstream::trunc); // trunc changed to app, trunc clears the file while app appends it
-        if (filezero.is_open())
-        {
-            for (int _rounds = 0; _rounds < 10; _rounds++) {
-                for (int _samples = 0; _samples < 1000; _samples++) {
-                    filezero << "BeltRounds: " << _rounds << "Sample: " << _samples << "Value: " << zeroUnfilteredArray[_rounds][_samples] << std::endl;
-                    // filezero << *numberOfBeltRounds  << "," <<  sampleCount << "," << weightValueFromScale << std::endl;
-                }
-                filezero << "\n";
+                zeroUnfilteredArray[numberOfBeltRoundsZero][sampleCount] = weightValueFromScale;
+                sampleCount++;
             }
+
         }
-        filezero.close();
+
+        if (sampleCount == 1 && numberOfBeltRoundsZero == NUMBER_OF_BELTROUNDS) {
+            // Calculate median of rows in zeroUnfilteredArray
+
+            for (int _sampleColumn=0; _sampleColumn < SAMPLES_PER_BELTROUND; _sampleColumn++) {
+
+                for (int _rounds = 0; _rounds < NUMBER_OF_BELTROUNDS; _rounds++) {
+                    zeroColumn[_rounds] = zeroUnfilteredArray[_sampleColumn][_rounds];
+                }
+                double* dpSorted = new double[NUMBER_OF_BELTROUNDS];
+                int iSize = NUMBER_OF_BELTROUNDS;
+
+                for (int i = 0; i < iSize; ++i) {
+                    dpSorted[i] = (double)zeroColumn[i];
+                }
+                for (int i = iSize - 1; i > 0; --i) {
+                    for (int j = 0; j < i; ++j) {
+                        if (dpSorted[j] > dpSorted[j+1]) {
+                            double dTemp = dpSorted[j];
+                            dpSorted[j] = dpSorted[j+1];
+                            dpSorted[j+1] = dTemp;
+                        }
+                    }
+                }
+
+                // Middle or average of middle values in the sorted array.
+                double dMedian = 0.0;
+                if ((iSize % 2) == 0) {
+                    dMedian = (dpSorted[iSize/2] + dpSorted[(iSize/2) - 1])/2.0;
+                } else {
+                    dMedian = dpSorted[iSize/2];
+                }
+                delete [] dpSorted;
+                zeroArray[_sampleColumn] = (int)dMedian;
+            }
+
+            filezero.open("zeroweight.csv", std::ofstream::out | std::ofstream::trunc); // trunc changed to app, trunc clears the file while app appends it
+            if (filezero.is_open())
+            {
+                for (int _rounds = 0; _rounds < 10; _rounds++) {
+                    filezero << zeroArray[_rounds] <<  std::endl;
+                }
+            }
+            filezero.close();
+            numberOfBeltRoundsZero = 0;
+        }
+
+
+
+
+
+
+
+        /*
+        if (numberOfBeltRoundsZero ==  NUMBER_OF_BELTROUNDS) {
+            filezero.open("zeroweight.csv", std::ofstream::out | std::ofstream::trunc); // trunc changed to app, trunc clears the file while app appends it
+            if (filezero.is_open())
+            {
+                for (int _rounds = 0; _rounds < 10; _rounds++) {
+                    for (int _samples = 0; _samples < 10; _samples++) {
+                        filezero << "BeltRounds: " << _rounds << "Sample: " << _samples << "Value: " << zeroUnfilteredArray[_rounds][_samples] << std::endl;
+                        // filezero << *numberOfBeltRounds  << "," <<  sampleCount << "," << weightValueFromScale << std::endl;
+                    }
+                    filezero << "\n";
+                }
+            }
+            filezero.close();
+            numberOfBeltRoundsZero = 0;
+        }*/
     }
+
+    // SAVE ZERO PATH
+    if (phase == 1){
+        // CALCULATE ZERO
+
+
+        phase = 2;
+    }
+
+    // PRODUCTION PHASE
+    if (phase == 2){
+
+    }
+
+
 
 
 
@@ -91,6 +186,7 @@ void Zerofilter::recordZeroWeight(int weightValueFromScale) {
 
 
 void Zerofilter::run() {
+
 
     //if (zeroFilterHasBeenUpdated == 1) {
 

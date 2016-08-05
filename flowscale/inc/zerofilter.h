@@ -10,6 +10,7 @@
 
 #define SAMPLES_PER_BELTROUND 1000
 #define NUMBER_OF_BELTROUNDS 10
+#define FILTER_DELAY 10
 
 class Zerofilter : public QThread
 {
@@ -24,11 +25,14 @@ public:
 
 
 private:
-    int *numberOfBeltRounds;
-    int weightValueFromScale;
+    int numberOfBeltRoundsZero;
+    bool runOnce;
+    int phase;
     long sampleCount;
     long lastRound;
     int zeroUnfilteredArray[NUMBER_OF_BELTROUNDS][SAMPLES_PER_BELTROUND];
+    int zeroArray[SAMPLES_PER_BELTROUND];
+    int zeroColumn[NUMBER_OF_BELTROUNDS];
     int runningSmoothArray[10];
 
 signals:
