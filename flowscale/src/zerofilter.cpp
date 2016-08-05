@@ -36,12 +36,9 @@ void Zerofilter::conveyorBeltCounter()
 
 void Zerofilter::recordZeroWeight(int weightValueFromScale) {
 
-
     std::ofstream filezero;
 
 
-
-    // INITIALIZATION - run only once
     if (runOnce == true) {
         filezero.open("zeroweight.csv", std::ofstream::out | std::ofstream::app); // trunc changed to app, trunc clears the file while app appends it
         filezero.close();
@@ -56,6 +53,7 @@ void Zerofilter::recordZeroWeight(int weightValueFromScale) {
             zeroArray[_samples] = 0;
         }
         runOnce = false;
+        phase = 0;
     }
 
 
@@ -68,15 +66,16 @@ void Zerofilter::recordZeroWeight(int weightValueFromScale) {
 
     // FIND ZERO PATH
     if (phase == 0) {
-        if (numberOfBeltRoundsZero < NUMBER_OF_BELTROUNDS && numberOfBeltRoundsZero > -1) {
+
+        if ((numberOfBeltRoundsZero > -1) && (numberOfBeltRoundsZero < NUMBER_OF_BELTROUNDS)) {
             // Assign weight value from scale in initializing matrix
             if (sampleCount < SAMPLES_PER_BELTROUND) {
 
                 zeroUnfilteredArray[numberOfBeltRoundsZero][sampleCount] = weightValueFromScale;
                 sampleCount++;
             }
-
         }
+
 
         if (sampleCount == 1 && numberOfBeltRoundsZero == NUMBER_OF_BELTROUNDS) {
             // Calculate median of rows in zeroUnfilteredArray
@@ -112,22 +111,18 @@ void Zerofilter::recordZeroWeight(int weightValueFromScale) {
                 delete [] dpSorted;
                 zeroArray[_sampleColumn] = (int)dMedian;
             }
-
-            filezero.open("zeroweight.csv", std::ofstream::out | std::ofstream::trunc); // trunc changed to app, trunc clears the file while app appends it
-            if (filezero.is_open())
-            {
-                for (int _rounds = 0; _rounds < 10; _rounds++) {
-                    filezero << zeroArray[_rounds] <<  std::endl;
-                }
-            }
-            filezero.close();
-            numberOfBeltRoundsZero = 0;
         }
 
 
-
-
-
+        filezero.open("zeroweight.csv", std::ofstream::out | std::ofstream::trunc); // trunc changed to app, trunc clears the file while app appends it
+        if (filezero.is_open())
+        {
+            for (int _rounds = 0; _rounds < 10; _rounds++) {
+                filezero << zeroArray[_rounds] <<  std::endl;
+            }
+        }
+        filezero.close();
+        numberOfBeltRoundsZero = 0;
 
 
         /*

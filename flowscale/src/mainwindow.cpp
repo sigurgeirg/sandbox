@@ -27,7 +27,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // ZERO Filtering:
         connect(scale, SIGNAL(receivedWeight(int)),         zero, SLOT(recordZeroWeight(int)));
-        connect(dio,   SIGNAL(conveyorSignal()),  zero, SLOT(conveyorBeltCounter()));
+        connect(dio,   SIGNAL(conveyorSignal()),            zero, SLOT(conveyorBeltCounter()));
 
         //This is the output array from zerofilter, and it will be sent to destination when ready.
         //connect(zero, SIGNAL(filteredZeroArray(int)),         this, SLOT(givethisnewnameandcreatefunction(int)));

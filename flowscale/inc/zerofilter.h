@@ -37,6 +37,7 @@ private:
 
 signals:
     void filteredZeroArray(int);
+    void debVal(int);
 
 public slots:
     void conveyorBeltCounter();
