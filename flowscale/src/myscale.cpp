@@ -169,6 +169,11 @@ void MyScale::run() {
     {
         if(writeToLoadcell != true)
         {
+            // /////////////////////////////////////////////////////////////////////////////////////////////
+            // FIXME: Here we can set condition to only read from loadcell and emit the data forward
+            // Only at zero-modelling as initialization process or when requested and when product sensor
+            // indicates that the scale is about to be loaded.
+            // /////////////////////////////////////////////////////////////////////////////////////////////
             modbus_read_registers(ctx, readFromRegister, 5, data);
             statusRegisterBinaryReturnValue = statusRegisterBinary(data);
 

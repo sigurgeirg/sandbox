@@ -4,9 +4,12 @@
 Zerofilter::Zerofilter(QObject *parent) :
     QThread(parent)
 {
-    numberOfBeltRounds = new unsigned long;
+    numberOfBeltRounds = new int;
 
-    _sampleCount = 0;
+    *numberOfBeltRounds = -1;
+    sampleCount = 0;
+    lastRound = 0;
+
 }
 
 
@@ -18,35 +21,59 @@ Zerofilter::~Zerofilter()
 }
 
 
-void Zerofilter::conveyorBeltCounter(unsigned long beltRoundCounter)
+void Zerofilter::conveyorBeltCounter()
 {
-    *numberOfBeltRounds = beltRoundCounter;
+    sampleCount = 0;
+
+    //*numberOfBeltRounds++;
+    this->numberOfBeltRounds++;
+
+//    if (*numberOfBeltRounds > INIT_MATRIX_COLUMNS) {
+//      *numberOfBeltRounds = 0;
+//    }
 }
 
 
 void Zerofilter::recordZeroWeight(int weightValueFromScale) {
 
+    weightValueFromScale = weightValueFromScale;
     std::ofstream filezero;
 
+    // ////////////////////////////////
+    // Prepare Zero-filter, collect weight from running empty conveyor for few rounds
+    // By using "if" condition to set boundaries to collect data we lower the load on the CPU
+    // ////////////////////////////////
 
+    if (*numberOfBeltRounds <= NUMBER_OF_BELTROUNDS) {
+        // Assign weight value from scale in initializing matrix
+        if (sampleCount <= SAMPLES_PER_BELTROUND) {
 
-    // /////////////////////////
-    // Instead of this part, write data into array as mentioned in point nr. 1
-    // each numberOfBeltRounds value occupies one "row" array in matrix.
-    // /////////////////////////
+            zeroUnfilteredArray[*numberOfBeltRounds][sampleCount] = weightValueFromScale;
+            sampleCount++;
+        }
 
-    _weightValueFromScale = weightValueFromScale;
+    } else {
 
-    if (_sampleCount < 10000){
-        filezero.open("zeroweight.csv", std::ofstream::out | std::ofstream::app); // trunc changed to app, trunc clears the file while app appends it
+        filezero.open("zeroweight.csv", std::ofstream::out | std::ofstream::trunc); // trunc changed to app, trunc clears the file while app appends it
         if (filezero.is_open())
         {
-            filezero << *numberOfBeltRounds  << "," <<  _sampleCount << "," << _weightValueFromScale << std::endl;
-            _sampleCount = _sampleCount + 1;
+            for (int _rounds = 0; _rounds < 10; _rounds++) {
+                for (int _samples = 0; _samples < 1000; _samples++) {
+                    filezero << "BeltRounds: " << _rounds << "Sample: " << _samples << "Value: " << zeroUnfilteredArray[_rounds][_samples] << std::endl;
+                    // filezero << *numberOfBeltRounds  << "," <<  sampleCount << "," << weightValueFromScale << std::endl;
+                }
+                filezero << "\n";
+            }
         }
         filezero.close();
     }
-    // /////////////////////////
+
+
+
+
+
+
+
 
 
     // 1. Write 10 rows of ~ 402 zeroWeightSamples
@@ -59,6 +86,7 @@ void Zerofilter::recordZeroWeight(int weightValueFromScale) {
     // 5. Verify if zerofFilter has been updated
     // 6. emit all necessary signals back to where weighing will be processed with respect to floating zero.
     // 7. should all be emitted or some written to a globally accessible pointer ???
+
 }
 
 

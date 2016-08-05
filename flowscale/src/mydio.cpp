@@ -39,7 +39,6 @@ MyDio::MyDio(QObject *parent) :
     //io.DICfgMode(3,DI_MODE_EDGE_HIGH_GOING);
 
     address	= 0;
-    beltRounds = 0;
     tickBeltProfile = 0;
 }
 
@@ -232,9 +231,8 @@ void MyDio::run() {
 
         if (conveyor == true)
         {
-            emit conveyorSignal(beltRounds);
+            emit conveyorSignal();
             conveyor = false;
-            beltRounds++;
         }
 
 

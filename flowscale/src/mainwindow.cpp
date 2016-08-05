@@ -18,23 +18,21 @@ MainWindow::MainWindow(QWidget *parent) :
     dio = new MyDio(this);
     graph = new MyGraph(this);
     mosq = new MyMessages(this);
-    numberOfBeltRounds = new unsigned long;
+    numberOfBeltRounds = new int;
 
-
-
-    _weightValueFromScale = 0;
-    _sampleCount = 0;
-    _step = 0;
-    _sampleCount = 0;
+    weightValueFromScale = 0;
+    sampleCount = 0;
+    step = 0;
 
 
     // ZERO Filtering:
         connect(scale, SIGNAL(receivedWeight(int)),         zero, SLOT(recordZeroWeight(int)));
-        connect(dio,   SIGNAL(conveyorSignal(unsigned long)),  zero, SLOT(conveyorBeltCounter(unsigned long)));
+        connect(dio,   SIGNAL(conveyorSignal()),  zero, SLOT(conveyorBeltCounter()));
+
         //This is the output array from zerofilter, and it will be sent to destination when ready.
         //connect(zero, SIGNAL(filteredZeroArray(int)),         this, SLOT(givethisnewnameandcreatefunction(int)));
 
-    // Show live weight on display:
+    // Show live weight on display (FIXME see below):
         connect(scale, SIGNAL(receivedWeight(int)),         this, SLOT(displayReceivedWeight(int)));
 
     // Collect live weight to a csv-file:
@@ -47,7 +45,7 @@ MainWindow::MainWindow(QWidget *parent) :
         connect(dio,   SIGNAL(inputValue(unsigned long)),   this, SLOT(displayInputValue(unsigned long)));
 
     // Read from physcial input from inductive metal sensor, increments for each beltround:
-        connect(dio,   SIGNAL(conveyorSignal(unsigned long)),  this, SLOT(conveyorBeltCounter(unsigned long)));
+        connect(dio,   SIGNAL(conveyorSignal()),  this, SLOT(conveyorBeltCounter()));
 
     // Tick is calculated from number of ticks per beltround therefore no need for physical signal:
         //connect(dio,   SIGNAL(tachoSignal(unsigned long)),  this, SLOT(displayTachoCount(unsigned long)));
@@ -66,9 +64,10 @@ MainWindow::~MainWindow()
     delete numberOfBeltRounds;
 }
 
-void MainWindow::conveyorBeltCounter(unsigned long beltRoundCounter)
+void MainWindow::conveyorBeltCounter()
 {
-    *numberOfBeltRounds = beltRoundCounter;
+    // FIXME: This has to be redifined wrt types *int = bool --- change or remote
+    //*numberOfBeltRounds = beltRoundCounter;
 }
 
 
@@ -78,22 +77,25 @@ void MainWindow::recordWeight(int weightValueFromScale)
     std::ofstream fout;
     QPixmap penguinObject("../images/penguin.png");
 
-    _weightValueFromScale = weightValueFromScale;
+    weightValueFromScale = weightValueFromScale;
 
+    // Commented out due to issues with streaming into two files at the same time
+    /*
 
     // //////////////////////////////////
     // stream to file
-    if (_sampleCount < 1000000){
+    if (sampleCount < 1000000){
         fout.open("weight.csv", std::ofstream::out | std::ofstream::app); // trunc changed to app, trunc clears the file while app appends it
         if (fout.is_open())
         {
-            fout << *numberOfBeltRounds  << "," <<  _sampleCount << "," << _weightValueFromScale << std::endl;
-            _sampleCount = _sampleCount + 1;
+            fout << *numberOfBeltRounds  << "," <<  sampleCount << "," << weightValueFromScale << std::endl;
+            sampleCount = sampleCount + 1;
 
 
         }
         fout.close();
     }
+    */
     // ////////////////////////////////////
 
 
@@ -101,35 +103,35 @@ void MainWindow::recordWeight(int weightValueFromScale)
 
 
     /*
-    if ( _weightValueFromScale < 50 && _step == 0)
+    if ( weightValueFromScale < 50 && step == 0)
     {
 
         qDebug() << "Step 0 ";
-        _step = 1;
-        _counter = 0;
+        step = 1;
+        counter = 0;
 
     }
-    else if ( _step == 1)
+    else if ( step == 1)
     {
-        if ( _weightValueFromScale > 50 && _counter < NUMBER_OF_WEIGHT_SAMPLES)
+        if ( weightValueFromScale > 50 && counter < NUMBER_OF_WEIGHT_SAMPLES)
         {
             ui->PenguinImage->setGeometry(300,50,80,96);
             ui->PenguinImage->setPixmap(penguinObject);
 
-            array[_counter][0] = _counter + 1;
-            array[_counter][1] = _weightValueFromScale;
+            array[counter][0] = counter + 1;
+            array[counter][1] = weightValueFromScale;
 
-            _counter = _counter + 1;
+            counter = counter + 1;
 
         }
-        else if ( _weightValueFromScale <= 50 && _counter > 1 )
+        else if ( weightValueFromScale <= 50 && counter > 1 )
         {
-            _step = 2;
+            step = 2;
             qDebug() << "Step 1 ";
         }
 
     }
-    else if( _weightValueFromScale < 50 && _step == 2 )
+    else if( weightValueFromScale < 50 && step == 2 )
     {
         qDebug() << "Step 2 ";
 
@@ -137,15 +139,15 @@ void MainWindow::recordWeight(int weightValueFromScale)
 
         if (fout.is_open())
         {
-            for (int i=0; i < _counter; i++)
+            for (int i=0; i < counter; i++)
             {
-                //qDebug() << "Counter: " << _counter << "   -    WeightFromScale: " << _weightValueFromScale;
+                //qDebug() << "Counter: " << counter << "   -    WeightFromScale: " << weightValueFromScale;
                 fout << array[i][0] << "," << array[i][1] << std::endl;
 
             }
-            if (_counter < 200)
+            if (counter < 200)
             {
-                for (int k = _counter; k <= 200; k++)
+                for (int k = counter; k <= 200; k++)
                 {
                     array[k][1] = 0;
                     fout << array[k][0] << "," << array[k][1] << std::endl;
@@ -173,17 +175,17 @@ void MainWindow::recordWeight(int weightValueFromScale)
         emit avgWeight(averageWeight);
         ui->lblFilteredWeight->setText(QString::number(averageWeight));
 
-        _step = 3;
+        step = 3;
 
     }
-    else if ( _step == 3 ) {
+    else if ( step == 3 ) {
 
         // with sensor to trigger weight reading - not active now
         if ( dio->value[5] == 0 ) {
-            _step = 0;
+            step = 0;
         }
         // without any sensor to trigger weight reading, using only threshold - active now
-        _step = 0;
+        step = 0;
 
 
     }
@@ -193,8 +195,13 @@ void MainWindow::recordWeight(int weightValueFromScale)
 
 void MainWindow::displayReceivedWeight(int weightValueFromScale)
 {
-    _weightValueFromScale = weightValueFromScale;
-    ui->lblReceivedWeight->setText(QString::number(_weightValueFromScale));
+    // /////////////////////////////////////////////////////////////////////////////////////////////
+    // FIXME: This part might possibly put some load on the CPU, haven't checked although,
+    // but it can either be opt'ed out for debugging or removed completely
+    // /////////////////////////////////////////////////////////////////////////////////////////////
+
+    weightValueFromScale = weightValueFromScale;
+    ui->lblReceivedWeight->setText(QString::number(weightValueFromScale));
 
 }
 

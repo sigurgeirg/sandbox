@@ -17,23 +17,13 @@ public:
     explicit MyDio(QObject *parent = 0);
     ~MyDio();
 
-    unsigned long tickBeltProfile;
-    unsigned long beltRounds;
-    // /////////////////////////
-    // Simulation
-//    unsigned char _inputAddress;
-//    bool _inputStatus;
-    // /////////////////////////
-
     void updateInputs();
     void updateOutputs();
-
     void newInput(unsigned char address);
     void run();
 
     Dio io;
 
-    unsigned char address;
     static unsigned long lastValue[NUMBER_OF_USED_INPUTS];
     static unsigned long newValue[NUMBER_OF_USED_INPUTS];
     static unsigned long value[NUMBER_OF_USED_INPUTS];
@@ -45,9 +35,20 @@ public:
     static unsigned char inverted[NUMBER_OF_USED_INPUTS];
     static unsigned char tickOrTime[NUMBER_OF_USED_INPUTS];
 
+private:
+    unsigned long tickBeltProfile;
+    unsigned long beltRounds;
+    unsigned char address;
+    // /////////////////////////
+    // Simulation
+    // unsigned char _inputAddress;
+    // bool _inputStatus;
+    // /////////////////////////
+
+
 signals:
     void inputValue(unsigned long);
-    void conveyorSignal(unsigned long);
+    void conveyorSignal();
     void tachoSignal(unsigned long);
 
 

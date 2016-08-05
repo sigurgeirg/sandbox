@@ -20,8 +20,10 @@ public:
 
     //void newInput(unsigned char address);
     void run();
-    double array[NUMBER_OF_WEIGHT_SAMPLES][2];
     void setupPlot(QCustomPlot* customPlot);
+
+private:
+    double array[NUMBER_OF_WEIGHT_SAMPLES][2];
     QVector<double> x, y; // initialize (this many) vector entries
 
 signals:

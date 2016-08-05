@@ -28,6 +28,7 @@ public:
     void run();
     int *statusRegisterBinary(uint16_t number[]);
 
+private:
     int *statusRegisterBinaryTempValue;
     int *statusRegisterBinaryReturnValue;
     uint16_t data[64];      // Incoming data values are stored for a moment in a vector

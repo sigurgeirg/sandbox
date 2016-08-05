@@ -8,7 +8,8 @@
 #include <math.h>
 #include <QDebug>
 
-#define NUMBER_OF_WEIGHT_SAMPLES 1000
+#define SAMPLES_PER_BELTROUND 1000
+#define NUMBER_OF_BELTROUNDS 10
 
 class Zerofilter : public QThread
 {
@@ -17,25 +18,26 @@ public:
     explicit Zerofilter(QObject *parent = 0);
     ~Zerofilter();
 
-    unsigned long *numberOfBeltRounds;
-
-
     void run();
-
-    int zeroUnfilteredArray[NUMBER_OF_WEIGHT_SAMPLES];
-    int runningSmoothArray[10];
 
     std::ofstream filezero;
 
-    int _weightValueFromScale;
-    long _sampleCount;
+
+private:
+    int *numberOfBeltRounds;
+    int weightValueFromScale;
+    long sampleCount;
+    long lastRound;
+    int zeroUnfilteredArray[NUMBER_OF_BELTROUNDS][SAMPLES_PER_BELTROUND];
+    int runningSmoothArray[10];
 
 signals:
     void filteredZeroArray(int);
 
 public slots:
-    void conveyorBeltCounter(unsigned long);
+    void conveyorBeltCounter();
     void recordZeroWeight(int);
+
 
 };
 

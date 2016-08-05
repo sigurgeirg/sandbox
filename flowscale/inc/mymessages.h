@@ -16,11 +16,13 @@ public:
     explicit MyMessages(QObject *parent = 0);
     ~MyMessages();
 
+    void run();
+
     BrokerPub *mqttb;
     MyDio *dio;
-    int rc;
 
-    void run();
+private:
+    int rc;
 
 signals:
 

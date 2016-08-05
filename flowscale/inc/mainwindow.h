@@ -36,23 +36,24 @@ public:
     MyGraph *graph;
     MyMessages *mosq;
     Dio io;
-    unsigned long *numberOfBeltRounds;
 
     std::ofstream fout;
 
-    int _weightValueFromScale;
-    long _counter;
-    int _step;
-    int array[NUMBER_OF_WEIGHT_SAMPLES][2];
-    long _sampleCount;
 
+private:
+    Ui::MainWindow *ui;
+    int *numberOfBeltRounds;
+    int step;
+    long sampleCount;
+    int weightValueFromScale;
+    long counter;
+    int array[NUMBER_OF_WEIGHT_SAMPLES][2];
 
 signals:
     void avgWeight(int);
-
     // /////////////////////////
     // Simulation
-//    void reply(unsigned char, bool);
+    // void reply(unsigned char, bool);
     // /////////////////////////
 
 private slots:
@@ -75,13 +76,11 @@ private slots:
     // /////////////////////////
 
 public slots:
-    void conveyorBeltCounter(unsigned long);
+    void conveyorBeltCounter();
     void recordWeight(int);
     void displayReceivedWeight(int);
     void displayInputValue(unsigned long);
 
-private:
-    Ui::MainWindow *ui;
 };
 
 #endif // MAINWINDOW_H
