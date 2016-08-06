@@ -8,8 +8,8 @@
 #include <math.h>
 #include <QDebug>
 
-#define SAMPLES_PER_BELTROUND 1000
-#define NUMBER_OF_BELTROUNDS 10
+#define SAMPLES_PER_BELTROUND 30 //1000
+#define NUMBER_OF_BELTROUNDS 3 //10
 #define FILTER_DELAY 10
 
 class Zerofilter : public QThread

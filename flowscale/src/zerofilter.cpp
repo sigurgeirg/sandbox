@@ -36,16 +36,12 @@ void Zerofilter::conveyorBeltCounter()
 
 void Zerofilter::recordZeroWeight(int weightValueFromScale) {
 
-    //std::ofstream filezero;
-
 
     // ////////////////////////////////
     // Prepare Zero-filter, collect weight from running empty conveyor for few rounds
     // By using "if" condition to set boundaries to collect data we lower the load on the CPU
     // ////////////////////////////////
 
-
-    // FIND ZERO PATH
     if (phase == 1) {
 
         if ((numberOfBeltRoundsZero > -1) && (numberOfBeltRoundsZero < NUMBER_OF_BELTROUNDS)) {
@@ -63,86 +59,99 @@ void Zerofilter::recordZeroWeight(int weightValueFromScale) {
     }
 
 
-    // Virkar hingað og þá fara hlutirnir að endurtaka sig .... hringeftirhring ...
-    // numberOfBeltRoundsZero virðist ekki verða stærra en 9 og þá hættir það að vaxa ?? af hverju ??
-
     if (phase == 2) {
 
 
-        // Henda strax út eftir prófun
-        filezero.open("zeroweight.csv", std::ofstream::out | std::ofstream::app); // trunc changed to app, trunc clears the file while app appends it
-        if (filezero.is_open())
-        {
-            for (int _rounds = 0; _rounds < 10; _rounds++) {
-                for (int _samples = 0; _samples < 10; _samples++) {
-                    filezero << "BeltRounds: " << _rounds << " - Sample: " << _samples << " - Value: " << zeroUnfilteredArray[_rounds][_samples] << std::endl;
-                    // filezero << *numberOfBeltRounds  << "," <<  sampleCount << "," << weightValueFromScale << std::endl;
+        for (int _sampleColumn = 0; _sampleColumn < SAMPLES_PER_BELTROUND; _sampleColumn++) {
+
+            for (int _rounds = 0; _rounds < NUMBER_OF_BELTROUNDS; _rounds++) {
+
+                zeroColumn[_rounds] = zeroUnfilteredArray[_rounds][_sampleColumn];
+
+
+
+
+
+
+            }
+        }
+
+        // Spurning um að umskrifa þetta svo þetta geti komið í stað 2földu for lykkjunnar hér að ofan.
+
+        double* dpSorted = new double[NUMBER_OF_BELTROUNDS];
+
+        for (int i = 0; i < NUMBER_OF_BELTROUNDS; ++i) {
+            dpSorted[i] = (double)zeroColumn[i];
+        }
+        for (int i = NUMBER_OF_BELTROUNDS - 1; i > 0; --i) {
+            for (int j = 0; j < i; ++j) {
+                if (dpSorted[j] > dpSorted[j+1]) {
+                    double dTemp = dpSorted[j];
+                    dpSorted[j] = dpSorted[j+1];
+                    dpSorted[j+1] = dTemp;
                 }
-                filezero << "\n";
             }
         }
-        filezero.close();
 
-        if (numberOfBeltRoundsZero >= NUMBER_OF_BELTROUNDS && sampleCount >= 1) {
-
-            filezero.open("zeroweight.csv", std::ofstream::out | std::ofstream::app); // trunc changed to app, trunc clears the file while app appends it
-            if (filezero.is_open())
-            {
-                filezero << "We have finished filling values into our arrays" << std::endl;
-            }
-            filezero.close();
-
-            phase = 3;
+        // Middle or average of middle values in the sorted array.
+        double dMedian = 0.0;
+        if ((NUMBER_OF_BELTROUNDS % 2) == 0) {
+            dMedian = (dpSorted[NUMBER_OF_BELTROUNDS/2] + dpSorted[(NUMBER_OF_BELTROUNDS/2) - 1])/2.0;
+        } else {
+            dMedian = dpSorted[NUMBER_OF_BELTROUNDS/2];
         }
+        delete [] dpSorted;
+        zeroArray[_sampleColumn] = (int)dMedian;
 
-/*
-        if (sampleCount == 1 && numberOfBeltRoundsZero == NUMBER_OF_BELTROUNDS) {
+
+
+
+
+
+
+            // /////////////////////////////////////////////////////////////////////////////////////////////////
             // Calculate median of rows in zeroUnfilteredArray
+            // /////////////////////////////////////////////////////////////////////////////////////////////////
 
-            for (int _sampleColumn=0; _sampleColumn < SAMPLES_PER_BELTROUND; _sampleColumn++) {
+//                double* dpSorted = new double[NUMBER_OF_BELTROUNDS];
+//                int iSize = NUMBER_OF_BELTROUNDS;
 
-                for (int _rounds = 0; _rounds < NUMBER_OF_BELTROUNDS; _rounds++) {
-                    zeroColumn[_rounds] = zeroUnfilteredArray[_sampleColumn][_rounds];
-                }
-                double* dpSorted = new double[NUMBER_OF_BELTROUNDS];
-                int iSize = NUMBER_OF_BELTROUNDS;
+//                for (int i = 0; i < iSize; ++i) {
+//                    dpSorted[i] = (double)zeroColumn[i];
+//                }
+//                for (int i = iSize - 1; i > 0; --i) {
+//                    for (int j = 0; j < i; ++j) {
+//                        if (dpSorted[j] > dpSorted[j+1]) {
+//                            double dTemp = dpSorted[j];
+//                            dpSorted[j] = dpSorted[j+1];
+//                            dpSorted[j+1] = dTemp;
+//                        }
+//                    }
+//                }
 
-                for (int i = 0; i < iSize; ++i) {
-                    dpSorted[i] = (double)zeroColumn[i];
-                }
-                for (int i = iSize - 1; i > 0; --i) {
-                    for (int j = 0; j < i; ++j) {
-                        if (dpSorted[j] > dpSorted[j+1]) {
-                            double dTemp = dpSorted[j];
-                            dpSorted[j] = dpSorted[j+1];
-                            dpSorted[j+1] = dTemp;
-                        }
-                    }
-                }
+//                // Middle or average of middle values in the sorted array.
+//                double dMedian = 0.0;
+//                if ((iSize % 2) == 0) {
+//                    dMedian = (dpSorted[iSize/2] + dpSorted[(iSize/2) - 1])/2.0;
+//                } else {
+//                    dMedian = dpSorted[iSize/2];
+//                }
+//                delete [] dpSorted;
+//                zeroArray[_sampleColumn] = (int)dMedian;
+//            }
 
-                // Middle or average of middle values in the sorted array.
-                double dMedian = 0.0;
-                if ((iSize % 2) == 0) {
-                    dMedian = (dpSorted[iSize/2] + dpSorted[(iSize/2) - 1])/2.0;
-                } else {
-                    dMedian = dpSorted[iSize/2];
-                }
-                delete [] dpSorted;
-                zeroArray[_sampleColumn] = (int)dMedian;
-            }
-        }
+            // /////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-        filezero.open("zeroweight.csv", std::ofstream::out | std::ofstream::trunc); // trunc changed to app, trunc clears the file while app appends it
-        if (filezero.is_open())
-        {
-            for (int _rounds = 0; _rounds < 10; _rounds++) {
-                filezero << zeroArray[_rounds] <<  std::endl;
-            }
-        }
-        filezero.close();
-        numberOfBeltRoundsZero = 0;
-*/
+//        filezero.open("zeroweight.csv", std::ofstream::out | std::ofstream::trunc); // trunc changed to app, trunc clears the file while app appends it
+//        if (filezero.is_open())
+//        {
+//            for (int _rounds = 0; _rounds < 10; _rounds++) {
+//                filezero << zeroArray[_rounds] <<  std::endl;
+//            }
+//        }
+//        filezero.close();
+//        numberOfBeltRoundsZero = 0;
 
 
 
@@ -213,6 +222,9 @@ void Zerofilter::run() {
         }
         for (int _samples = 0; _samples < SAMPLES_PER_BELTROUND; _samples++) {
             zeroArray[_samples] = 0;
+        }
+        for (int _rounds = 0; _rounds < NUMBER_OF_BELTROUNDS; _rounds++) {
+            zeroColumn[_rounds] = 0;
         }
         runOnce = false;
         phase = 1;
