@@ -9,6 +9,8 @@ Zerofilter::Zerofilter(QObject *parent) :
     lastRound = 0;
     phase = 0;
     runOnce = true;
+    dpSorted = new double[NUMBER_OF_BELTROUNDS];
+    dMedian = 0.0;
 
 }
 
@@ -17,6 +19,7 @@ Zerofilter::~Zerofilter()
 {
     //
     //delete numberOfBeltRoundsZero;
+    delete dpSorted;
 
 }
 
@@ -68,9 +71,6 @@ void Zerofilter::recordZeroWeight(int weightValueFromScale) {
 
     if (phase == 2) {
 
-
-        double* dpSorted = new double[NUMBER_OF_BELTROUNDS];
-
         for (int _sampleColumn = 0; _sampleColumn < SAMPLES_PER_BELTROUND; _sampleColumn++) {
 
             for (int _rounds = 0; _rounds < NUMBER_OF_BELTROUNDS; _rounds++) {
@@ -90,72 +90,59 @@ void Zerofilter::recordZeroWeight(int weightValueFromScale) {
                 }
             }
 
+
             // Middle or average of middle values in the sorted array.
-            double dMedian = 0.0;
+
             if ((NUMBER_OF_BELTROUNDS % 2) == 0) {
                 dMedian = (dpSorted[NUMBER_OF_BELTROUNDS/2] + dpSorted[(NUMBER_OF_BELTROUNDS/2) - 1])/2.0;
             } else {
                 dMedian = dpSorted[NUMBER_OF_BELTROUNDS/2];
             }
-            delete [] dpSorted;
-            zeroArray[_sampleColumn] = (int)dMedian;
+            //Ætti námundunin kannski bara að eiga við í öðru tilvikinu en ekki hinu ??
+
+            dMedian = dMedian + 0.5;                    // rounding by adding half and then cutting out the comma value
+            zeroArray[_sampleColumn] = (int)(dMedian);  // when casting the double to int value
 
         }
-
-
-
-//        filezero.open("zeroweight.csv", std::ofstream::out | std::ofstream::trunc); // trunc changed to app, trunc clears the file while app appends it
-//        if (filezero.is_open())
-//        {
-//            for (int _rounds = 0; _rounds < 10; _rounds++) {
-//                filezero << zeroArray[_rounds] <<  std::endl;
-//            }
-//        }
-//        filezero.close();
-//        numberOfBeltRoundsZero = 0;
-
-
-
-
-        /*
-        if (numberOfBeltRoundsZero ==  NUMBER_OF_BELTROUNDS) {
-            filezero.open("zeroweight.csv", std::ofstream::out | std::ofstream::trunc); // trunc changed to app, trunc clears the file while app appends it
-            if (filezero.is_open())
-            {
-                for (int _rounds = 0; _rounds < 10; _rounds++) {
-                    for (int _samples = 0; _samples < 10; _samples++) {
-                        filezero << "BeltRounds: " << _rounds << "Sample: " << _samples << "Value: " << zeroUnfilteredArray[_rounds][_samples] << std::endl;
-                        // filezero << *numberOfBeltRounds  << "," <<  sampleCount << "," << weightValueFromScale << std::endl;
-                    }
-                    filezero << "\n";
-                }
-            }
-            filezero.close();
-            numberOfBeltRoundsZero = 0;
-        }*/
+        phase = 3;
     }
 
-    // SAVE ZERO PATH
-    if (phase == 3){
-        // CALCULATE ZERO
 
+    if (phase == 3) {
+
+        filezero.open("zeroweight.csv", std::ofstream::out | std::ofstream::trunc); // trunc changed to app, trunc clears the file while app appends it
+        if (filezero.is_open())
+        {
+
+            for (int _rounds = 0; _rounds < NUMBER_OF_BELTROUNDS; _rounds++) {
+                for (int _samples = 0; _samples < SAMPLES_PER_BELTROUND; _samples++) {
+                    filezero << zeroUnfilteredArray[_rounds][_samples] << ",";
+                }
+                filezero << std::endl;
+            }
+
+            filezero << std::endl;
+            filezero << std::endl;
+
+            for (int _samples = 0; _samples < SAMPLES_PER_BELTROUND; _samples++) {
+                filezero << zeroArray[_samples] <<  ",";
+            }
+            filezero << std::endl;
+        }
+        filezero.close();
+
+//        numberOfBeltRoundsZero = 0;
 
         phase = 4;
     }
 
-    // PRODUCTION PHASE
+
+    // Next step ...
     if (phase == 4){
 
+
+
     }
-
-
-
-
-
-
-
-
-
 
 
     // 1. Write 10 rows of ~ 402 zeroWeightSamples
