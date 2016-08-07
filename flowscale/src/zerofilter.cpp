@@ -9,7 +9,6 @@ Zerofilter::Zerofilter(QObject *parent) :
     lastRound = 0;
     phase = 0;
     runOnce = true;
-    dpSorted = new double[NUMBER_OF_BELTROUNDS];
     dMedian = 0.0;
 
 }
@@ -18,8 +17,6 @@ Zerofilter::Zerofilter(QObject *parent) :
 Zerofilter::~Zerofilter()
 {
     //
-    //delete numberOfBeltRoundsZero;
-    delete dpSorted;
 
 }
 
@@ -76,16 +73,16 @@ void Zerofilter::recordZeroWeight(int weightValueFromScale) {
             for (int _rounds = 0; _rounds < NUMBER_OF_BELTROUNDS; _rounds++) {
 
                 // This line: make new 1D array[] from only single column from zeroUnfilteredArray
-                dpSorted[_rounds] = (double)zeroUnfilteredArray[_rounds][_sampleColumn];
+                dSorted[_rounds] = (double)zeroUnfilteredArray[_rounds][_sampleColumn];
             }
 
             // Sort numerical values in array by size for further processing
             for (int _round = (NUMBER_OF_BELTROUNDS - 1); _round > 0; --_round) {
                 for (int _sample = 0; _sample < _round; ++_sample) {
-                    if (dpSorted[_sample] > dpSorted[_sample+1]) {
-                        double dTemp = dpSorted[_sample];
-                        dpSorted[_sample] = dpSorted[_sample+1];
-                        dpSorted[_sample+1] = dTemp;
+                    if (dSorted[_sample] > dSorted[_sample+1]) {
+                        double dTemp = dSorted[_sample];
+                        dSorted[_sample] = dSorted[_sample+1];
+                        dSorted[_sample+1] = dTemp;
                     }
                 }
             }
@@ -94,9 +91,9 @@ void Zerofilter::recordZeroWeight(int weightValueFromScale) {
             // Middle or average of middle values in the sorted array.
 
             if ((NUMBER_OF_BELTROUNDS % 2) == 0) {
-                dMedian = (dpSorted[NUMBER_OF_BELTROUNDS/2] + dpSorted[(NUMBER_OF_BELTROUNDS/2) - 1])/2.0;
+                dMedian = (dSorted[NUMBER_OF_BELTROUNDS/2] + dSorted[(NUMBER_OF_BELTROUNDS/2) - 1])/2.0;
             } else {
-                dMedian = dpSorted[NUMBER_OF_BELTROUNDS/2];
+                dMedian = dSorted[NUMBER_OF_BELTROUNDS/2];
             }
             //Ætti námundunin kannski bara að eiga við í öðru tilvikinu en ekki hinu ??
 
@@ -173,6 +170,7 @@ void Zerofilter::run() {
         }
         for (int _rounds = 0; _rounds < NUMBER_OF_BELTROUNDS; _rounds++) {
             zeroColumn[_rounds] = 0;
+            dSorted[_rounds] = 0;
         }
         runOnce = false;
         phase = 1;

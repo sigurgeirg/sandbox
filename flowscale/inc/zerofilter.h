@@ -34,7 +34,7 @@ private:
     int zeroArray[SAMPLES_PER_BELTROUND];
     int zeroColumn[NUMBER_OF_BELTROUNDS];
     int runningSmoothArray[10];
-    double* dpSorted;
+    double dSorted[NUMBER_OF_BELTROUNDS];
     double dMedian;
 
 signals:
