@@ -59,88 +59,49 @@ void Zerofilter::recordZeroWeight(int weightValueFromScale) {
     }
 
 
+    // /////////////////////////////////////////////////////////////////////////////////////////////////
+    // Calculate median of rows in zeroUnfilteredArray
+    // /////////////////////////////////////////////////////////////////////////////////////////////////
+
+    // Þessi hluti compilar, en hann er óprófaður, virkar logiskt, en sjáum hvað gerist ...
+
+
     if (phase == 2) {
 
+
+        double* dpSorted = new double[NUMBER_OF_BELTROUNDS];
 
         for (int _sampleColumn = 0; _sampleColumn < SAMPLES_PER_BELTROUND; _sampleColumn++) {
 
             for (int _rounds = 0; _rounds < NUMBER_OF_BELTROUNDS; _rounds++) {
 
-                zeroColumn[_rounds] = zeroUnfilteredArray[_rounds][_sampleColumn];
-
-
-
-
-
-
+                // This line: make new 1D array[] from only single column from zeroUnfilteredArray
+                dpSorted[_rounds] = (double)zeroUnfilteredArray[_rounds][_sampleColumn];
             }
-        }
 
-        // Spurning um að umskrifa þetta svo þetta geti komið í stað 2földu for lykkjunnar hér að ofan.
-
-        double* dpSorted = new double[NUMBER_OF_BELTROUNDS];
-
-        for (int i = 0; i < NUMBER_OF_BELTROUNDS; ++i) {
-            dpSorted[i] = (double)zeroColumn[i];
-        }
-        for (int i = NUMBER_OF_BELTROUNDS - 1; i > 0; --i) {
-            for (int j = 0; j < i; ++j) {
-                if (dpSorted[j] > dpSorted[j+1]) {
-                    double dTemp = dpSorted[j];
-                    dpSorted[j] = dpSorted[j+1];
-                    dpSorted[j+1] = dTemp;
+            // Sort numerical values in array by size for further processing
+            for (int _round = (NUMBER_OF_BELTROUNDS - 1); _round > 0; --_round) {
+                for (int _sample = 0; _sample < _round; ++_sample) {
+                    if (dpSorted[_sample] > dpSorted[_sample+1]) {
+                        double dTemp = dpSorted[_sample];
+                        dpSorted[_sample] = dpSorted[_sample+1];
+                        dpSorted[_sample+1] = dTemp;
+                    }
                 }
             }
+
+            // Middle or average of middle values in the sorted array.
+            double dMedian = 0.0;
+            if ((NUMBER_OF_BELTROUNDS % 2) == 0) {
+                dMedian = (dpSorted[NUMBER_OF_BELTROUNDS/2] + dpSorted[(NUMBER_OF_BELTROUNDS/2) - 1])/2.0;
+            } else {
+                dMedian = dpSorted[NUMBER_OF_BELTROUNDS/2];
+            }
+            delete [] dpSorted;
+            zeroArray[_sampleColumn] = (int)dMedian;
+
         }
 
-        // Middle or average of middle values in the sorted array.
-        double dMedian = 0.0;
-        if ((NUMBER_OF_BELTROUNDS % 2) == 0) {
-            dMedian = (dpSorted[NUMBER_OF_BELTROUNDS/2] + dpSorted[(NUMBER_OF_BELTROUNDS/2) - 1])/2.0;
-        } else {
-            dMedian = dpSorted[NUMBER_OF_BELTROUNDS/2];
-        }
-        delete [] dpSorted;
-        zeroArray[_sampleColumn] = (int)dMedian;
-
-
-
-
-
-
-
-            // /////////////////////////////////////////////////////////////////////////////////////////////////
-            // Calculate median of rows in zeroUnfilteredArray
-            // /////////////////////////////////////////////////////////////////////////////////////////////////
-
-//                double* dpSorted = new double[NUMBER_OF_BELTROUNDS];
-//                int iSize = NUMBER_OF_BELTROUNDS;
-
-//                for (int i = 0; i < iSize; ++i) {
-//                    dpSorted[i] = (double)zeroColumn[i];
-//                }
-//                for (int i = iSize - 1; i > 0; --i) {
-//                    for (int j = 0; j < i; ++j) {
-//                        if (dpSorted[j] > dpSorted[j+1]) {
-//                            double dTemp = dpSorted[j];
-//                            dpSorted[j] = dpSorted[j+1];
-//                            dpSorted[j+1] = dTemp;
-//                        }
-//                    }
-//                }
-
-//                // Middle or average of middle values in the sorted array.
-//                double dMedian = 0.0;
-//                if ((iSize % 2) == 0) {
-//                    dMedian = (dpSorted[iSize/2] + dpSorted[(iSize/2) - 1])/2.0;
-//                } else {
-//                    dMedian = dpSorted[iSize/2];
-//                }
-//                delete [] dpSorted;
-//                zeroArray[_sampleColumn] = (int)dMedian;
-//            }
-
-            // /////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 //        filezero.open("zeroweight.csv", std::ofstream::out | std::ofstream::trunc); // trunc changed to app, trunc clears the file while app appends it
