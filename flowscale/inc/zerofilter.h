@@ -28,8 +28,14 @@ private:
     int numberOfBeltRoundsZero;
     bool runOnce;
     int phase;
-    long sampleCount;
+    long sampleCounter;
     long lastRound;
+    double pulseCounter;
+    double pulsesPerBeltRound;
+    double pulseResolution;
+    double lengthOfEachBeltChain;
+    double numberOfBeltChains;
+    double lengthOfEachBeltPeriod;
     int zeroUnfilteredArray[NUMBER_OF_BELTROUNDS][SAMPLES_PER_BELTROUND];
     int zeroArray[SAMPLES_PER_BELTROUND];
     int zeroColumn[NUMBER_OF_BELTROUNDS];

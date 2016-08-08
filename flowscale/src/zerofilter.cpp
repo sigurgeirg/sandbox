@@ -5,8 +5,15 @@ Zerofilter::Zerofilter(QObject *parent) :
     QThread(parent)
 {
     numberOfBeltRoundsZero = -2;
-    sampleCount = 0;
+    sampleCounter = 0;
     lastRound = 0;
+    pulseCounter = 0.0;
+    pulsesPerBeltRound = 0.0;
+    pulseResolution = 0.0;
+    lengthOfEachBeltPeriod = 0.0;
+    lengthOfEachBeltChain =  (25.4 / 2);
+    numberOfBeltChains = 280;
+    lengthOfEachBeltPeriod = (lengthOfEachBeltChain * numberOfBeltChains);
     phase = 0;
     runOnce = true;
     dMedian = 0.0;
@@ -23,7 +30,7 @@ Zerofilter::~Zerofilter()
 
 void Zerofilter::conveyorBeltCounter()
 {
-    sampleCount = 0;
+    sampleCounter = 0;
 
     numberOfBeltRoundsZero++;
     //this->numberOfBeltRounds++;
@@ -46,14 +53,19 @@ void Zerofilter::recordZeroWeight(int weightValueFromScale) {
 
         if ((numberOfBeltRoundsZero > -1) && (numberOfBeltRoundsZero < NUMBER_OF_BELTROUNDS)) {
             // Assign weight value from scale in initializing matrix
-            if (sampleCount < SAMPLES_PER_BELTROUND) {
+            if (sampleCounter < SAMPLES_PER_BELTROUND) {
 
-                zeroUnfilteredArray[numberOfBeltRoundsZero][sampleCount] = weightValueFromScale;
-                sampleCount++;
+                zeroUnfilteredArray[numberOfBeltRoundsZero][sampleCounter] = weightValueFromScale;
+                sampleCounter++;
+                pulseCounter++;
             }
         }
 
         if (numberOfBeltRoundsZero >= NUMBER_OF_BELTROUNDS) {
+
+            pulsesPerBeltRound = pulseCounter / NUMBER_OF_BELTROUNDS;
+            pulseResolution = lengthOfEachBeltPeriod / pulsesPerBeltRound;
+
             phase = 2;
         }
     }
@@ -124,7 +136,13 @@ void Zerofilter::recordZeroWeight(int weightValueFromScale) {
             for (int _samples = 0; _samples < SAMPLES_PER_BELTROUND; _samples++) {
                 filezero << zeroArray[_samples] <<  ",";
             }
+
             filezero << std::endl;
+            filezero << "Total pulses: " << pulseCounter << "" << std::endl;
+            filezero << std::endl;
+            filezero << "Pulses per beltround: " << pulsesPerBeltRound << "" << std::endl;
+            filezero << std::endl;
+            filezero << "Resolution of each pulse: " << pulseResolution << " mm " << std::endl;
         }
         filezero.close();
 
@@ -174,6 +192,7 @@ void Zerofilter::run() {
         }
         runOnce = false;
         phase = 1;
+        pulseCounter = 0.0;
     }
 
     //if (zeroFilterHasBeenUpdated == 1) {
