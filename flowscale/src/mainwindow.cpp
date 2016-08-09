@@ -14,7 +14,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
     scale = new MyScale(this);
-    zero = new Zerofilter(this);
+    //zero = new Zerofilter(this);
     dio = new MyDio(this);
     graph = new MyGraph(this);
     mosq = new MyMessages(this);
@@ -47,7 +47,7 @@ MainWindow::MainWindow(QWidget *parent) :
         connect(dio,   SIGNAL(inputValue(unsigned long)),   this, SLOT(displayInputValue(unsigned long)));
 
     // Read from physcial input from inductive metal sensor, increments for each beltround:
-        connect(dio,   SIGNAL(conveyorSignal()),  scale, SLOT(conveyorBeltCounter()));
+        //connect(dio,   SIGNAL(conveyorSignal()),  scale, SLOT(conveyorBeltCounter()));
 
     // Tick is calculated from number of ticks per beltround therefore no need for physical signal:
         //connect(dio,   SIGNAL(tachoSignal(unsigned long)),  this, SLOT(displayTachoCount(unsigned long)));
@@ -251,7 +251,7 @@ void MainWindow::displayInputValue(unsigned long)
 
 void MainWindow::on_btnConnect_clicked()
 {
-    zero->start();
+    //zero->start();
     scale->connectToSlaveDevice();
     scale->start();
     dio->start();

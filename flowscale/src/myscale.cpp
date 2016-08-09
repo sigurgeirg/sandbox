@@ -22,22 +22,33 @@ MyScale::MyScale(QObject *parent) :
     statusRegisterBinaryReturnValue = new int[16];
 
 
-
-
     // from zerofilter
     numberOfBeltRoundsZero = -2;
-    sampleCount = 0;
+    sampleCounter = 0;
     filterCounter = 0;
     lastRound = 0;
-    phase = 0;
-    runOnce = true;
+    pulseCounter = 0.0;
+    pulsesPerBeltRound = 0.0;
+    pulseResolution = 0.0;
+    lengthOfEachBeltPeriod = 0.0;
+    lengthOfEachBeltChain =  (25.4 / 2);
+    numberOfBeltChains = 280;
+    lengthOfEachBeltPeriod = (lengthOfEachBeltChain * numberOfBeltChains);
     dMedian = 0.0;
+
+    zt_InitializeZeroVectors = 1;
+    zt_CollectDiscreteWeightSamples = 2;
+    zt_CalculateMedianOfZeroPath = 3;
+    zt_ReturnResultsToFile = 4;
+    zt_RunningFilter = 5;
+
+    zeroTracking = zt_InitializeZeroVectors;
+
 }
 
 
 MyScale::~MyScale()
 {
-    //
     delete statusRegisterBinaryTempValue;
     delete statusRegisterBinaryReturnValue;
 }
@@ -62,62 +73,54 @@ int* MyScale::statusRegisterBinary(uint16_t number[]) {
 void MyScale::connectToSlaveDevice() {
 
     try {
+            ctx = modbus_new_rtu("/dev/ttyUSB0", 38400, 'N', 8, 1);
+            setslave = modbus_set_slave(ctx, 0x01);
 
-        ctx = modbus_new_rtu("/dev/ttyUSB0", 38400, 'N', 8, 1);
-        setslave = modbus_set_slave(ctx, 0x01);
+            if (ctx == NULL) {
+                qDebug() << "Unable to create the libmodbus context";
+                modbus_free(ctx);
+            }
+            else qDebug() << "Creation successful";
 
-        if (ctx == NULL)
-        {
-            qDebug() << "Unable to create the libmodbus context";
-            modbus_free(ctx);
-        }
-        else
-            qDebug() << "Creation successful";
+            if (setslave == 0) {
+                qDebug() << "Able to set slave successfully, value : " << setslave;
+            }
+            else {
+                qDebug() << "Unable to set slave, value: " << setslave;
+                modbus_free(ctx);
+            }
 
-        if (setslave == 0)
-        {
-            qDebug() << "Able to set slave successfully, value : " << setslave;
-        }
-        else
-        {
-            qDebug() << "Unable to set slave, value: " << setslave;
-            modbus_free(ctx);
-        }
-
-        if (modbus_connect(ctx) == -1)
-        {
-            qDebug() << "Connection failed";
-            modbus_free(ctx);
-        }
-        else
-        {
-            qDebug() << "Connection successful " << modbus_connect(ctx);
-            modbusConnected = true;
-            qDebug() << "ModBus is Connected";
-            start();
-        }
-    }
-        catch(...) {
+            if (modbus_connect(ctx) == -1) {
+                qDebug() << "Connection failed";
+                modbus_free(ctx);
+            }
+            else {
+                qDebug() << "Connection successful " << modbus_connect(ctx);
+                modbusConnected = true;
+                qDebug() << "ModBus is Connected";
+                start();
+            }
+    } catch(...) {
+            //
     }
 }
 
 
 void MyScale::disconnectFromSlaveDevice() {
     
-    try
-    {
-        modbusConnected = false;
+    try {
+            modbusConnected = false;
 
-        if (modbus_connect(ctx) == -1) {
-            modbus_free(ctx);
-        }
+            if (modbus_connect(ctx) == -1) {
+                modbus_free(ctx);
+            }
 
-        modbus_close(ctx);
-        qDebug() << "ModBus is Disconnected";
-        //modbus_free(ctx); //This function-call causes segfault if activated here.
+            modbus_close(ctx);
+            qDebug() << "ModBus is Disconnected";
+            //modbus_free(ctx); //This function-call causes segfault if activated here.
     }
-    catch(...)
-    {
+    catch(...) {
+        //
     }
 }
 
@@ -175,49 +178,36 @@ void MyScale::netWeight() {
 
 void MyScale::conveyorBeltCounter()
 {
-    sampleCount = 0;
-
+    sampleCounter = 0;
     numberOfBeltRoundsZero++;
-    //this->numberOfBeltRounds++;
-
-//    if (*numberOfBeltRounds > INIT_MATRIX_COLUMNS) {
-//      *numberOfBeltRounds = 0;
-//    }
 }
 
 void MyScale::modelZeroWeight(int weightValueFromScale) {
 
 
-    // ////////////////////////////////
-    // Prepare Zero-filter, collect weight from running empty conveyor for few rounds
-    // By using "if" condition to set boundaries to collect data we lower the load on the CPU
-    // ////////////////////////////////
-
-    if (phase == 1) {
+    if (zeroTracking == zt_CollectDiscreteWeightSamples) {
 
         if ((numberOfBeltRoundsZero > -1) && (numberOfBeltRoundsZero < NUMBER_OF_BELTROUNDS)) {
             // Assign weight value from scale in initializing matrix
-            if (sampleCount < SAMPLES_PER_BELTROUND) {
+            if (sampleCounter < SAMPLES_PER_BELTROUND) {
 
-                zeroUnfilteredArray[numberOfBeltRoundsZero][sampleCount] = weightValueFromScale;
-                sampleCount++;
+                zeroUnfilteredArray[numberOfBeltRoundsZero][sampleCounter] = weightValueFromScale;
+                sampleCounter++;
+                pulseCounter++;
             }
         }
 
         if (numberOfBeltRoundsZero >= NUMBER_OF_BELTROUNDS) {
-            phase = 2;
+
+            pulsesPerBeltRound = pulseCounter / NUMBER_OF_BELTROUNDS;
+            pulseResolution = lengthOfEachBeltPeriod / pulsesPerBeltRound;
+
+            zeroTracking = zt_CalculateMedianOfZeroPath;
         }
     }
 
 
-    // /////////////////////////////////////////////////////////////////////////////////////////////////
-    // Calculate median of rows in zeroUnfilteredArray
-    // /////////////////////////////////////////////////////////////////////////////////////////////////
-
-    // Þessi hluti compilar, en hann er óprófaður, virkar logiskt, en sjáum hvað gerist ...
-
-
-    if (phase == 2) {
+    if (zeroTracking == zt_CalculateMedianOfZeroPath) {
 
         for (int _sampleColumn = 0; _sampleColumn < SAMPLES_PER_BELTROUND; _sampleColumn++) {
 
@@ -239,28 +229,26 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
             }
 
 
-            // Middle or average of middle values in the sorted array.
-
+            // Median values returned from a sorted array.
             if ((NUMBER_OF_BELTROUNDS % 2) == 0) {
                 dMedian = (dSorted[NUMBER_OF_BELTROUNDS/2] + dSorted[(NUMBER_OF_BELTROUNDS/2) - 1])/2.0;
             } else {
                 dMedian = dSorted[NUMBER_OF_BELTROUNDS/2];
             }
-            //Ætti námundunin kannski bara að eiga við í öðru tilvikinu en ekki hinu ??
 
             dMedian = dMedian + 0.5;                    // rounding by adding half and then cutting out the comma value
             zeroArray[_sampleColumn] = (int)(dMedian);  // when casting the double to int value
 
         }
-        phase = 3;
+        zeroTracking = zt_ReturnResultsToFile;
     }
 
 
-    if (phase == 3) {
+    if (zeroTracking == zt_ReturnResultsToFile) {
 
         filezero.open("zeroweight.csv", std::ofstream::out | std::ofstream::trunc); // trunc changed to app, trunc clears the file while app appends it
-        if (filezero.is_open())
-        {
+
+        if (filezero.is_open()) {
 
             for (int _rounds = 0; _rounds < NUMBER_OF_BELTROUNDS; _rounds++) {
                 for (int _samples = 0; _samples < SAMPLES_PER_BELTROUND; _samples++) {
@@ -275,19 +263,32 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
             for (int _samples = 0; _samples < SAMPLES_PER_BELTROUND; _samples++) {
                 filezero << zeroArray[_samples] <<  ",";
             }
+
             filezero << std::endl;
+            filezero << "Total pulses: " << pulseCounter << "" << std::endl;
+            filezero << std::endl;
+            filezero << "Pulses per beltround: " << pulsesPerBeltRound << "" << std::endl;
+            filezero << std::endl;
+            filezero << "Resolution of each pulse: " << pulseResolution << " mm " << std::endl;
         }
         filezero.close();
 
-//        numberOfBeltRoundsZero = 0;
-
-        phase = 4;
+        zeroTracking = zt_RunningFilter;
     }
 
 
-    // Next step ...
-    if (phase == 4){
-        runningFilter[filterCounter] = weightValueFromScale-zeroArray[sampleCount];
+    // Next step :
+    // 1. Should we write std array with respect to the processed matrix (array) where we do the zeroArray ??
+    // 2. Return info:
+    //          avg weight array, std array, number of samples, number of rounds
+    //          number of samples might deviate +/-1, then we just accept lowest common denomintor ...
+    // 3. Verify if zerofFilter has been updated
+    // 4. emit all necessary signals back to where weighing will be processed with respect to floating zero.
+    // 5. should all be emitted or some written to a globally accessible pointer ???
+
+    if (zeroTracking == zt_RunningFilter){
+
+        runningFilter[filterCounter] = weightValueFromScale-zeroArray[sampleCounter];
         filterCounter++;
         if (filterCounter > 9){
             filterCounter = 0;
@@ -297,16 +298,7 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
     }
 
 
-    // 1. Write 10 rows of ~ 402 zeroWeightSamples
-    //    Info: Weight, tickPosition(==posInArray), roundNumber(==rownumber)
-    // 2. Create some avg/median array from the sample matrix
-    // 3. Produce std array with respect to the processed matrix (array)
-    // 4. Return info:
-    //          avg weight array, std array, number of samples, number of rounds
-    //          number of samples might deviate +/-1, then we just accept lowest common denomintor ...
-    // 5. Verify if zerofFilter has been updated
-    // 6. emit all necessary signals back to where weighing will be processed with respect to floating zero.
-    // 7. should all be emitted or some written to a globally accessible pointer ???
+
 
 }
 
@@ -317,8 +309,8 @@ void MyScale::run() {
     
     int sign = 0;
 
-    if (runOnce == true) {
-        // initialize zeroUnfilteredArray with zeros
+    if (zeroTracking == zt_InitializeZeroVectors) {
+
         for (int _rounds = 0; _rounds < NUMBER_OF_BELTROUNDS; _rounds++) {
             for (int _samples = 0; _samples < SAMPLES_PER_BELTROUND; _samples++) {
                 zeroUnfilteredArray[_rounds][_samples] = 0;
@@ -334,8 +326,9 @@ void MyScale::run() {
         for (int _samples = 0; _samples < FILTER_DELAY; _samples++) {
             runningFilter[_samples] = 0;
         }
-        phase = 1;
-        runOnce = false;
+        pulseCounter = 0.0;
+
+        zeroTracking = zt_CollectDiscreteWeightSamples;
     }
 
 
@@ -353,13 +346,13 @@ void MyScale::run() {
 
             if(weightGROSSorNET[0] == grossDisplay)
             {
-                sign=pow((-1),(statusRegisterBinaryReturnValue[7]));
+                sign = pow((-1),(statusRegisterBinaryReturnValue[7]));
                 emit receivedWeight(sign*data[2]);
                 //qDebug() << " WeightGross: " <<  sign*data[2];
             }
             else if(weightGROSSorNET[0] == netDisplay)
             {
-                sign=pow((-1),(statusRegisterBinaryReturnValue[8]));
+                sign = pow((-1),(statusRegisterBinaryReturnValue[8]));
                 emit receivedWeight(sign*data[4]);
                 //qDebug() << " WeightNetto: " << sign*data[4];
             }
