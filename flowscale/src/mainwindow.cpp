@@ -25,9 +25,11 @@ MainWindow::MainWindow(QWidget *parent) :
     step = 0;
 
 
+
+
     // ZERO Filtering:
-        connect(scale, SIGNAL(receivedWeight(int)),         zero, SLOT(recordZeroWeight(int)));
-        connect(dio,   SIGNAL(conveyorSignal()),            zero, SLOT(conveyorBeltCounter()));
+        connect(scale, SIGNAL(receivedWeight(int)),         scale, SLOT(modelZeroWeight(int)));
+        connect(dio,   SIGNAL(conveyorSignal()),            scale, SLOT(conveyorBeltCounter()));
 
         //This is the output array from zerofilter, and it will be sent to destination when ready.
         //connect(zero, SIGNAL(filteredZeroArray(int)),         this, SLOT(givethisnewnameandcreatefunction(int)));
@@ -45,7 +47,7 @@ MainWindow::MainWindow(QWidget *parent) :
         connect(dio,   SIGNAL(inputValue(unsigned long)),   this, SLOT(displayInputValue(unsigned long)));
 
     // Read from physcial input from inductive metal sensor, increments for each beltround:
-        connect(dio,   SIGNAL(conveyorSignal()),  this, SLOT(conveyorBeltCounter()));
+        connect(dio,   SIGNAL(conveyorSignal()),  scale, SLOT(conveyorBeltCounter()));
 
     // Tick is calculated from number of ticks per beltround therefore no need for physical signal:
         //connect(dio,   SIGNAL(tachoSignal(unsigned long)),  this, SLOT(displayTachoCount(unsigned long)));

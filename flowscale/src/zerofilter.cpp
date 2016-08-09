@@ -6,6 +6,7 @@ Zerofilter::Zerofilter(QObject *parent) :
 {
     numberOfBeltRoundsZero = -2;
     sampleCounter = 0;
+    filterCounter = 0;
     lastRound = 0;
     pulseCounter = 0.0;
     pulsesPerBeltRound = 0.0;
@@ -27,7 +28,7 @@ Zerofilter::~Zerofilter()
 
 }
 
-
+/*
 void Zerofilter::conveyorBeltCounter()
 {
     sampleCounter = 0;
@@ -38,9 +39,9 @@ void Zerofilter::conveyorBeltCounter()
 //    if (*numberOfBeltRounds > INIT_MATRIX_COLUMNS) {
 //      *numberOfBeltRounds = 0;
 //    }
-}
+}*/
 
-
+/*
 void Zerofilter::recordZeroWeight(int weightValueFromScale) {
 
 
@@ -154,7 +155,11 @@ void Zerofilter::recordZeroWeight(int weightValueFromScale) {
 
     // Next step ...
     if (phase == 4){
-
+        runningFilter[filterCounter] = weightValueFromScale-zeroArray[sampleCounter];
+        filterCounter++;
+        if (filterCounter > 9){
+            filterCounter = 0;
+        }
 
 
     }
@@ -171,11 +176,12 @@ void Zerofilter::recordZeroWeight(int weightValueFromScale) {
     // 6. emit all necessary signals back to where weighing will be processed with respect to floating zero.
     // 7. should all be emitted or some written to a globally accessible pointer ???
 
-}
+}*/
 
 
 void Zerofilter::run() {
 
+    /*
     if (runOnce == true) {
         // initialize zeroUnfilteredArray with zeros
         for (int _rounds = 0; _rounds < NUMBER_OF_BELTROUNDS; _rounds++) {
@@ -190,10 +196,14 @@ void Zerofilter::run() {
             zeroColumn[_rounds] = 0;
             dSorted[_rounds] = 0;
         }
-        runOnce = false;
+        for (int _samples = 0; _samples < FILTER_DELAY; _samples++) {
+            runningFilter[_samples] = 0;
+        }
+
         phase = 1;
         pulseCounter = 0.0;
-    }
+        runOnce = false;
+    }*/
 
     //if (zeroFilterHasBeenUpdated == 1) {
 
