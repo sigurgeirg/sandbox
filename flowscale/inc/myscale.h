@@ -8,6 +8,12 @@
 #include <iostream>
 #include <math.h>
 #include <QDebug>
+#include <fstream>
+
+
+#define SAMPLES_PER_BELTROUND 1000
+#define NUMBER_OF_BELTROUNDS 10
+#define FILTER_DELAY 10
 
 class MyScale : public QThread
 {
@@ -27,6 +33,7 @@ public:
     void netWeight();
     void run();
     int *statusRegisterBinary(uint16_t number[]);
+    std::ofstream filezero;
 
 private:
     int *statusRegisterBinaryTempValue;
@@ -50,10 +57,28 @@ private:
     int calibrationWeight;  // Variable that keeps calibration weight value in terms of [g]
     int weightGROSSorNET[1];// Indicates whether selected weight is GROSS or NET weight.
 
+
+    // from zerofilter
+    int numberOfBeltRoundsZero;
+    bool runOnce;
+    int phase;
+    long sampleCount;
+    long lastRound;
+    int zeroUnfilteredArray[NUMBER_OF_BELTROUNDS][SAMPLES_PER_BELTROUND];
+    int zeroArray[SAMPLES_PER_BELTROUND];
+    int zeroColumn[NUMBER_OF_BELTROUNDS];
+    int runningFilter[FILTER_DELAY];
+    int filterCounter;
+    int runningSmoothArray[10];
+    double dSorted[NUMBER_OF_BELTROUNDS];
+    double dMedian;
+
 signals:
     void receivedWeight(int);
 
 public slots:
+    void conveyorBeltCounter();
+    void modelZeroWeight(int);
     
 };
 

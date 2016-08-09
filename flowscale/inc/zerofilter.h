@@ -21,7 +21,7 @@ public:
 
     void run();
 
-    std::ofstream filezero;
+    //std::ofstream filezero;
 
 
 private:
@@ -33,6 +33,8 @@ private:
     int zeroUnfilteredArray[NUMBER_OF_BELTROUNDS][SAMPLES_PER_BELTROUND];
     int zeroArray[SAMPLES_PER_BELTROUND];
     int zeroColumn[NUMBER_OF_BELTROUNDS];
+    int runningFilter[FILTER_DELAY];
+    int filterCounter;
     int runningSmoothArray[10];
     double dSorted[NUMBER_OF_BELTROUNDS];
     double dMedian;
@@ -42,8 +44,8 @@ signals:
     void debVal(int);
 
 public slots:
-    void conveyorBeltCounter();
-    void recordZeroWeight(int);
+    //void conveyorBeltCounter();
+    //void recordZeroWeight(int);
 
 
 };
