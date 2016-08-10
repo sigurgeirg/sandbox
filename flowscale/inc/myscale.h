@@ -81,9 +81,12 @@ private:
     int zt_CalculateMedianOfZeroPath;
     int zt_ReturnResultsToFile;
     int zt_RunningFilter;
+    int filterValue;
+    int filterSUM;
 
 signals:
     void receivedWeight(int);
+    void sendFilteredWeight(int);
 
 public slots:
     void conveyorBeltCounter();

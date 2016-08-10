@@ -79,6 +79,7 @@ public slots:
     void conveyorBeltCounter();
     void recordWeight(int);
     void displayReceivedWeight(int);
+    void displayFilteredWeight(int);
     void displayInputValue(unsigned long);
 
 };

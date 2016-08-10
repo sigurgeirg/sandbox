@@ -23,7 +23,7 @@ MyScale::MyScale(QObject *parent) :
 
 
     // from zerofilter
-    numberOfBeltRoundsZero = -2;
+    numberOfBeltRoundsZero = -4;
     sampleCounter = 0;
     filterCounter = 0;
     lastRound = 0;
@@ -43,6 +43,9 @@ MyScale::MyScale(QObject *parent) :
     zt_RunningFilter = 5;
 
     zeroTracking = zt_InitializeZeroVectors;
+
+    filterValue = 0;
+    filterSUM = 0;
 
 }
 
@@ -290,11 +293,18 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
 
         runningFilter[filterCounter] = weightValueFromScale-zeroArray[sampleCounter];
         filterCounter++;
+        sampleCounter++;
         if (filterCounter > 9){
             filterCounter = 0;
         }
 
+        for(int i = 0; i < FILTER_DELAY; i++){
+           filterSUM += runningFilter[i];
+        }
+        filterValue = filterSUM / FILTER_DELAY;
+        filterSUM = 0;
 
+        emit sendFilteredWeight(filterValue);
     }
 
 

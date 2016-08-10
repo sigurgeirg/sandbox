@@ -30,6 +30,7 @@ MainWindow::MainWindow(QWidget *parent) :
     // ZERO Filtering:
         connect(scale, SIGNAL(receivedWeight(int)),         scale, SLOT(modelZeroWeight(int)));
         connect(dio,   SIGNAL(conveyorSignal()),            scale, SLOT(conveyorBeltCounter()));
+        connect(scale, SIGNAL(sendFilteredWeight(int)),         this, SLOT(displayFilteredWeight(int)));
 
         //This is the output array from zerofilter, and it will be sent to destination when ready.
         //connect(zero, SIGNAL(filteredZeroArray(int)),         this, SLOT(givethisnewnameandcreatefunction(int)));
@@ -206,6 +207,15 @@ void MainWindow::displayReceivedWeight(int weightValueFromScale)
     ui->lblReceivedWeight->setText(QString::number(weightValueFromScale));
 
 }
+
+void MainWindow::displayFilteredWeight(int filteredWeight){
+
+    ui->lblReceivedWeight_2->setText(QString::number(filteredWeight));
+
+}
+
+
+
 
 // /////////////////////////
 // Simulation
