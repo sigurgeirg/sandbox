@@ -63,6 +63,7 @@ private:
     long sampleCounter;
     long lastRound;
     double pulseCounter;
+    double productCounter;
     double pulsesPerBeltRound;
     double pulseResolution;
     double lengthOfEachBeltChain;

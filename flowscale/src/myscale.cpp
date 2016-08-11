@@ -25,6 +25,7 @@ MyScale::MyScale(QObject *parent) :
     // from zerofilter
     numberOfBeltRoundsZero = -4;
     sampleCounter = 0;
+    productCounter = 0;
     filterCounter = 0;
     lastRound = 0;
     pulseCounter = 0.0;
@@ -41,6 +42,7 @@ MyScale::MyScale(QObject *parent) :
     zt_CalculateMedianOfZeroPath = 3;
     zt_ReturnResultsToFile = 4;
     zt_RunningFilter = 5;
+    zt_ProductFilter = 6;
 
     zeroTracking = zt_InitializeZeroVectors;
 
@@ -185,6 +187,11 @@ void MyScale::conveyorBeltCounter()
     numberOfBeltRoundsZero++;
 }
 
+void MyScale::productSignalCounter()
+{
+    productCounter = 0;
+}
+
 void MyScale::modelZeroWeight(int weightValueFromScale) {
 
 
@@ -276,7 +283,7 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
         }
         filezero.close();
 
-        zeroTracking = zt_RunningFilter;
+        zeroTracking = zt_ProductFilter;
     }
 
 
@@ -303,6 +310,18 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
         }
         filterValue = filterSUM / FILTER_DELAY;
         filterSUM = 0;
+
+        emit sendFilteredWeight(filterValue);
+    }
+
+    if (zeroTracking == zt_ProductFilter){
+
+        productCounter++;
+
+        if ((productCounter > pulseResolution
+
+
+
 
         emit sendFilteredWeight(filterValue);
     }
