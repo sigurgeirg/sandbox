@@ -53,6 +53,8 @@ MyScale::MyScale(QObject *parent) :
     filterValue = 0;
     filterSUM = 0;
 
+    productID = -1;
+
 }
 
 
@@ -196,6 +198,14 @@ void MyScale::productSignalCounter()
 {
     enteringProduct = true;
     productCounter++;
+    productID++;
+    if (productID == NUMBER_OF_PRODUCT_IDS) {
+        productID = 0;
+    }
+
+
+    productIDcounter[productID] = 0;
+
 }
 
 void MyScale::modelZeroWeight(int weightValueFromScale) {
@@ -208,7 +218,7 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
             if (sampleCounter < SAMPLES_PER_BELTROUND) {
 
                 zeroUnfilteredArray[numberOfBeltRoundsZero][sampleCounter] = weightValueFromScale;
-                sampleCounter++;
+
                 pulseCounter++;
             }
         }
@@ -256,6 +266,11 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
             zeroArray[_sampleColumn] = (int)(dMedian);  // when casting the double to int value
 
         }
+
+        weightStartPulse = (int)((double)(PRODUCT_WEIGHING_START_DISTANCE)/pulseResolution + 0.5);
+        weightEndPulse = (int)((double)(PRODUCT_WEIGHING_STOP_DISTANCE)/pulseResolution + 0.5);
+        productReleasePulse = (int)((double)(PRODUCT_RELEASE)/pulseResolution + 0.5);
+
         zeroTracking = zt_ReturnResultsToFile;
     }
 
@@ -289,6 +304,8 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
         }
         filezero.close();
 
+        int temp = 0;
+        emit sendFilteredWeight(temp);
         zeroTracking = zt_ProductFilter;
     }
 
@@ -330,11 +347,64 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
     if (zeroTracking == zt_ProductFilter){
 
 
-        if (productCounter == true) {
+        // increment all elements in productIDcounter that are >= 0
+        for (int _productNbr = 0; _productNbr < NUMBER_OF_PRODUCT_IDS; _productNbr++) {
+            if (productIDcounter[_productNbr] >= 0) {
+                productIDcounter[_productNbr]++;
 
-            // newProductAtSensor = true
-            productCounter = false;
+
+
+                //check where the product is at
+
+                // Weighing mode
+                if ((productIDcounter[_productNbr] >= weightStartPulse) &&
+                        (productIDcounter[_productNbr] < weightEndPulse)){
+                    productIDweights[_productNbr][productIDcounter[_productNbr]-weightStartPulse] = weightValueFromScale-zeroArray[sampleCounter];
+                }
+
+                // Emit modeled weight
+                if (productIDcounter[_productNbr] == weightEndPulse){
+                    meanSample = 0;
+                    for (int _sample = 0; _sample < weightEndPulse-weightStartPulse; _sample++){
+                        meanSample += productIDweights[_productNbr][_sample];
+                    }
+                    meanSample = meanSample/(weightEndPulse-weightStartPulse);
+                    emit sendFilteredWeight(meanSample);
+                    emit sendDebugData(productIDcounter[_productNbr]);
+
+                }
+
+                // release weight
+                // STILL LEFT => assign product ID and save product information
+                if (productIDcounter[_productNbr] > productReleasePulse){
+                    productIDcounter[_productNbr] = -1;
+
+                    filezero.open("zeroweight.csv", std::ofstream::out | std::ofstream::app); // trunc changed to app, trunc clears the file while app appends it
+
+                    if (filezero.is_open()) {
+                        filezero << meanSample << ",";
+
+                        for (int _samples = 0; _samples < weightEndPulse-weightStartPulse; _samples++) {
+                            filezero << productIDweights[_productNbr][_samples] << ",";
+                        }
+                        filezero << std::endl;
+                    }
+                    filezero.close();
+                    emit sendDebugData(_productNbr);
+                    productIDcounter[_productNbr] = -1;
+                }
+
+
+            }
         }
+
+
+
+
+
+
+
+
 
 //        if (newProductAtSensor == true) {
 //            //
@@ -360,6 +430,11 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
 
 
 
+    }
+
+
+
+    sampleCounter++;
 }
 
 
@@ -374,6 +449,11 @@ void MyScale::run() {
                 zeroUnfilteredArray[_rounds][_samples] = 0;
             }
         }
+        for (int _rounds = 0; _rounds < NUMBER_OF_PRODUCT_IDS; _rounds++) {
+            for (int _samples = 0; _samples < SAMPLES_PER_BELTROUND; _samples++) {
+                productIDweights[_rounds][_samples] = 0;
+            }
+        }
         for (int _samples = 0; _samples < SAMPLES_PER_BELTROUND; _samples++) {
             zeroArray[_samples] = 0;
         }
@@ -383,6 +463,9 @@ void MyScale::run() {
         }
         for (int _samples = 0; _samples < FILTER_DELAY; _samples++) {
             runningFilter[_samples] = 0;
+        }
+        for (int _samples = 0; _samples < NUMBER_OF_PRODUCT_IDS; _samples++) {
+            productIDcounter[_samples] = -1;
         }
         pulseCounter = 0.0;
 

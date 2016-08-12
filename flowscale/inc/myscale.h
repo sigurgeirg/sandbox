@@ -14,6 +14,10 @@
 #define SAMPLES_PER_BELTROUND 1000
 #define NUMBER_OF_BELTROUNDS 10
 #define FILTER_DELAY 10
+#define NUMBER_OF_PRODUCT_IDS 5
+#define PRODUCT_WEIGHING_START_DISTANCE 330 // FIX ME
+#define PRODUCT_WEIGHING_STOP_DISTANCE 666 // FIX ME
+#define PRODUCT_RELEASE 1400 // FIX ME
 
 class MyScale : public QThread
 {
@@ -66,6 +70,7 @@ private:
 
     double pulseCounter;
     double productCounter;
+    int productID;
     double pulsesPerBeltRound;
     double pulseResolution;
     double lengthOfEachBeltChain;
@@ -75,9 +80,11 @@ private:
 
     double dSorted[NUMBER_OF_BELTROUNDS];
     int zeroUnfilteredArray[NUMBER_OF_BELTROUNDS][SAMPLES_PER_BELTROUND];
+    int productIDweights[NUMBER_OF_PRODUCT_IDS][SAMPLES_PER_BELTROUND];
     int zeroArray[SAMPLES_PER_BELTROUND];
     int zeroColumn[NUMBER_OF_BELTROUNDS];
     int runningFilter[FILTER_DELAY];
+    int productIDcounter[NUMBER_OF_PRODUCT_IDS];
     int filterCounter;
     int numberOfBeltRoundsZero;
 
@@ -88,7 +95,13 @@ private:
     int zt_RunningFilter;
     int zt_ProductFilter;
 
+
+
     int zeroTracking;
+    int weightStartPulse;
+    int weightEndPulse;
+    int productReleasePulse;
+    int meanSample;
 
     int filterValue;
     int filterSUM;
@@ -96,6 +109,7 @@ private:
 signals:
     void receivedWeight(int);
     void sendFilteredWeight(int);
+    void sendDebugData(int);
 
 public slots:
     void conveyorBeltCounter();

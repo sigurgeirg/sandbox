@@ -80,6 +80,7 @@ public slots:
     void recordWeight(int);
     void displayReceivedWeight(int);
     void displayFilteredWeight(int);
+    void displayDebugData(int);
     void displayInputValue(unsigned long);
 
 };

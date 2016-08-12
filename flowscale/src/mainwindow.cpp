@@ -35,6 +35,7 @@ MainWindow::MainWindow(QWidget *parent) :
         connect(dio,   SIGNAL(productSignal()),             scale, SLOT(productSignalCounter()));
 
         connect(scale, SIGNAL(sendFilteredWeight(int)),     this,  SLOT(displayFilteredWeight(int)));
+        connect(scale, SIGNAL(sendDebugData(int)),     this,  SLOT(displayDebugData(int)));
 
         //This is the output array from zerofilter, and it will be sent to destination when ready.
         //connect(zero, SIGNAL(filteredZeroArray(int)),         this, SLOT(givethisnewnameandcreatefunction(int)));
@@ -218,7 +219,11 @@ void MainWindow::displayFilteredWeight(int filteredWeight){
 
 }
 
+void MainWindow::displayDebugData(int debugData){
 
+    ui->lblReceivedWeight_3->setText(QString::number(debugData));
+
+}
 
 
 // /////////////////////////
