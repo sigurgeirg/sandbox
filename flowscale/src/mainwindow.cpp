@@ -28,9 +28,13 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
     // ZERO Filtering:
+
+        // FIXME:This next line should be deleted when this part has been implemented inside of the scale class.
         connect(scale, SIGNAL(receivedWeight(int)),         scale, SLOT(modelZeroWeight(int)));
         connect(dio,   SIGNAL(conveyorSignal()),            scale, SLOT(conveyorBeltCounter()));
-        connect(scale, SIGNAL(sendFilteredWeight(int)),         this, SLOT(displayFilteredWeight(int)));
+        connect(dio,   SIGNAL(productSignal()),             scale, SLOT(productSignalCounter()));
+
+        connect(scale, SIGNAL(sendFilteredWeight(int)),     this,  SLOT(displayFilteredWeight(int)));
 
         //This is the output array from zerofilter, and it will be sent to destination when ready.
         //connect(zero, SIGNAL(filteredZeroArray(int)),         this, SLOT(givethisnewnameandcreatefunction(int)));

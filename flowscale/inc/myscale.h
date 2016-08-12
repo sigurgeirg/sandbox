@@ -59,9 +59,11 @@ private:
 
 
     // from zerofilter
-    int numberOfBeltRoundsZero;
+    bool enteringProduct;
+
     long sampleCounter;
     long lastRound;
+
     double pulseCounter;
     double productCounter;
     double pulsesPerBeltRound;
@@ -70,18 +72,24 @@ private:
     double numberOfBeltChains;
     double lengthOfEachBeltPeriod;
     double dMedian;
+
     double dSorted[NUMBER_OF_BELTROUNDS];
     int zeroUnfilteredArray[NUMBER_OF_BELTROUNDS][SAMPLES_PER_BELTROUND];
     int zeroArray[SAMPLES_PER_BELTROUND];
     int zeroColumn[NUMBER_OF_BELTROUNDS];
     int runningFilter[FILTER_DELAY];
     int filterCounter;
-    int zeroTracking;
+    int numberOfBeltRoundsZero;
+
     int zt_InitializeZeroVectors;
     int zt_CollectDiscreteWeightSamples;
     int zt_CalculateMedianOfZeroPath;
     int zt_ReturnResultsToFile;
     int zt_RunningFilter;
+    int zt_ProductFilter;
+
+    int zeroTracking;
+
     int filterValue;
     int filterSUM;
 
@@ -91,6 +99,7 @@ signals:
 
 public slots:
     void conveyorBeltCounter();
+    void productSignalCounter();
     void modelZeroWeight(int);
     
 };

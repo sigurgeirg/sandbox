@@ -36,6 +36,12 @@ public:
     static unsigned char tickOrTime[NUMBER_OF_USED_INPUTS];
 
 private:
+
+    bool trigger;
+    bool tacho;
+    bool conveyor;
+    bool product;
+
     unsigned long tickBeltProfile;
     unsigned long beltRounds;
     unsigned char address;
@@ -50,6 +56,7 @@ signals:
     void inputValue(unsigned long);
     void conveyorSignal();
     void tachoSignal(unsigned long);
+    void productSignal();
 
 
 public slots:

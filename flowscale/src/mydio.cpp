@@ -38,8 +38,19 @@ MyDio::MyDio(QObject *parent) :
     //io.DICfgMode(2,DI_MODE_EDGE_LOW_GOING);
     //io.DICfgMode(3,DI_MODE_EDGE_HIGH_GOING);
 
+    //*
+//	struct timeval tim;
+//	double lastTime;
+//	double currTime;
+    trigger = false;
+    tacho = false;
+    conveyor = false;
+    product = false;
+    //*/
+
     address	= 0;
     tickBeltProfile = 0;
+
 }
 
 MyDio::~MyDio()
@@ -160,14 +171,6 @@ void MyDio::run() {
         emit inputValue(value[i]);
     }
 
-    //*
-//	struct timeval tim;
-//	double lastTime;
-//	double currTime;
-    bool trigger = 0;
-    bool tacho = 0;
-    bool conveyor = 0;
-    //*/
 
     while (1) {
 
@@ -206,6 +209,7 @@ void MyDio::run() {
             conveyor = true;
         }
 
+        // FIXME: This input is not used currently, we use tick on program scantime, insted of tacho or encoder signal...
         // Here we assume that input[1] is tacho pulse listener input, many pulses per belt period.
         if (rising[1] == 1) {
             qDebug() << "Input 2:" << 2 << " is rising!";
@@ -216,6 +220,7 @@ void MyDio::run() {
         // Here we assume that input[2] is available input signal
         if (rising[2] == 1) {
             qDebug() << "Input 3:" << 3 << " is rising!";
+            product = true;
         }
 
         // Here we assume that input[3] is available input signal
@@ -223,16 +228,19 @@ void MyDio::run() {
             qDebug() << "Input 4:" << 4 << " is rising!";
         }
 
-        if (tacho == true)
-        {
+        if (conveyor == true) {
+            emit conveyorSignal();
+            conveyor = false;
+        }
+
+        if (tacho == true) {
             emit tachoSignal(tickBeltProfile);
             tacho = false;
         }
 
-        if (conveyor == true)
-        {
-            emit conveyorSignal();
-            conveyor = false;
+        if (product == true) {
+            emit productSignal();
+            product = false;
         }
 
 

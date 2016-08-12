@@ -23,19 +23,23 @@ MyScale::MyScale(QObject *parent) :
 
 
     // from zerofilter
-    numberOfBeltRoundsZero = -4;
+    enteringProduct = false;
+
     sampleCounter = 0;
-    productCounter = 0;
-    filterCounter = 0;
     lastRound = 0;
+
     pulseCounter = 0.0;
+    productCounter = 0.0;
     pulsesPerBeltRound = 0.0;
     pulseResolution = 0.0;
     lengthOfEachBeltPeriod = 0.0;
     lengthOfEachBeltChain =  (25.4 / 2);
-    numberOfBeltChains = 280;
+    numberOfBeltChains = 280.0;
     lengthOfEachBeltPeriod = (lengthOfEachBeltChain * numberOfBeltChains);
     dMedian = 0.0;
+
+    filterCounter = 0;
+    numberOfBeltRoundsZero = -4;
 
     zt_InitializeZeroVectors = 1;
     zt_CollectDiscreteWeightSamples = 2;
@@ -187,9 +191,11 @@ void MyScale::conveyorBeltCounter()
     numberOfBeltRoundsZero++;
 }
 
+
 void MyScale::productSignalCounter()
 {
-    productCounter = 0;
+    enteringProduct = true;
+    productCounter++;
 }
 
 void MyScale::modelZeroWeight(int weightValueFromScale) {
@@ -287,20 +293,14 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
     }
 
 
-    // Next step :
-    // 1. Should we write std array with respect to the processed matrix (array) where we do the zeroArray ??
-    // 2. Return info:
-    //          avg weight array, std array, number of samples, number of rounds
-    //          number of samples might deviate +/-1, then we just accept lowest common denomintor ...
-    // 3. Verify if zerofFilter has been updated
-    // 4. emit all necessary signals back to where weighing will be processed with respect to floating zero.
-    // 5. should all be emitted or some written to a globally accessible pointer ???
-
+/*
     if (zeroTracking == zt_RunningFilter){
 
         runningFilter[filterCounter] = weightValueFromScale-zeroArray[sampleCounter];
+
         filterCounter++;
         sampleCounter++;
+
         if (filterCounter > 9){
             filterCounter = 0;
         }
@@ -313,25 +313,54 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
 
         emit sendFilteredWeight(filterValue);
     }
+*/
+
+
+//      If product arrives:
+//        count down distance (tick - sampleCounter) where window starts,
+//        where it ends
+//        and where product is delivered
+//        estimate from tick resolution and translate to cm
+//      Filter only the window of measurement:
+//          leave out rest when calculating
+//          do some running filter on this one
+//          return ... emit best fit weight value to whatever component needs to forward it.
+
 
     if (zeroTracking == zt_ProductFilter){
 
-        productCounter++;
 
-        if ((productCounter > pulseResolution
+        if (productCounter == true) {
+
+            // newProductAtSensor = true
+            productCounter = false;
+        }
+
+//        if (newProductAtSensor == true) {
+//            //
+//            // start counting down pulses from here
+//            // distance depends on ticks and resolution
+//            // be able to keep track of up to 5 simultaneous products
+//            // put info onto each product, such as IDnr, BathcNr,
+//            // weight, stddev or variance, length, destination gate, ...
+//            //
+//            sampleCounter++;
+//        }
+
+
+//        if (productCounter > pulseResolution)
 
 
 
 
-        emit sendFilteredWeight(filterValue);
-    }
+
+//            emit sendFilteredWeight(filterValue);
+//    }
 
 
 
 
 }
-
-
 
 
 void MyScale::run() {
