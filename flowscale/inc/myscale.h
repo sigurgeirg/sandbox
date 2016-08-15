@@ -70,7 +70,6 @@ private:
 
     double pulseCounter;
     double productCounter;
-    int productID;
     double pulsesPerBeltRound;
     double pulseResolution;
     double lengthOfEachBeltChain;
@@ -85,6 +84,7 @@ private:
     int zeroColumn[NUMBER_OF_BELTROUNDS];
     int runningFilter[FILTER_DELAY];
     int productIDcounter[NUMBER_OF_PRODUCT_IDS];
+
     int filterCounter;
     int numberOfBeltRoundsZero;
 
@@ -95,7 +95,10 @@ private:
     int zt_RunningFilter;
     int zt_ProductFilter;
 
+    int filterValue;
+    int filterSUM;
 
+    int productID;
 
     int zeroTracking;
     int weightStartPulse;
@@ -103,11 +106,9 @@ private:
     int productReleasePulse;
     int meanSample;
 
-    int filterValue;
-    int filterSUM;
 
 signals:
-    void receivedWeight(int);
+    //void receivedWeight(int);
     void sendFilteredWeight(int);
     void sendDebugData(int);
 

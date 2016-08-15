@@ -30,7 +30,7 @@ MainWindow::MainWindow(QWidget *parent) :
     // ZERO Filtering:
 
         // FIXME:This next line should be deleted when this part has been implemented inside of the scale class.
-        connect(scale, SIGNAL(receivedWeight(int)),         scale, SLOT(modelZeroWeight(int)));
+        //connect(scale, SIGNAL(receivedWeight(int)),         scale, SLOT(modelZeroWeight(int)));
         connect(dio,   SIGNAL(conveyorSignal()),            scale, SLOT(conveyorBeltCounter()));
         connect(dio,   SIGNAL(productSignal()),             scale, SLOT(productSignalCounter()));
 

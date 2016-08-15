@@ -213,6 +213,18 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
 
     if (zeroTracking == zt_CollectDiscreteWeightSamples) {
 
+        // ///////////////////////////////////////////////////////////////////////////////////////////////////
+        // Next in, in this statemachine:
+        // ///////////////////////////////
+        // If periodpulse -> read data to 2 rounds in a row, remember to mark where new period start always
+        // ///////////////////////////////
+        // To prevent data sample loss, we should collect about 2 rounds after each period pulse
+        // This prevents data loss at the end of each period where metal detection is biased by 2-4 samples
+        // If metalsensor misses out a round, we just ignore that round and catch up when next metalpulse shows up.
+        // ///////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
         if ((numberOfBeltRoundsZero > -1) && (numberOfBeltRoundsZero < NUMBER_OF_BELTROUNDS)) {
             // Assign weight value from scale in initializing matrix
             if (sampleCounter < SAMPLES_PER_BELTROUND) {
@@ -488,13 +500,15 @@ void MyScale::run() {
             if(weightGROSSorNET[0] == grossDisplay)
             {
                 sign = pow((-1),(statusRegisterBinaryReturnValue[7]));
-                emit receivedWeight(sign*data[2]);
+                //emit receivedWeight(sign*data[2]);
+                modelZeroWeight(sign*data[2]);
                 //qDebug() << " WeightGross: " <<  sign*data[2];
             }
             else if(weightGROSSorNET[0] == netDisplay)
             {
                 sign = pow((-1),(statusRegisterBinaryReturnValue[8]));
-                emit receivedWeight(sign*data[4]);
+                //emit receivedWeight(sign*data[4]);
+                modelZeroWeight(sign*data[4]);
                 //qDebug() << " WeightNetto: " << sign*data[4];
             }
         }
