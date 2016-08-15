@@ -42,7 +42,7 @@ MyScale::MyScale(QObject *parent) :
     numberOfBeltRoundsZero = -4;
 
     zt_InitializeZeroVectors = 1;
-    zt_CollectDiscreteWeightSamples = 2;
+    zt_CollectInitialZeroWeightSamples = 2;
     zt_CalculateMedianOfZeroPath = 3;
     zt_ReturnResultsToFile = 4;
     zt_RunningFilter = 5;
@@ -211,7 +211,7 @@ void MyScale::productSignalCounter()
 void MyScale::modelZeroWeight(int weightValueFromScale) {
 
 
-    if (zeroTracking == zt_CollectDiscreteWeightSamples) {
+    if (zeroTracking == zt_CollectInitialZeroWeightSamples) {
 
         // ///////////////////////////////////////////////////////////////////////////////////////////////////
         // Next in, in this statemachine:
@@ -243,6 +243,19 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
             zeroTracking = zt_CalculateMedianOfZeroPath;
         }
     }
+
+
+//    if (zeroTracking == zt_UpdateZeroWeightSamples) {
+
+    // /////////////////////////////////////////////////////////////////////
+    // In this state we update oldest zeroweight sample with a new sample.
+    // /////////////////////////////////////////////////////////////////////
+
+
+
+
+//    }
+
 
 
     if (zeroTracking == zt_CalculateMedianOfZeroPath) {
@@ -481,7 +494,7 @@ void MyScale::run() {
         }
         pulseCounter = 0.0;
 
-        zeroTracking = zt_CollectDiscreteWeightSamples;
+        zeroTracking = zt_CollectInitialZeroWeightSamples;
     }
 
 

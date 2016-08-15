@@ -89,7 +89,7 @@ private:
     int numberOfBeltRoundsZero;
 
     int zt_InitializeZeroVectors;
-    int zt_CollectDiscreteWeightSamples;
+    int zt_CollectInitialZeroWeightSamples;
     int zt_CalculateMedianOfZeroPath;
     int zt_ReturnResultsToFile;
     int zt_RunningFilter;
