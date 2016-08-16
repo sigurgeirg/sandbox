@@ -66,6 +66,7 @@ private:
     bool enteringProduct;
 
     long sampleCounter;
+    long lastSampleCounter;
     long lastRound;
 
     double pulseCounter;

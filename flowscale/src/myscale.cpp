@@ -26,6 +26,7 @@ MyScale::MyScale(QObject *parent) :
     enteringProduct = false;
 
     sampleCounter = 0;
+    lastSampleCounter = 0;
     lastRound = 0;
 
     pulseCounter = 0.0;
@@ -189,6 +190,7 @@ void MyScale::netWeight() {
 
 void MyScale::conveyorBeltCounter()
 {
+    lastSampleCounter = sampleCounter;
     sampleCounter = 0;
     numberOfBeltRoundsZero++;
 }
@@ -213,29 +215,25 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
 
     if (zeroTracking == zt_CollectInitialZeroWeightSamples) {
 
-        // ///////////////////////////////////////////////////////////////////////////////////////////////////
-        // Next in, in this statemachine:
-        // ///////////////////////////////
-        // If periodpulse -> read data to 2 rounds in a row, remember to mark where new period start always
-        // ///////////////////////////////
-        // To prevent data sample loss, we should collect about 2 rounds after each period pulse
-        // This prevents data loss at the end of each period where metal detection is biased by 2-4 samples
-        // If metalsensor misses out a round, we just ignore that round and catch up when next metalpulse shows up.
-        // ///////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
         if ((numberOfBeltRoundsZero > -1) && (numberOfBeltRoundsZero < NUMBER_OF_BELTROUNDS)) {
             // Assign weight value from scale in initializing matrix
             if (sampleCounter < SAMPLES_PER_BELTROUND) {
 
                 zeroUnfilteredArray[numberOfBeltRoundsZero][sampleCounter] = weightValueFromScale;
 
+                // FIXME: This is an attempt to add sample in current beltRound to the back of last beltRound
+                // purpose is to eliminate zeros where beltRounds are not equal in length -> DOES THIS WORK ??? TEST !!!
+                if (numberOfBeltRoundsZero > 0) {
+                    zeroUnfilteredArray[numberOfBeltRoundsZero-1][lastSampleCounter+sampleCounter+1] = weightValueFromScale;
+                }
+
                 pulseCounter++;
             }
         }
 
         if (numberOfBeltRoundsZero >= NUMBER_OF_BELTROUNDS) {
+
+            lastSampleCounter = 0;
 
             pulsesPerBeltRound = pulseCounter / NUMBER_OF_BELTROUNDS;
             pulseResolution = lengthOfEachBeltPeriod / pulsesPerBeltRound;
@@ -357,16 +355,6 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
     }
 */
 
-
-//      If product arrives:
-//        count down distance (tick - sampleCounter) where window starts,
-//        where it ends
-//        and where product is delivered
-//        estimate from tick resolution and translate to cm
-//      Filter only the window of measurement:
-//          leave out rest when calculating
-//          do some running filter on this one
-//          return ... emit best fit weight value to whatever component needs to forward it.
 
 
     if (zeroTracking == zt_ProductFilter){
