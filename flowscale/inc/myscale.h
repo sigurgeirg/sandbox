@@ -85,6 +85,7 @@ private:
     int zeroColumn[NUMBER_OF_BELTROUNDS];
     int runningFilter[FILTER_DELAY];
     int productIDcounter[NUMBER_OF_PRODUCT_IDS];
+    int pulseCounterInEachRow[12];  //henda þessu þegar þetta hefur verið notað og sannprófað
 
     int filterCounter;
     int numberOfBeltRoundsZero;
@@ -109,7 +110,7 @@ private:
 
 
 signals:
-    //void receivedWeight(int);
+    void receivedWeight(int);
     void sendFilteredWeight(int);
     void sendDebugData(int);
 

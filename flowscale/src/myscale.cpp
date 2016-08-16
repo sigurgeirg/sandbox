@@ -191,6 +191,10 @@ void MyScale::netWeight() {
 void MyScale::conveyorBeltCounter()
 {
     lastSampleCounter = sampleCounter;
+    if (numberOfBeltRoundsZero < 12) {
+        pulseCounterInEachRow[numberOfBeltRoundsZero] = lastSampleCounter;
+    }
+
     sampleCounter = 0;
     numberOfBeltRoundsZero++;
 }
@@ -201,7 +205,7 @@ void MyScale::productSignalCounter()
     enteringProduct = true;
     productCounter++;
     productID++;
-    if (productID == NUMBER_OF_PRODUCT_IDS) {
+    if (productID >= NUMBER_OF_PRODUCT_IDS) {
         productID = 0;
     }
 
@@ -212,7 +216,6 @@ void MyScale::productSignalCounter()
 
 void MyScale::modelZeroWeight(int weightValueFromScale) {
 
-
     if (zeroTracking == zt_CollectInitialZeroWeightSamples) {
 
         if ((numberOfBeltRoundsZero > -1) && (numberOfBeltRoundsZero < NUMBER_OF_BELTROUNDS)) {
@@ -222,9 +225,11 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
                 zeroUnfilteredArray[numberOfBeltRoundsZero][sampleCounter] = weightValueFromScale;
 
                 // FIXME: This is an attempt to add sample in current beltRound to the back of last beltRound
-                // purpose is to eliminate zeros where beltRounds are not equal in length -> DOES THIS WORK ??? TEST !!!
+                // purpose is to eliminate zeros where beltRounds are not equal in length
+                // DOES THIS WORK ???
+                // TEST !!!
                 if (numberOfBeltRoundsZero > 0) {
-                    zeroUnfilteredArray[numberOfBeltRoundsZero-1][lastSampleCounter+sampleCounter+1] = weightValueFromScale;
+                    zeroUnfilteredArray[numberOfBeltRoundsZero-1][lastSampleCounter+sampleCounter] = weightValueFromScale;
                 }
 
                 pulseCounter++;
@@ -249,8 +254,14 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
     // In this state we update oldest zeroweight sample with a new sample.
     // /////////////////////////////////////////////////////////////////////
 
+    // current beltRoundCounter ...
 
+    // count from zero up to less than 1000
+    // this could be collected in zeroTracking == zt_productFilter
+    // and returned to this place when ready, that is when one period AND no product sensor triggered,
+    // and injected upon request, then returned back to zt_productFilter
 
+    // increment beltRoundCounter++
 
 //    }
 
@@ -324,6 +335,11 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
             filezero << "Pulses per beltround: " << pulsesPerBeltRound << "" << std::endl;
             filezero << std::endl;
             filezero << "Resolution of each pulse: " << pulseResolution << " mm " << std::endl;
+            filezero << std::endl;
+            for (int i=0; i<12; i++) {
+                filezero << "PulseCounterInZeroRow number " << i << ": " << pulseCounterInEachRow[i] << "" << std::endl;
+            }
+
         }
         filezero.close();
 
@@ -360,6 +376,11 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
     if (zeroTracking == zt_ProductFilter){
 
 
+        // FIXME: Ef enginn productFilter triggeraður, þá má hlaða inn í zeroWeight vector
+        // eins og í "zt_CollectInitialZeroWeightSamples" svo það sé hægt að uppfæra hann sem oftast ...
+
+
+
         // increment all elements in productIDcounter that are >= 0
         for (int _productNbr = 0; _productNbr < NUMBER_OF_PRODUCT_IDS; _productNbr++) {
             if (productIDcounter[_productNbr] >= 0) {
@@ -375,7 +396,7 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
                     productIDweights[_productNbr][productIDcounter[_productNbr]-weightStartPulse] = weightValueFromScale-zeroArray[sampleCounter];
                 }
 
-                // Emit modeled weight
+                // Emit modelled weight
                 if (productIDcounter[_productNbr] == weightEndPulse){
                     meanSample = 0;
                     for (int _sample = 0; _sample < weightEndPulse-weightStartPulse; _sample++){
@@ -501,15 +522,15 @@ void MyScale::run() {
             if(weightGROSSorNET[0] == grossDisplay)
             {
                 sign = pow((-1),(statusRegisterBinaryReturnValue[7]));
-                //emit receivedWeight(sign*data[2]);
                 modelZeroWeight(sign*data[2]);
+                emit receivedWeight(sign*data[2]);
                 //qDebug() << " WeightGross: " <<  sign*data[2];
             }
             else if(weightGROSSorNET[0] == netDisplay)
             {
                 sign = pow((-1),(statusRegisterBinaryReturnValue[8]));
-                //emit receivedWeight(sign*data[4]);
                 modelZeroWeight(sign*data[4]);
+                emit receivedWeight(sign*data[4]);
                 //qDebug() << " WeightNetto: " << sign*data[4];
             }
         }
