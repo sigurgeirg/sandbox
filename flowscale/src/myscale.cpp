@@ -224,14 +224,9 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
 
                 zeroUnfilteredArray[numberOfBeltRoundsZero][sampleCounter] = weightValueFromScale;
 
-                // FIXME: This is an attempt to add sample in current beltRound to the back of last beltRound
-                // purpose is to eliminate zeros where beltRounds are not equal in length
-                // DOES THIS WORK ???
-                // TEST !!!
                 if (numberOfBeltRoundsZero > 0) {
                     zeroUnfilteredArray[numberOfBeltRoundsZero-1][lastSampleCounter+sampleCounter] = weightValueFromScale;
                 }
-
                 pulseCounter++;
             }
         }
@@ -432,41 +427,12 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
             }
         }
 
-
-
-
-
-
-
-
-
-//        if (newProductAtSensor == true) {
-//            //
-//            // start counting down pulses from here
-//            // distance depends on ticks and resolution
-//            // be able to keep track of up to 5 simultaneous products
-//            // put info onto each product, such as IDnr, BathcNr,
-//            // weight, stddev or variance, length, destination gate, ...
-//            //
-//            sampleCounter++;
-//        }
-
-
-//        if (productCounter > pulseResolution)
-
-
-
-
-
-//            emit sendFilteredWeight(filterValue);
-//    }
-
-
+        //            // be able to keep track of up to 5 simultaneous products
+        //            // put info onto each product, such as IDnr, BathcNr,
+        //            // weight, stddev or variance, length, destination gate, ...
 
 
     }
-
-
 
     sampleCounter++;
 }
@@ -511,11 +477,6 @@ void MyScale::run() {
     {
         if(writeToLoadcell != true)
         {
-            // /////////////////////////////////////////////////////////////////////////////////////////////
-            // FIXME: Here we can set condition to only read from loadcell and emit the data forward
-            // Only at zero-modelling as initialization process or when requested and when product sensor
-            // indicates that the scale is about to be loaded.
-            // /////////////////////////////////////////////////////////////////////////////////////////////
             modbus_read_registers(ctx, readFromRegister, 5, data);
             statusRegisterBinaryReturnValue = statusRegisterBinary(data);
 
