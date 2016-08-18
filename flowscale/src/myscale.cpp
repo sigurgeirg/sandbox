@@ -24,9 +24,11 @@ MyScale::MyScale(QObject *parent) :
 
     // from zerofilter
     enteringProduct = false;
+    requestZeroUpdate = false;
 
     sampleCounter = 0;
     lastSampleCounter = 0;
+    updateZeroWeightCounter = 0;
     lastRound = 0;
 
     pulseCounter = 0.0;
@@ -43,11 +45,12 @@ MyScale::MyScale(QObject *parent) :
     numberOfBeltRoundsZero = -4;
 
     zt_InitializeZeroVectors = 1;
-    zt_CollectInitialZeroWeightSamples = 2;
-    zt_CalculateMedianOfZeroPath = 3;
-    zt_ReturnResultsToFile = 4;
-    zt_RunningFilter = 5;
-    zt_ProductFilter = 6;
+    zt_UpdateZeroWeightSamples = 2;
+    zt_CollectInitialZeroWeightSamples = 3;
+    zt_CalculateMedianOfZeroPath = 4;
+    zt_ReturnResultsToFile = 5;
+    zt_RunningFilter = 6;
+    zt_ProductFilter = 7;
 
     zeroTracking = zt_InitializeZeroVectors;
 
@@ -56,6 +59,9 @@ MyScale::MyScale(QObject *parent) :
 
     productID = -1;
 
+    nextZeroUpdatePosition = 0;
+    numberOfElementsOnScaleArea = 0;
+
 }
 
 
@@ -63,6 +69,16 @@ MyScale::~MyScale()
 {
     delete statusRegisterBinaryTempValue;
     delete statusRegisterBinaryReturnValue;
+}
+
+
+bool MyScale::between(int less, int value, int greater) {
+
+    if ((value >= less) && (value < greater)) {
+        return true;
+    } else {
+        return false;
+    }
 }
 
 
@@ -205,12 +221,12 @@ void MyScale::productSignalCounter()
     enteringProduct = true;
     productCounter++;
     productID++;
-    if (productID >= NUMBER_OF_PRODUCT_IDS) {
+    if (productID >= NUMBER_OF_ELEMENTS_IN_LIST) {
         productID = 0;
     }
 
 
-    productIDcounter[productID] = 0;
+    productTrackerOverScale[productID] = 0;
 
 }
 
@@ -234,6 +250,7 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
         if (numberOfBeltRoundsZero >= NUMBER_OF_BELTROUNDS) {
 
             lastSampleCounter = 0;
+            nextZeroUpdatePosition = 0;
 
             pulsesPerBeltRound = pulseCounter / NUMBER_OF_BELTROUNDS;
             pulseResolution = lengthOfEachBeltPeriod / pulsesPerBeltRound;
@@ -243,22 +260,22 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
     }
 
 
-//    if (zeroTracking == zt_UpdateZeroWeightSamples) {
 
     // /////////////////////////////////////////////////////////////////////
-    // In this state we update oldest zeroweight sample with a new sample.
+    // In this state we update oldest zeroWeight sample with a new sample.
     // /////////////////////////////////////////////////////////////////////
+    if (zeroTracking == zt_UpdateZeroWeightSamples) {
 
-    // current beltRoundCounter ...
+        zeroUnfilteredArray[nextZeroUpdatePosition][sampleCounter] = updateZeroArray[sampleCounter];
 
-    // count from zero up to less than 1000
-    // this could be collected in zeroTracking == zt_productFilter
-    // and returned to this place when ready, that is when one period AND no product sensor triggered,
-    // and injected upon request, then returned back to zt_productFilter
+        if (nextZeroUpdatePosition >= NUMBER_OF_BELTROUNDS) {
+            nextZeroUpdatePosition = 0;
+        } else {
+            nextZeroUpdatePosition++;
+        }
 
-    // increment beltRoundCounter++
-
-//    }
+        zeroTracking = zt_CalculateMedianOfZeroPath;
+    }
 
 
 
@@ -370,43 +387,72 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
 
     if (zeroTracking == zt_ProductFilter){
 
+        // /////////////////////////////////////////////////////////////////////
+        // FIXME: for every XX rounds .. 20, 50, ..
+        // Implement activation some good place "requestZero = true"... count to 5 and then update ... proof of concept :)
+        // /////////////////////////////////////////////////////////////////////
 
-        // FIXME: Ef enginn productFilter triggeraður, þá má hlaða inn í zeroWeight vector
-        // eins og í "zt_CollectInitialZeroWeightSamples" svo það sé hægt að uppfæra hann sem oftast ...
+        if (requestZeroUpdate == true) {
+
+            if (numberOfElementsOnScaleArea == 0) {
+                updateZeroWeightCounter++;
+
+                // If simultaneous tempCount reaches one round + 5% for uncertainty (approx)
+                if (updateZeroWeightCounter >= (pulsesPerBeltRound*1.05)) {
+
+                    updateZeroArray[sampleCounter] = weightValueFromScale;
+                    zeroTracking = zt_UpdateZeroWeightSamples;
+                    requestZeroUpdate = false;
+                }
+            } else {
+                // we will have to try again for one whole round ..
+                updateZeroWeightCounter = 0;
+            }
+        }
+
+        // /////////////////////////////////////////////////////////////////////
 
 
 
-        // increment all elements in productIDcounter that are >= 0
-        for (int _productNbr = 0; _productNbr < NUMBER_OF_PRODUCT_IDS; _productNbr++) {
-            if (productIDcounter[_productNbr] >= 0) {
-                productIDcounter[_productNbr]++;
 
+        // Track elements from product sensor (>=0) and over weighing area on program-scantime resolution +1
 
+        for (int _elementId = 0; _elementId < NUMBER_OF_ELEMENTS_IN_LIST; _elementId++) {
+            if (productTrackerOverScale[_elementId] >= 0) {
+                productTrackerOverScale[_elementId]++;
+                numberOfElementsOnScaleArea++;
 
-                //check where the product is at
+                // Track active weight on scale AREA and give each position weight
+                if (between(weightStartPulse, productTrackerOverScale[_elementId], weightEndPulse)) {
 
-                // Weighing mode
-                if ((productIDcounter[_productNbr] >= weightStartPulse) &&
-                        (productIDcounter[_productNbr] < weightEndPulse)){
-                    productIDweights[_productNbr][productIDcounter[_productNbr]-weightStartPulse] = weightValueFromScale-zeroArray[sampleCounter];
+                    productIDweights[_elementId][productTrackerOverScale[_elementId]-weightStartPulse] = weightValueFromScale-zeroArray[sampleCounter];
                 }
 
-                // Emit modelled weight
-                if (productIDcounter[_productNbr] == weightEndPulse){
+                // At "weiging" endpoint calculate mean value and emit modeled weight
+                if (productTrackerOverScale[_elementId] == weightEndPulse){
+                    numberOfElementsOnScaleArea--;
                     meanSample = 0;
+
                     for (int _sample = 0; _sample < weightEndPulse-weightStartPulse; _sample++){
-                        meanSample += productIDweights[_productNbr][_sample];
+                        meanSample += productIDweights[_elementId][_sample];
                     }
-                    meanSample = meanSample/(weightEndPulse-weightStartPulse);
+
+                    meanSample = meanSample / (weightEndPulse-weightStartPulse);
+
                     emit sendFilteredWeight(meanSample);
-                    emit sendDebugData(productIDcounter[_productNbr]);
+                    emit sendDebugData(productTrackerOverScale[_elementId]);
 
                 }
 
-                // release weight
-                // STILL LEFT => assign product ID and save product information
-                if (productIDcounter[_productNbr] > productReleasePulse){
-                    productIDcounter[_productNbr] = -1;
+
+                // At delivery point release product information to next module
+                // FIXME: assign product ID and save product information
+                //            // Later:
+                //            // put info onto each product, such as IDnr, BathcNr,
+                //            // weight, stddev or variance, length, destination gate, ..
+
+                if (productTrackerOverScale[_elementId] > productReleasePulse){
+                    productTrackerOverScale[_elementId] = -1;
 
                     filezero.open("zeroweight.csv", std::ofstream::out | std::ofstream::app); // trunc changed to app, trunc clears the file while app appends it
 
@@ -414,24 +460,18 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
                         filezero << meanSample << ",";
 
                         for (int _samples = 0; _samples < weightEndPulse-weightStartPulse; _samples++) {
-                            filezero << productIDweights[_productNbr][_samples] << ",";
+                            filezero << productIDweights[_elementId][_samples] << ",";
                         }
                         filezero << std::endl;
                     }
                     filezero.close();
-                    emit sendDebugData(_productNbr);
-                    productIDcounter[_productNbr] = -1;
+                    emit sendDebugData(_elementId);
+                    productTrackerOverScale[_elementId] = -1;
                 }
 
 
             }
         }
-
-        //            // be able to keep track of up to 5 simultaneous products
-        //            // put info onto each product, such as IDnr, BathcNr,
-        //            // weight, stddev or variance, length, destination gate, ...
-
-
     }
 
     sampleCounter++;
@@ -449,13 +489,14 @@ void MyScale::run() {
                 zeroUnfilteredArray[_rounds][_samples] = 0;
             }
         }
-        for (int _rounds = 0; _rounds < NUMBER_OF_PRODUCT_IDS; _rounds++) {
+        for (int _rounds = 0; _rounds < NUMBER_OF_ELEMENTS_IN_LIST; _rounds++) {
             for (int _samples = 0; _samples < SAMPLES_PER_BELTROUND; _samples++) {
                 productIDweights[_rounds][_samples] = 0;
             }
         }
         for (int _samples = 0; _samples < SAMPLES_PER_BELTROUND; _samples++) {
             zeroArray[_samples] = 0;
+            updateZeroArray[_samples] = 0;
         }
         for (int _rounds = 0; _rounds < NUMBER_OF_BELTROUNDS; _rounds++) {
             zeroColumn[_rounds] = 0;
@@ -464,8 +505,8 @@ void MyScale::run() {
         for (int _samples = 0; _samples < FILTER_DELAY; _samples++) {
             runningFilter[_samples] = 0;
         }
-        for (int _samples = 0; _samples < NUMBER_OF_PRODUCT_IDS; _samples++) {
-            productIDcounter[_samples] = -1;
+        for (int _samples = 0; _samples < NUMBER_OF_ELEMENTS_IN_LIST; _samples++) {
+            productTrackerOverScale[_samples] = -1;
         }
         pulseCounter = 0.0;
 

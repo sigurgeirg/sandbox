@@ -14,7 +14,7 @@
 #define SAMPLES_PER_BELTROUND 1000
 #define NUMBER_OF_BELTROUNDS 10
 #define FILTER_DELAY 10
-#define NUMBER_OF_PRODUCT_IDS 5
+#define NUMBER_OF_ELEMENTS_IN_LIST 5
 #define PRODUCT_WEIGHING_START_DISTANCE 330 // FIX ME
 #define PRODUCT_WEIGHING_STOP_DISTANCE 666 // FIX ME
 #define PRODUCT_RELEASE 1400 // FIX ME
@@ -26,6 +26,7 @@ public:
     explicit MyScale(QObject *parent = 0);
     ~MyScale();
 
+    bool between(int less, int value, int greater);
     void connectToSlaveDevice();
     void disconnectFromSlaveDevice();
     void toggleWriteToLoadcell(bool checked);
@@ -64,9 +65,11 @@ private:
 
     // from zerofilter
     bool enteringProduct;
+    bool requestZeroUpdate;
 
     long sampleCounter;
     long lastSampleCounter;
+    long updateZeroWeightCounter;
     long lastRound;
 
     double pulseCounter;
@@ -80,17 +83,19 @@ private:
 
     double dSorted[NUMBER_OF_BELTROUNDS];
     int zeroUnfilteredArray[NUMBER_OF_BELTROUNDS][SAMPLES_PER_BELTROUND];
-    int productIDweights[NUMBER_OF_PRODUCT_IDS][SAMPLES_PER_BELTROUND];
+    int productIDweights[NUMBER_OF_ELEMENTS_IN_LIST][SAMPLES_PER_BELTROUND];
     int zeroArray[SAMPLES_PER_BELTROUND];
+    int updateZeroArray[SAMPLES_PER_BELTROUND];
     int zeroColumn[NUMBER_OF_BELTROUNDS];
     int runningFilter[FILTER_DELAY];
-    int productIDcounter[NUMBER_OF_PRODUCT_IDS];
+    int productTrackerOverScale[NUMBER_OF_ELEMENTS_IN_LIST];
     int pulseCounterInEachRow[12];  //henda þessu þegar þetta hefur verið notað og sannprófað
 
     int filterCounter;
     int numberOfBeltRoundsZero;
 
     int zt_InitializeZeroVectors;
+    int zt_UpdateZeroWeightSamples;
     int zt_CollectInitialZeroWeightSamples;
     int zt_CalculateMedianOfZeroPath;
     int zt_ReturnResultsToFile;
@@ -102,10 +107,12 @@ private:
 
     int productID;
 
+    int nextZeroUpdatePosition;
     int zeroTracking;
     int weightStartPulse;
     int weightEndPulse;
     int productReleasePulse;
+    int numberOfElementsOnScaleArea;
     int meanSample;
 
 
