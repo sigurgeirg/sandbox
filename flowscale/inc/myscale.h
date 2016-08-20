@@ -93,6 +93,7 @@ private:
 
     int filterCounter;
     int numberOfBeltRoundsZero;
+    int countFewBeltRounds;
 
     int zt_InitializeZeroVectors;
     int zt_UpdateZeroWeightSamples;

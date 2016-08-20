@@ -43,6 +43,7 @@ MyScale::MyScale(QObject *parent) :
 
     filterCounter = 0;
     numberOfBeltRoundsZero = -4;
+    countFewBeltRounds = 0;
 
     zt_InitializeZeroVectors = 1;
     zt_UpdateZeroWeightSamples = 2;
@@ -213,6 +214,15 @@ void MyScale::conveyorBeltCounter()
 
     sampleCounter = 0;
     numberOfBeltRoundsZero++;
+
+    if (zeroTracking == zt_ProductFilter) {
+
+        if (countFewBeltRounds > 5) {
+
+            requestZeroUpdate = true;
+        }
+        countFewBeltRounds++;
+    }
 }
 
 
@@ -225,9 +235,7 @@ void MyScale::productSignalCounter()
         productID = 0;
     }
 
-
     productTrackerOverScale[productID] = 0;
-
 }
 
 void MyScale::modelZeroWeight(int weightValueFromScale) {
@@ -274,6 +282,7 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
             nextZeroUpdatePosition++;
         }
 
+        countFewBeltRounds = 0;
         zeroTracking = zt_CalculateMedianOfZeroPath;
     }
 
@@ -392,17 +401,24 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
         // Implement activation some good place "requestZero = true"... count to 5 and then update ... proof of concept :)
         // /////////////////////////////////////////////////////////////////////
 
+
+
         if (requestZeroUpdate == true) {
 
             if (numberOfElementsOnScaleArea == 0) {
+
                 updateZeroWeightCounter++;
 
                 // If simultaneous tempCount reaches one round + 5% for uncertainty (approx)
-                if (updateZeroWeightCounter >= (pulsesPerBeltRound*1.05)) {
+                if (updateZeroWeightCounter >= 10) { //(pulsesPerBeltRound*1.05)) {
+
+                    qDebug() << "newRoundOfZeroElements";
 
                     updateZeroArray[sampleCounter] = weightValueFromScale;
-                    zeroTracking = zt_UpdateZeroWeightSamples;
                     requestZeroUpdate = false;
+                    zeroTracking = zt_UpdateZeroWeightSamples;
+
+
                 }
             } else {
                 // we will have to try again for one whole round ..
@@ -420,7 +436,7 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
         for (int _elementId = 0; _elementId < NUMBER_OF_ELEMENTS_IN_LIST; _elementId++) {
             if (productTrackerOverScale[_elementId] >= 0) {
                 productTrackerOverScale[_elementId]++;
-                numberOfElementsOnScaleArea++;
+
 
                 // Track active weight on scale AREA and give each position weight
                 if (between(weightStartPulse, productTrackerOverScale[_elementId], weightEndPulse)) {
@@ -428,10 +444,16 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
                     productIDweights[_elementId][productTrackerOverScale[_elementId]-weightStartPulse] = weightValueFromScale-zeroArray[sampleCounter];
                 }
 
+                if (productTrackerOverScale[_elementId] == weightStartPulse){
+
+                    numberOfElementsOnScaleArea++;
+                }
+
                 // At "weiging" endpoint calculate mean value and emit modeled weight
                 if (productTrackerOverScale[_elementId] == weightEndPulse){
-                    numberOfElementsOnScaleArea--;
                     meanSample = 0;
+
+                    numberOfElementsOnScaleArea--;
 
                     for (int _sample = 0; _sample < weightEndPulse-weightStartPulse; _sample++){
                         meanSample += productIDweights[_elementId][_sample];
