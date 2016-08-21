@@ -275,7 +275,7 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
     // /////////////////////////////////////////////////////////////////////
     if (zeroTracking == zt_UpdateZeroWeightSamples) {
 
-        for (int i = 0; i < 300; i ++) {
+        for (int i = 0; i <= pulsesPerBeltRound; i ++) {
             zeroUnfilteredArray[nextZeroUpdatePosition][i] = updateZeroArray[i];
         }
 
@@ -328,7 +328,6 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
 
         weightStartPulse = (int)((double)(PRODUCT_WEIGHING_START_DISTANCE)/pulseResolution + 0.5);
         weightEndPulse = (int)((double)(PRODUCT_WEIGHING_STOP_DISTANCE)/pulseResolution + 0.5);
-        weightEndOfPlatform = (int)((double)(PRODUCT_END_OF_PLATFORM_DISTANCE)/pulseResolution + 0.5);
         productReleasePulse = (int)((double)(PRODUCT_RELEASE)/pulseResolution + 0.5);
 
         zeroTracking = zt_ReturnResultsToFile;
@@ -364,7 +363,7 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
             filezero << std::endl;
             filezero << "Resolution of each pulse: " << pulseResolution << " mm " << std::endl;
             filezero << std::endl;
-            for (int i=0; i<12; i++) {
+            for (int i = 0; i < NUMBER_OF_BELTROUNDS; i++) {
                 filezero << "PulseCounterInZeroRow number " << i << ": " << pulseCounterInEachRow[i] << "" << std::endl;
             }
 
@@ -440,7 +439,7 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
             if (productTrackerOverScale[_elementId] >= 0) {
                 productTrackerOverScale[_elementId]++;
 
-                // At product sensor
+                // At weighing startpoint on scale platform
                 if (productTrackerOverScale[_elementId] == weightStartPulse) {
 
                     elementOnScaleArea[_elementId] = true;
@@ -454,7 +453,7 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
                 }
 
 
-                // At "weiging" endpoint calculate mean value and emit modeled weight
+                // At weiging endpoint on scale platform calculate mean value and emit modeled weight
                 if (productTrackerOverScale[_elementId] == weightEndPulse) {
                     meanSample = 0;
 
@@ -468,8 +467,8 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
                     emit sendDebugData(productTrackerOverScale[_elementId]);
                 }
 
-                // Behind end of scale platform
-                if (productTrackerOverScale[_elementId] ==  weightEndOfPlatform) {
+                // Last product is leaving the main platform, at delivery point, when we can consider to update the ZERO weight again.
+                if (productTrackerOverScale[_elementId] ==  productReleasePulse) {
 
                     elementOnScaleArea[_elementId] = false;
                 }

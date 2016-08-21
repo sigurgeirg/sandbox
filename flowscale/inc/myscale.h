@@ -15,10 +15,9 @@
 #define NUMBER_OF_BELTROUNDS 10
 #define FILTER_DELAY 10
 #define NUMBER_OF_ELEMENTS_IN_LIST 5
-#define PRODUCT_WEIGHING_START_DISTANCE 330 // FIX ME
-#define PRODUCT_WEIGHING_STOP_DISTANCE 666 // FIX ME
-#define PRODUCT_END_OF_PLATFORM_DISTANCE 900 // FIX ME
-#define PRODUCT_RELEASE 1400 // FIX ME
+#define PRODUCT_WEIGHING_START_DISTANCE 430 // FIXME: was 330
+#define PRODUCT_WEIGHING_STOP_DISTANCE 770 // FIXME: was 666
+#define PRODUCT_RELEASE 1400 // FIXME
 
 class MyScale : public QThread
 {
@@ -91,7 +90,7 @@ private:
     int zeroColumn[NUMBER_OF_BELTROUNDS];
     int runningFilter[FILTER_DELAY];
     int productTrackerOverScale[NUMBER_OF_ELEMENTS_IN_LIST];
-    int pulseCounterInEachRow[12];  //henda þessu þegar þetta hefur verið notað og sannprófað
+    int pulseCounterInEachRow[NUMBER_OF_BELTROUNDS];  //henda þessu þegar þetta hefur verið notað og sannprófað
 
     int filterCounter;
     int numberOfBeltRoundsZero;
@@ -114,7 +113,6 @@ private:
     int zeroTracking;
     int weightStartPulse;
     int weightEndPulse;
-    int weightEndOfPlatform;
     int productReleasePulse;
     int meanSample;
 
