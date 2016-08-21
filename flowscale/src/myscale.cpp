@@ -28,7 +28,7 @@ MyScale::MyScale(QObject *parent) :
 
     sampleCounter = 0;
     lastSampleCounter = 0;
-    updateZeroWeightCounter = 0;
+    updateSampleCounter = 0;
     lastRound = 0;
 
     pulseCounter = 0.0;
@@ -61,8 +61,6 @@ MyScale::MyScale(QObject *parent) :
     productID = -1;
 
     nextZeroUpdatePosition = 0;
-    numberOfElementsOnScaleArea = 0;
-
 }
 
 
@@ -207,22 +205,24 @@ void MyScale::netWeight() {
 
 void MyScale::conveyorBeltCounter()
 {
-    lastSampleCounter = sampleCounter;
-    if (numberOfBeltRoundsZero < 12) {
-        pulseCounterInEachRow[numberOfBeltRoundsZero] = lastSampleCounter;
+    if (zeroTracking == zt_CollectInitialZeroWeightSamples) {
+        lastSampleCounter = sampleCounter;
+        if (numberOfBeltRoundsZero < 12) {
+            pulseCounterInEachRow[numberOfBeltRoundsZero] = lastSampleCounter;
+        }
+        numberOfBeltRoundsZero++;
     }
-
-    sampleCounter = 0;
-    numberOfBeltRoundsZero++;
 
     if (zeroTracking == zt_ProductFilter) {
 
-        if (countFewBeltRounds > 5) {
+        if (countFewBeltRounds > 3) {
 
             requestZeroUpdate = true;
         }
         countFewBeltRounds++;
     }
+
+    sampleCounter = 0;
 }
 
 
@@ -248,7 +248,7 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
 
                 zeroUnfilteredArray[numberOfBeltRoundsZero][sampleCounter] = weightValueFromScale;
 
-                if (numberOfBeltRoundsZero > 0) {
+                if ((numberOfBeltRoundsZero > 0) && (lastSampleCounter+sampleCounter < SAMPLES_PER_BELTROUND)) {
                     zeroUnfilteredArray[numberOfBeltRoundsZero-1][lastSampleCounter+sampleCounter] = weightValueFromScale;
                 }
                 pulseCounter++;
@@ -259,6 +259,7 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
 
             lastSampleCounter = 0;
             nextZeroUpdatePosition = 0;
+            numberOfBeltRoundsZero = -1;
 
             pulsesPerBeltRound = pulseCounter / NUMBER_OF_BELTROUNDS;
             pulseResolution = lengthOfEachBeltPeriod / pulsesPerBeltRound;
@@ -274,7 +275,9 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
     // /////////////////////////////////////////////////////////////////////
     if (zeroTracking == zt_UpdateZeroWeightSamples) {
 
-        zeroUnfilteredArray[nextZeroUpdatePosition][sampleCounter] = updateZeroArray[sampleCounter];
+        for (int i = 0; i < 300; i ++) {
+            zeroUnfilteredArray[nextZeroUpdatePosition][i] = updateZeroArray[i];
+        }
 
         if (nextZeroUpdatePosition >= NUMBER_OF_BELTROUNDS) {
             nextZeroUpdatePosition = 0;
@@ -283,6 +286,7 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
         }
 
         countFewBeltRounds = 0;
+        updateSampleCounter = 0;
         zeroTracking = zt_CalculateMedianOfZeroPath;
     }
 
@@ -324,6 +328,7 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
 
         weightStartPulse = (int)((double)(PRODUCT_WEIGHING_START_DISTANCE)/pulseResolution + 0.5);
         weightEndPulse = (int)((double)(PRODUCT_WEIGHING_STOP_DISTANCE)/pulseResolution + 0.5);
+        weightEndOfPlatform = (int)((double)(PRODUCT_END_OF_PLATFORM_DISTANCE)/pulseResolution + 0.5);
         productReleasePulse = (int)((double)(PRODUCT_RELEASE)/pulseResolution + 0.5);
 
         zeroTracking = zt_ReturnResultsToFile;
@@ -332,11 +337,13 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
 
     if (zeroTracking == zt_ReturnResultsToFile) {
 
-        filezero.open("zeroweight.csv", std::ofstream::out | std::ofstream::trunc); // trunc changed to app, trunc clears the file while app appends it
+        //filezero.open("zeroweight.csv", std::ofstream::out | std::ofstream::trunc); // trunc changed to app, trunc clears the file while app appends it
+        filezero.open("zeroweight.csv", std::ofstream::out | std::ofstream::app); // trunc changed to app, trunc clears the file while app appends it
 
         if (filezero.is_open()) {
 
             for (int _rounds = 0; _rounds < NUMBER_OF_BELTROUNDS; _rounds++) {
+
                 for (int _samples = 0; _samples < SAMPLES_PER_BELTROUND; _samples++) {
                     filezero << zeroUnfilteredArray[_rounds][_samples] << ",";
                 }
@@ -401,29 +408,25 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
         // Implement activation some good place "requestZero = true"... count to 5 and then update ... proof of concept :)
         // /////////////////////////////////////////////////////////////////////
 
+        if ((elementOnScaleArea[0] == false) && (elementOnScaleArea[1] == false) &&
+            (elementOnScaleArea[2] == false) && (elementOnScaleArea[3] == false) &&
+            (elementOnScaleArea[4] == false)) {
 
-
-        if (requestZeroUpdate == true) {
-
-            if (numberOfElementsOnScaleArea == 0) {
-
-                updateZeroWeightCounter++;
-
-                // If simultaneous tempCount reaches one round + 5% for uncertainty (approx)
-                if (updateZeroWeightCounter >= 10) { //(pulsesPerBeltRound*1.05)) {
-
-                    qDebug() << "newRoundOfZeroElements";
-
-                    updateZeroArray[sampleCounter] = weightValueFromScale;
-                    requestZeroUpdate = false;
-                    zeroTracking = zt_UpdateZeroWeightSamples;
-
-
-                }
-            } else {
-                // we will have to try again for one whole round ..
-                updateZeroWeightCounter = 0;
+            if (requestZeroUpdate == true) {
+                updateZeroArray[updateSampleCounter] = weightValueFromScale;
+                updateSampleCounter++;
             }
+
+            if (updateSampleCounter >= (pulsesPerBeltRound*1.05)) {
+
+                zeroTracking = zt_UpdateZeroWeightSamples;
+                requestZeroUpdate = false;
+                updateSampleCounter = 0;
+                qDebug() << "newRoundOfZeroElements";
+            }
+        } else {            // we will have to try again for one whole round ..
+
+            updateSampleCounter = 0;
         }
 
         // /////////////////////////////////////////////////////////////////////
@@ -437,6 +440,12 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
             if (productTrackerOverScale[_elementId] >= 0) {
                 productTrackerOverScale[_elementId]++;
 
+                // At product sensor
+                if (productTrackerOverScale[_elementId] == weightStartPulse) {
+
+                    elementOnScaleArea[_elementId] = true;
+                }
+
 
                 // Track active weight on scale AREA and give each position weight
                 if (between(weightStartPulse, productTrackerOverScale[_elementId], weightEndPulse)) {
@@ -444,18 +453,12 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
                     productIDweights[_elementId][productTrackerOverScale[_elementId]-weightStartPulse] = weightValueFromScale-zeroArray[sampleCounter];
                 }
 
-                if (productTrackerOverScale[_elementId] == weightStartPulse){
-
-                    numberOfElementsOnScaleArea++;
-                }
 
                 // At "weiging" endpoint calculate mean value and emit modeled weight
-                if (productTrackerOverScale[_elementId] == weightEndPulse){
+                if (productTrackerOverScale[_elementId] == weightEndPulse) {
                     meanSample = 0;
 
-                    numberOfElementsOnScaleArea--;
-
-                    for (int _sample = 0; _sample < weightEndPulse-weightStartPulse; _sample++){
+                    for (int _sample = 0; _sample < weightEndPulse-weightStartPulse; _sample++) {
                         meanSample += productIDweights[_elementId][_sample];
                     }
 
@@ -463,8 +466,14 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
 
                     emit sendFilteredWeight(meanSample);
                     emit sendDebugData(productTrackerOverScale[_elementId]);
-
                 }
+
+                // Behind end of scale platform
+                if (productTrackerOverScale[_elementId] ==  weightEndOfPlatform) {
+
+                    elementOnScaleArea[_elementId] = false;
+                }
+
 
 
                 // At delivery point release product information to next module
@@ -473,7 +482,7 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
                 //            // put info onto each product, such as IDnr, BathcNr,
                 //            // weight, stddev or variance, length, destination gate, ..
 
-                if (productTrackerOverScale[_elementId] > productReleasePulse){
+                if (productTrackerOverScale[_elementId] > productReleasePulse) {
                     productTrackerOverScale[_elementId] = -1;
 
                     filezero.open("zeroweight.csv", std::ofstream::out | std::ofstream::app); // trunc changed to app, trunc clears the file while app appends it

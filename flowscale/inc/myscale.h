@@ -17,6 +17,7 @@
 #define NUMBER_OF_ELEMENTS_IN_LIST 5
 #define PRODUCT_WEIGHING_START_DISTANCE 330 // FIX ME
 #define PRODUCT_WEIGHING_STOP_DISTANCE 666 // FIX ME
+#define PRODUCT_END_OF_PLATFORM_DISTANCE 900 // FIX ME
 #define PRODUCT_RELEASE 1400 // FIX ME
 
 class MyScale : public QThread
@@ -69,7 +70,7 @@ private:
 
     long sampleCounter;
     long lastSampleCounter;
-    long updateZeroWeightCounter;
+    long updateSampleCounter;
     long lastRound;
 
     double pulseCounter;
@@ -82,6 +83,7 @@ private:
     double dMedian;
 
     double dSorted[NUMBER_OF_BELTROUNDS];
+    bool elementOnScaleArea[NUMBER_OF_ELEMENTS_IN_LIST];
     int zeroUnfilteredArray[NUMBER_OF_BELTROUNDS][SAMPLES_PER_BELTROUND];
     int productIDweights[NUMBER_OF_ELEMENTS_IN_LIST][SAMPLES_PER_BELTROUND];
     int zeroArray[SAMPLES_PER_BELTROUND];
@@ -112,8 +114,8 @@ private:
     int zeroTracking;
     int weightStartPulse;
     int weightEndPulse;
+    int weightEndOfPlatform;
     int productReleasePulse;
-    int numberOfElementsOnScaleArea;
     int meanSample;
 
 
