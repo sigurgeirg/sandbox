@@ -215,11 +215,14 @@ void MyScale::conveyorBeltCounter()
 
     if (zeroTracking == zt_ProductFilter) {
 
-        if (countFewBeltRounds > 3) {
+        if (requestZeroUpdate == false) {
+            if (countFewBeltRounds > 3) {
 
-            requestZeroUpdate = true;
+                requestZeroUpdate = true;
+                // Here we can emit information to display that running ZERO tracking update has been requested
+            }
+            countFewBeltRounds++;
         }
-        countFewBeltRounds++;
     }
 
     sampleCounter = 0;
@@ -287,6 +290,7 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
 
         countFewBeltRounds = 0;
         updateSampleCounter = 0;
+        requestZeroUpdate = false;
         zeroTracking = zt_CalculateMedianOfZeroPath;
     }
 
@@ -326,6 +330,7 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
 
         }
 
+        productEntryPulse = (int)((double)(PRODUCT_ENTRY)/pulseResolution + 0.5);
         weightStartPulse = (int)((double)(PRODUCT_WEIGHING_START_DISTANCE)/pulseResolution + 0.5);
         weightEndPulse = (int)((double)(PRODUCT_WEIGHING_STOP_DISTANCE)/pulseResolution + 0.5);
         productReleasePulse = (int)((double)(PRODUCT_RELEASE)/pulseResolution + 0.5);
@@ -402,35 +407,26 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
 
     if (zeroTracking == zt_ProductFilter){
 
-        // /////////////////////////////////////////////////////////////////////
-        // FIXME: for every XX rounds .. 20, 50, ..
-        // Implement activation some good place "requestZero = true"... count to 5 and then update ... proof of concept :)
-        // /////////////////////////////////////////////////////////////////////
+        if (requestZeroUpdate == true) {
 
-        if ((elementOnScaleArea[0] == false) && (elementOnScaleArea[1] == false) &&
-            (elementOnScaleArea[2] == false) && (elementOnScaleArea[3] == false) &&
-            (elementOnScaleArea[4] == false)) {
+            if (enteringProduct == false) {
 
-            if (requestZeroUpdate == true) {
-                updateZeroArray[updateSampleCounter] = weightValueFromScale;
+                updateZeroArray[sampleCounter] = weightValueFromScale;
                 updateSampleCounter++;
+                // Here we can emit information to display that running ZERO tracking update is being attempted
+
+            } else {
+
+                updateSampleCounter = 0;
             }
 
             if (updateSampleCounter >= (pulsesPerBeltRound*1.05)) {
 
                 zeroTracking = zt_UpdateZeroWeightSamples;
-                requestZeroUpdate = false;
-                updateSampleCounter = 0;
-                qDebug() << "newRoundOfZeroElements";
+                qDebug() << "Update ZeroWeight Samples";
+                // Here we can emit information to display that running ZERO tracking update has been performed
             }
-        } else {            // we will have to try again for one whole round ..
-
-            updateSampleCounter = 0;
         }
-
-        // /////////////////////////////////////////////////////////////////////
-
-
 
 
         // Track elements from product sensor (>=0) and over weighing area on program-scantime resolution +1
@@ -438,12 +434,6 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
         for (int _elementId = 0; _elementId < NUMBER_OF_ELEMENTS_IN_LIST; _elementId++) {
             if (productTrackerOverScale[_elementId] >= 0) {
                 productTrackerOverScale[_elementId]++;
-
-                // At weighing startpoint on scale platform
-                if (productTrackerOverScale[_elementId] == weightStartPulse) {
-
-                    elementOnScaleArea[_elementId] = true;
-                }
 
 
                 // Track active weight on scale AREA and give each position weight
@@ -467,10 +457,11 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
                     emit sendDebugData(productTrackerOverScale[_elementId]);
                 }
 
+
                 // Last product is leaving the main platform, at delivery point, when we can consider to update the ZERO weight again.
                 if (productTrackerOverScale[_elementId] ==  productReleasePulse) {
 
-                    elementOnScaleArea[_elementId] = false;
+                    enteringProduct = false;
                 }
 
 

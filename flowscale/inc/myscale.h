@@ -15,6 +15,7 @@
 #define NUMBER_OF_BELTROUNDS 10
 #define FILTER_DELAY 10
 #define NUMBER_OF_ELEMENTS_IN_LIST 5
+#define PRODUCT_ENTRY 1 //start of conveyor
 #define PRODUCT_WEIGHING_START_DISTANCE 430 // FIXME: was 330
 #define PRODUCT_WEIGHING_STOP_DISTANCE 770 // FIXME: was 666
 #define PRODUCT_RELEASE 1400 // FIXME
@@ -111,6 +112,7 @@ private:
 
     int nextZeroUpdatePosition;
     int zeroTracking;
+    int productEntryPulse;
     int weightStartPulse;
     int weightEndPulse;
     int productReleasePulse;
