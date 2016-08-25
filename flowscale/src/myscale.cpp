@@ -24,6 +24,8 @@ MyScale::MyScale(QObject *parent) :
 
     // from zerofilter
     enteringProduct = false;
+    requestBeltRoundPulse = false;
+    beltRoundPulse = false;
     requestZeroUpdate = false;
 
     sampleCounter = 0;
@@ -31,7 +33,7 @@ MyScale::MyScale(QObject *parent) :
     updateSampleCounter = 0;
     lastRound = 0;
 
-    pulseCounter = 0.0;
+    pulseCounterInAllRows = 0.0;
     productCounter = 0.0;
     pulsesPerBeltRound = 0.0;
     pulseResolution = 0.0;
@@ -44,6 +46,8 @@ MyScale::MyScale(QObject *parent) :
     filterCounter = 0;
     numberOfBeltRoundsZero = -4;
     countFewBeltRounds = 0;
+    pulseCounterInAllRows = 0;
+    medianZeroSample = 0;
 
     zt_InitializeZeroVectors = 1;
     zt_UpdateZeroWeightSamples = 2;
@@ -207,8 +211,14 @@ void MyScale::conveyorBeltCounter()
 {
     if (zeroTracking == zt_CollectInitialZeroWeightSamples) {
         lastSampleCounter = sampleCounter;
+
+        if (requestBeltRoundPulse == true) {
+            beltRoundPulse = true;
+        }
+
         if (numberOfBeltRoundsZero < 12) {
-            pulseCounterInEachRow[numberOfBeltRoundsZero] = lastSampleCounter;
+
+                pulseCounterInEachRow[numberOfBeltRoundsZero] = lastSampleCounter;
         }
         numberOfBeltRoundsZero++;
     }
@@ -245,29 +255,81 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
 
     if (zeroTracking == zt_CollectInitialZeroWeightSamples) {
 
-        if ((numberOfBeltRoundsZero > -1) && (numberOfBeltRoundsZero < NUMBER_OF_BELTROUNDS)) {
-            // Assign weight value from scale in initializing matrix
-            if (sampleCounter < SAMPLES_PER_BELTROUND) {
+        // FIXME: This guard (condition) ensures that the first round starts same time as the first beltRoundPulse
+        requestBeltRoundPulse = true;
 
-                zeroUnfilteredArray[numberOfBeltRoundsZero][sampleCounter] = weightValueFromScale;
+        if (beltRoundPulse == true) {
 
-                if ((numberOfBeltRoundsZero > 0) && (lastSampleCounter+sampleCounter < SAMPLES_PER_BELTROUND)) {
-                    zeroUnfilteredArray[numberOfBeltRoundsZero-1][lastSampleCounter+sampleCounter] = weightValueFromScale;
+            if ((numberOfBeltRoundsZero > -1) && (numberOfBeltRoundsZero < NUMBER_OF_BELTROUNDS)) {
+                // Assign weight value from scale in initializing matrix
+                if (sampleCounter < SAMPLES_PER_BELTROUND) {
+
+                    zeroUnfilteredArray[numberOfBeltRoundsZero][sampleCounter] = weightValueFromScale;
+
+                    if ((numberOfBeltRoundsZero > 0) && (lastSampleCounter+sampleCounter < SAMPLES_PER_BELTROUND)) {
+                        zeroUnfilteredArray[numberOfBeltRoundsZero-1][lastSampleCounter+sampleCounter] = weightValueFromScale;
+                    }
                 }
-                pulseCounter++;
             }
-        }
 
-        if (numberOfBeltRoundsZero >= NUMBER_OF_BELTROUNDS) {
 
-            lastSampleCounter = 0;
-            nextZeroUpdatePosition = 0;
-            numberOfBeltRoundsZero = -1;
+            if (numberOfBeltRoundsZero >= NUMBER_OF_BELTROUNDS) {
 
-            pulsesPerBeltRound = pulseCounter / NUMBER_OF_BELTROUNDS;
-            pulseResolution = lengthOfEachBeltPeriod / pulsesPerBeltRound;
+                // /////////////////////////////////////////////////////////////////////
+                // Median of number of samples per BeltRound
+                // /////////////////////////////////////////////////////////////////////
 
-            zeroTracking = zt_CalculateMedianOfZeroPath;
+                for (int _rounds = 0; _rounds < NUMBER_OF_BELTROUNDS; _rounds++) {
+                    dSorted[_rounds] = (double)pulseCounterInEachRow[_rounds];
+                }
+
+                // Sort numerical values in array by size for further processing
+                for (int _round = (NUMBER_OF_BELTROUNDS - 1); _round > 0; --_round) {
+                    for (int _sample = 0; _sample < _round; ++_sample) {
+                        if (dSorted[_sample] > dSorted[_sample+1]) {
+                            double dTemp = dSorted[_sample];
+                            dSorted[_sample] = dSorted[_sample+1];
+                            dSorted[_sample+1] = dTemp;
+                        }
+                    }
+                }
+
+                // Median values returned from a sorted array.
+                if ((NUMBER_OF_BELTROUNDS % 2) == 0) {
+                    dMedian = (dSorted[NUMBER_OF_BELTROUNDS/2] + dSorted[(NUMBER_OF_BELTROUNDS/2) - 1])/2.0;
+                } else {
+                    dMedian = dSorted[NUMBER_OF_BELTROUNDS/2];
+                }
+
+                dMedian = dMedian + 0.5;                    // rounding by adding half and then cutting out the comma value
+                medianZeroSample = (int)(dMedian);  // when casting the double to int value
+
+                // /////////////////////////////////////////////////////////////////////
+                // If beltRounds are more than 5% from median value, use the median value instead.
+                // /////////////////////////////////////////////////////////////////////
+
+                for (int _round = 0; _round < NUMBER_OF_BELTROUNDS; _round++) {
+
+                     if (( fabs((double)pulseCounterInEachRow[_round] - (double)medianZeroSample) / (double)medianZeroSample ) >= 0.05) {
+
+                        pulseCounterInEachRow[_round] = medianZeroSample;
+                    }
+
+                    pulseCounterInAllRows += pulseCounterInEachRow[_round];
+                }
+
+
+                lastSampleCounter = 0;
+                nextZeroUpdatePosition = 0;
+                numberOfBeltRoundsZero = -1;
+                requestBeltRoundPulse = false;
+                beltRoundPulse = false;
+
+                pulsesPerBeltRound = pulseCounterInAllRows / NUMBER_OF_BELTROUNDS;
+                pulseResolution = lengthOfEachBeltPeriod / pulsesPerBeltRound;
+
+                zeroTracking = zt_CalculateMedianOfZeroPath;
+            }
         }
     }
 
@@ -298,11 +360,13 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
 
     if (zeroTracking == zt_CalculateMedianOfZeroPath) {
 
+        // /////////////////////////////////////////////////////////////////////
+        // Median of ZERO weight values over entire beltlength
+        // /////////////////////////////////////////////////////////////////////
+
         for (int _sampleColumn = 0; _sampleColumn < SAMPLES_PER_BELTROUND; _sampleColumn++) {
 
             for (int _rounds = 0; _rounds < NUMBER_OF_BELTROUNDS; _rounds++) {
-
-                // This line: make new 1D array[] from only single column from zeroUnfilteredArray
                 dSorted[_rounds] = (double)zeroUnfilteredArray[_rounds][_sampleColumn];
             }
 
@@ -317,7 +381,6 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
                 }
             }
 
-
             // Median values returned from a sorted array.
             if ((NUMBER_OF_BELTROUNDS % 2) == 0) {
                 dMedian = (dSorted[NUMBER_OF_BELTROUNDS/2] + dSorted[(NUMBER_OF_BELTROUNDS/2) - 1])/2.0;
@@ -327,8 +390,9 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
 
             dMedian = dMedian + 0.5;                    // rounding by adding half and then cutting out the comma value
             zeroArray[_sampleColumn] = (int)(dMedian);  // when casting the double to int value
-
         }
+
+        // /////////////////////////////////////////////////////////////////////
 
         productEntryPulse = (int)((double)(PRODUCT_ENTRY)/pulseResolution + 0.5);
         weightStartPulse = (int)((double)(PRODUCT_WEIGHING_START_DISTANCE)/pulseResolution + 0.5);
@@ -362,7 +426,7 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
             }
 
             filezero << std::endl;
-            filezero << "Total pulses: " << pulseCounter << "" << std::endl;
+            filezero << "Total pulses: " << pulseCounterInAllRows << "" << std::endl;
             filezero << std::endl;
             filezero << "Pulses per beltround: " << pulsesPerBeltRound << "" << std::endl;
             filezero << std::endl;
@@ -445,15 +509,15 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
 
                 // At weiging endpoint on scale platform calculate mean value and emit modeled weight
                 if (productTrackerOverScale[_elementId] == weightEndPulse) {
-                    meanSample = 0;
+                    meanWeightSamples = 0;
 
                     for (int _sample = 0; _sample < weightEndPulse-weightStartPulse; _sample++) {
-                        meanSample += productIDweights[_elementId][_sample];
+                        meanWeightSamples += productIDweights[_elementId][_sample];
                     }
 
-                    meanSample = meanSample / (weightEndPulse-weightStartPulse);
+                    meanWeightSamples = meanWeightSamples / (weightEndPulse-weightStartPulse);
 
-                    emit sendFilteredWeight(meanSample);
+                    emit sendFilteredWeight(meanWeightSamples);
                     emit sendDebugData(productTrackerOverScale[_elementId]);
                 }
 
@@ -478,7 +542,7 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
                     filezero.open("zeroweight.csv", std::ofstream::out | std::ofstream::app); // trunc changed to app, trunc clears the file while app appends it
 
                     if (filezero.is_open()) {
-                        filezero << meanSample << ",";
+                        filezero << meanWeightSamples << ",";
 
                         for (int _samples = 0; _samples < weightEndPulse-weightStartPulse; _samples++) {
                             filezero << productIDweights[_elementId][_samples] << ",";
@@ -529,7 +593,7 @@ void MyScale::run() {
         for (int _samples = 0; _samples < NUMBER_OF_ELEMENTS_IN_LIST; _samples++) {
             productTrackerOverScale[_samples] = -1;
         }
-        pulseCounter = 0.0;
+        pulseCounterInAllRows = 0.0;
 
         zeroTracking = zt_CollectInitialZeroWeightSamples;
     }

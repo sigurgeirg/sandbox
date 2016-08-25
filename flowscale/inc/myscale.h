@@ -7,6 +7,7 @@
 #include <inttypes.h>
 #include <iostream>
 #include <math.h>
+#include <cmath>
 #include <QDebug>
 #include <fstream>
 
@@ -66,6 +67,8 @@ private:
 
     // from zerofilter
     bool enteringProduct;
+    bool requestBeltRoundPulse;
+    bool beltRoundPulse;
     bool requestZeroUpdate;
 
     long sampleCounter;
@@ -73,7 +76,7 @@ private:
     long updateSampleCounter;
     long lastRound;
 
-    double pulseCounter;
+    double pulseCounterInAllRows;
     double productCounter;
     double pulsesPerBeltRound;
     double pulseResolution;
@@ -116,7 +119,8 @@ private:
     int weightStartPulse;
     int weightEndPulse;
     int productReleasePulse;
-    int meanSample;
+    int medianZeroSample;
+    int meanWeightSamples;
 
 
 signals:
