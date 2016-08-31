@@ -9,7 +9,7 @@ unsigned char MyDio::delayLeftUp[] 		= {0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0};
 unsigned char MyDio::delayLeftDown[] 	= {0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0};
 unsigned char MyDio::falling[] 			= {0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0};
 unsigned char MyDio::rising[] 			= {0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0};
-unsigned char MyDio::inverted[] 		= {0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0};
+unsigned char MyDio::inverted[] 		= {1,1,1,1, 1,1,1,1, 1,1,1,1, 1,1,1,1};
 unsigned char MyDio::tickOrTime[] 		= {0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0};
 
 
@@ -45,7 +45,8 @@ MyDio::MyDio(QObject *parent) :
     trigger = false;
     tacho = false;
     conveyor = false;
-    product = false;
+    productEnteringSensor = false;
+    productLeavingSensor = false;
     //*/
 
     address	= 0;
@@ -204,7 +205,7 @@ void MyDio::run() {
 
         // Here we assume that input[0] is one pulse per round periodic sensor of conveyor belt
         if (rising[0] == 1) {
-            qDebug() << "Input 1:" << 1 << " is rising!";
+            qDebug() << "BeltPeriod Pulse";
             tickBeltProfile = 0;
             conveyor = true;
         }
@@ -212,20 +213,26 @@ void MyDio::run() {
         // FIXME: This input is not used currently, we use tick on program scantime, insted of tacho or encoder signal...
         // Here we assume that input[1] is tacho pulse listener input, many pulses per belt period.
         if (rising[1] == 1) {
-            qDebug() << "Input 2:" << 2 << " is rising!";
+            // qDebug() << "Input 2:" << 2 << " is rising!";
             tickBeltProfile++;
             tacho = true;
         }
 
-        // Here we assume that input[2] is available input signal
+        // Here we assume that input[2] is the product sensor and this is the rising event
         if (rising[2] == 1) {
-            qDebug() << "Input 3:" << 3 << " is rising!";
-            product = true;
+            qDebug() << "Product Entering";
+            productEnteringSensor = true;
+        }
+
+        // Here we assume that input[2] is the product sensor and this is the rising event
+        if (falling[2] == 1) {
+            // qDebug() << "Input 3:" << 3 << " is falling!";
+            productLeavingSensor = true;
         }
 
         // Here we assume that input[3] is available input signal
         if (rising[3] == 1) {
-            qDebug() << "Input 4:" << 4 << " is rising!";
+            // qDebug() << "Input 4:" << 4 << " is rising!";
         }
 
         if (conveyor == true) {
@@ -238,11 +245,15 @@ void MyDio::run() {
             tacho = false;
         }
 
-        if (product == true) {
-            emit productSignal();
-            product = false;
+        if (productEnteringSensor == true) {
+            emit enteringProductSensorSignal();
+            productEnteringSensor = false;
         }
 
+        if (productLeavingSensor == true) {
+            emit leavingProductSensorSignal();
+            productLeavingSensor = false;
+        }
 
 
 //		gettimeofday(&tim, NULL);

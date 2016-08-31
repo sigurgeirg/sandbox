@@ -40,7 +40,8 @@ private:
     bool trigger;
     bool tacho;
     bool conveyor;
-    bool product;
+    bool productEnteringSensor;
+    bool productLeavingSensor;
 
     unsigned long tickBeltProfile;
     unsigned long beltRounds;
@@ -56,7 +57,8 @@ signals:
     void inputValue(unsigned long);
     void conveyorSignal();
     void tachoSignal(unsigned long);
-    void productSignal();
+    void enteringProductSensorSignal();
+    void leavingProductSensorSignal();
 
 
 public slots:

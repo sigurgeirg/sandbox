@@ -30,9 +30,10 @@ MainWindow::MainWindow(QWidget *parent) :
     // ZERO Filtering:
 
         // FIXME:This next line should be deleted when this part has been implemented inside of the scale class.
-        //connect(scale, SIGNAL(receivedWeight(int)),         scale, SLOT(modelZeroWeight(int)));
-        connect(dio,   SIGNAL(conveyorSignal()),            scale, SLOT(conveyorBeltCounter()));
-        connect(dio,   SIGNAL(productSignal()),             scale, SLOT(productSignalCounter()));
+        //connect(scale, SIGNAL(receivedWeight(int)),           scale, SLOT(modelZeroWeight(int)));
+        connect(dio,   SIGNAL(conveyorSignal()),                scale, SLOT(conveyorBeltSignal()));
+        connect(dio,   SIGNAL(enteringProductSensorSignal()),   scale, SLOT(enteringProductSensorSignal()));
+        connect(dio,   SIGNAL(leavingProductSensorSignal()),    scale, SLOT(leavingProductSensorSignal()));
 
         connect(scale, SIGNAL(sendFilteredWeight(int)),     this,  SLOT(displayFilteredWeight(int)));
         connect(scale, SIGNAL(sendDebugData(int)),     this,  SLOT(displayDebugData(int)));
@@ -72,7 +73,7 @@ MainWindow::~MainWindow()
     delete numberOfBeltRounds;
 }
 
-void MainWindow::conveyorBeltCounter()
+void MainWindow::conveyorBeltSignal()
 {
     // FIXME: This has to be redifined wrt types *int = bool --- change or remote
     //*numberOfBeltRounds = beltRoundCounter;

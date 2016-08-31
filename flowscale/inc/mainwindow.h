@@ -76,7 +76,7 @@ private slots:
     // /////////////////////////
 
 public slots:
-    void conveyorBeltCounter();
+    void conveyorBeltSignal();
     void recordWeight(int);
     void displayReceivedWeight(int);
     void displayFilteredWeight(int);

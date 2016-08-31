@@ -21,6 +21,7 @@
 #define PRODUCT_WEIGHING_STOP_DISTANCE 770 // FIXME: was 666
 #define PRODUCT_RELEASE 1400 // FIXME
 
+
 class MyScale : public QThread
 {
     Q_OBJECT
@@ -41,6 +42,22 @@ public:
     void run();
     int *statusRegisterBinary(uint16_t number[]);
     std::ofstream filezero;
+
+    struct productData {
+
+        int tempId[NUMBER_OF_ELEMENTS_IN_LIST];
+        int serialId[NUMBER_OF_ELEMENTS_IN_LIST];
+        int batchId[NUMBER_OF_ELEMENTS_IN_LIST];
+        int productId[NUMBER_OF_ELEMENTS_IN_LIST];
+        int productType[NUMBER_OF_ELEMENTS_IN_LIST];
+        int productSensorEntryPosition[NUMBER_OF_ELEMENTS_IN_LIST];
+        int productSensorExitPosition[NUMBER_OF_ELEMENTS_IN_LIST];
+        int productLength[NUMBER_OF_ELEMENTS_IN_LIST];
+        int productWeight[NUMBER_OF_ELEMENTS_IN_LIST];
+        int productStdDev[NUMBER_OF_ELEMENTS_IN_LIST];
+        int productLengthCounter[NUMBER_OF_ELEMENTS_IN_LIST];
+        int destinationGate[NUMBER_OF_ELEMENTS_IN_LIST];
+    } proData;
 
 private:
     int *statusRegisterBinaryTempValue;
@@ -93,7 +110,7 @@ private:
     int updateZeroArray[SAMPLES_PER_BELTROUND];
     int zeroColumn[NUMBER_OF_BELTROUNDS];
     int runningFilter[FILTER_DELAY];
-    int productTrackerOverScale[NUMBER_OF_ELEMENTS_IN_LIST];
+    int productTempId[NUMBER_OF_ELEMENTS_IN_LIST];
     int pulseCounterInEachRow[NUMBER_OF_BELTROUNDS];  //henda þessu þegar þetta hefur verið notað og sannprófað
 
     int filterCounter;
@@ -129,8 +146,9 @@ signals:
     void sendDebugData(int);
 
 public slots:
-    void conveyorBeltCounter();
-    void productSignalCounter();
+    void conveyorBeltSignal();
+    void enteringProductSensorSignal();
+    void leavingProductSensorSignal();
     void modelZeroWeight(int);
     
 };

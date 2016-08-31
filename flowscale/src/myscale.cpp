@@ -1,6 +1,9 @@
 #include "../inc/myscale.h"
 
 
+
+
+
 MyScale::MyScale(QObject *parent) :
     QThread(parent)
 {
@@ -23,6 +26,7 @@ MyScale::MyScale(QObject *parent) :
 
 
     // from zerofilter
+
     enteringProduct = false;
     requestBeltRoundPulse = false;
     beltRoundPulse = false;
@@ -65,6 +69,7 @@ MyScale::MyScale(QObject *parent) :
     productID = -1;
 
     nextZeroUpdatePosition = 0;
+
 }
 
 
@@ -207,7 +212,7 @@ void MyScale::netWeight() {
 }
 
 
-void MyScale::conveyorBeltCounter()
+void MyScale::conveyorBeltSignal()
 {
     if (zeroTracking == zt_CollectInitialZeroWeightSamples) {
         lastSampleCounter = sampleCounter;
@@ -238,8 +243,12 @@ void MyScale::conveyorBeltCounter()
     sampleCounter = 0;
 }
 
+// ///////////////////////////////////////////////////////////////////////////////////////
+// FIXME: Mark product with Unique ID at product sensor,
+// let product sensor measure length of product.
+// ///////////////////////////////////////////////////////////////////////////////////////
 
-void MyScale::productSignalCounter()
+void MyScale::enteringProductSensorSignal()
 {
     enteringProduct = true;
     productCounter++;
@@ -248,8 +257,30 @@ void MyScale::productSignalCounter()
         productID = 0;
     }
 
-    productTrackerOverScale[productID] = 0;
+    productTempId[productID] = 0;
+
+    // //////////////////////////////////////////////////////////
+    // FIXME: Data that follows product from scale to grader - find better location later
+    // //////////////////////////////////////////////////////////
+    proData.tempId[productID] = 0;
+    proData.serialId[productID] = productCounter;
+    proData.batchId[productID] = 100;
+    proData.productId[productID] = 0;
+    proData.productType[productID] = 0;
+    proData.productSensorEntryPosition[productID] = 0;
+    proData.productLength[productID] = 0;
+    proData.productWeight[productID] = 0;
+    proData.productLengthCounter[productID] = 0;
+    proData.destinationGate[productID] = 0;
+    // //////////////////////////////////////////////////////////
 }
+
+
+void MyScale::leavingProductSensorSignal() {
+
+    proData.productLength[productID] = proData.productLengthCounter[productID] * pulseResolution;
+}
+
 
 void MyScale::modelZeroWeight(int weightValueFromScale) {
 
@@ -496,19 +527,30 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
         // Track elements from product sensor (>=0) and over weighing area on program-scantime resolution +1
 
         for (int _elementId = 0; _elementId < NUMBER_OF_ELEMENTS_IN_LIST; _elementId++) {
-            if (productTrackerOverScale[_elementId] >= 0) {
-                productTrackerOverScale[_elementId]++;
+            if (productTempId[_elementId] >= 0) {
+                productTempId[_elementId]++;
+
+                if (productTempId[_elementId] == productEntryPulse) {
+
+                    proData.productLengthCounter[productID] = PRODUCT_ENTRY;
+                }
+
+                if (between(productEntryPulse, productTempId[_elementId], weightEndPulse)) {
+
+                    proData.productLengthCounter[productID]++;
+                }
+
 
 
                 // Track active weight on scale AREA and give each position weight
-                if (between(weightStartPulse, productTrackerOverScale[_elementId], weightEndPulse)) {
+                if (between(weightStartPulse, productTempId[_elementId], weightEndPulse)) {
 
-                    productIDweights[_elementId][productTrackerOverScale[_elementId]-weightStartPulse] = weightValueFromScale-zeroArray[sampleCounter];
+                    productIDweights[_elementId][productTempId[_elementId]-weightStartPulse] = weightValueFromScale-zeroArray[sampleCounter];
                 }
 
 
                 // At weiging endpoint on scale platform calculate mean value and emit modeled weight
-                if (productTrackerOverScale[_elementId] == weightEndPulse) {
+                if (productTempId[_elementId] == weightEndPulse) {
                     meanWeightSamples = 0;
 
                     for (int _sample = 0; _sample < weightEndPulse-weightStartPulse; _sample++) {
@@ -517,13 +559,22 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
 
                     meanWeightSamples = meanWeightSamples / (weightEndPulse-weightStartPulse);
 
+                    proData.productWeight[_elementId] = meanWeightSamples;
+
+                    qDebug() << "_elementId: " << _elementId
+                             << " - Serial: " << proData.serialId[_elementId] << " - Batch: " << proData.batchId[_elementId]
+                             << " - Weight: " << proData.productWeight[_elementId] << " - Length: " << proData.productLength[_elementId];
+
+
                     emit sendFilteredWeight(meanWeightSamples);
-                    emit sendDebugData(productTrackerOverScale[_elementId]);
+                    emit sendDebugData(productTempId[_elementId]);
+
+                    proData.productLengthCounter[productID] = 0;
                 }
 
 
-                // Last product is leaving the main platform, at delivery point, when we can consider to update the ZERO weight again.
-                if (productTrackerOverScale[_elementId] ==  productReleasePulse) {
+                // Product is leaving the main platform, at delivery point, then we can consider to update the ZERO weight again.
+                if (productTempId[_elementId] ==  productReleasePulse) {
 
                     enteringProduct = false;
                 }
@@ -536,8 +587,7 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
                 //            // put info onto each product, such as IDnr, BathcNr,
                 //            // weight, stddev or variance, length, destination gate, ..
 
-                if (productTrackerOverScale[_elementId] > productReleasePulse) {
-                    productTrackerOverScale[_elementId] = -1;
+                if (productTempId[_elementId] > productReleasePulse) {
 
                     filezero.open("zeroweight.csv", std::ofstream::out | std::ofstream::app); // trunc changed to app, trunc clears the file while app appends it
 
@@ -551,7 +601,7 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
                     }
                     filezero.close();
                     emit sendDebugData(_elementId);
-                    productTrackerOverScale[_elementId] = -1;
+                    productTempId[_elementId] = -1;
                 }
 
 
@@ -591,7 +641,7 @@ void MyScale::run() {
             runningFilter[_samples] = 0;
         }
         for (int _samples = 0; _samples < NUMBER_OF_ELEMENTS_IN_LIST; _samples++) {
-            productTrackerOverScale[_samples] = -1;
+            productTempId[_samples] = -1;
         }
         pulseCounterInAllRows = 0.0;
 
