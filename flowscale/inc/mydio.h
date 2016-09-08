@@ -1,6 +1,7 @@
 #ifndef MYDIO_H
 #define MYDIO_H
 
+#include "constants.h"
 #include <dio.h>
 #include <iostream>
 #include <QThread>
@@ -8,7 +9,6 @@
 #include <ctime>
 #include <sys/time.h>
 
-#define NUMBER_OF_USED_INPUTS 16	// Number of Used    Digital Inputs in: MODE_DIRECT
 
 class MyDio : public QThread
 {
@@ -24,16 +24,16 @@ public:
 
     Dio io;
 
-    static unsigned long lastValue[NUMBER_OF_USED_INPUTS];
-    static unsigned long newValue[NUMBER_OF_USED_INPUTS];
-    static unsigned long value[NUMBER_OF_USED_INPUTS];
-    static unsigned char delay[NUMBER_OF_USED_INPUTS];
-    static unsigned char delayLeftUp[NUMBER_OF_USED_INPUTS];
-    static unsigned char delayLeftDown[NUMBER_OF_USED_INPUTS];
-    static unsigned char falling[NUMBER_OF_USED_INPUTS];
-    static unsigned char rising[NUMBER_OF_USED_INPUTS];
-    static unsigned char inverted[NUMBER_OF_USED_INPUTS];
-    static unsigned char tickOrTime[NUMBER_OF_USED_INPUTS];
+    static unsigned long lastValue[numberOfUsedDigitalInputs];
+    static unsigned long newValue[numberOfUsedDigitalInputs];
+    static unsigned long value[numberOfUsedDigitalInputs];
+    static unsigned char delay[numberOfUsedDigitalInputs];
+    static unsigned char delayLeftUp[numberOfUsedDigitalInputs];
+    static unsigned char delayLeftDown[numberOfUsedDigitalInputs];
+    static unsigned char falling[numberOfUsedDigitalInputs];
+    static unsigned char rising[numberOfUsedDigitalInputs];
+    static unsigned char inverted[numberOfUsedDigitalInputs];
+    static unsigned char tickOrTime[numberOfUsedDigitalInputs];
 
 private:
 

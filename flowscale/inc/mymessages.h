@@ -1,7 +1,7 @@
 #ifndef MYMESSAGES_H
 #define MYMESSAGES_H
 
-#include "../inc/mydio.h"
+#include "mydio.h"
 #include "clientsub.h"
 #include "brokerpub.h"
 #include <string>

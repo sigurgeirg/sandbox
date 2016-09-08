@@ -576,7 +576,7 @@
       <enum>QTabWidget::Rounded</enum>
      </property>
      <property name="currentIndex">
-      <number>1</number>
+      <number>2</number>
      </property>
      <property name="iconSize">
       <size>
@@ -1021,15 +1021,44 @@
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
-        <widget class="QCustomPlot" name="customPlot" native="true">
-         <property name="autoFillBackground">
-          <bool>false</bool>
-         </property>
+        <widget class="QWidget" name="widget" native="true">
+         <widget class="QFrame" name="frame_4">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>10</y>
+            <width>581</width>
+            <height>201</height>
+           </rect>
+          </property>
+          <property name="frameShape">
+           <enum>QFrame::StyledPanel</enum>
+          </property>
+          <property name="frameShadow">
+           <enum>QFrame::Raised</enum>
+          </property>
+          <widget class="QCustomPlot" name="customPlot" native="true">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="geometry">
+            <rect>
+             <x>10</x>
+             <y>10</y>
+             <width>561</width>
+             <height>181</height>
+            </rect>
+           </property>
+           <property name="autoFillBackground">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </widget>
          <widget class="QLabel" name="lblFilteredWeight">
           <property name="geometry">
            <rect>
-            <x>250</x>
-            <y>100</y>
+            <x>300</x>
+            <y>220</y>
             <width>141</width>
             <height>31</height>
            </rect>
@@ -1046,6 +1075,55 @@
           </property>
           <property name="text">
            <string>Number</string>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="btnForward">
+          <property name="geometry">
+           <rect>
+            <x>290</x>
+            <y>260</y>
+            <width>97</width>
+            <height>31</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Forward</string>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="btnReverse">
+          <property name="geometry">
+           <rect>
+            <x>190</x>
+            <y>260</y>
+            <width>97</width>
+            <height>31</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Reverse</string>
+          </property>
+         </widget>
+         <widget class="QLabel" name="lblElementId">
+          <property name="geometry">
+           <rect>
+            <x>110</x>
+            <y>220</y>
+            <width>161</width>
+            <height>31</height>
+           </rect>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>20</pointsize>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">color: rgb(255, 255, 255);</string>
+          </property>
+          <property name="text">
+           <string>ElementId</string>
           </property>
          </widget>
         </widget>
@@ -1487,8 +1565,6 @@
   </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>tabWidget</tabstop>
-  <tabstop>btnCalibrateZERO</tabstop>
   <tabstop>btnCalibrateWEIGHT</tabstop>
   <tabstop>btnAPPLY</tabstop>
   <tabstop>btnSemiAutoZERO</tabstop>
@@ -1496,9 +1572,14 @@
   <tabstop>btnSaveToEEPROM</tabstop>
   <tabstop>btnGrossWeight</tabstop>
   <tabstop>btnNetWeight</tabstop>
+  <tabstop>btnCalibrateZERO</tabstop>
   <tabstop>btnConnect</tabstop>
   <tabstop>btnDisconnect</tabstop>
   <tabstop>chkWriteToLoadcell</tabstop>
+  <tabstop>chkDIN_03</tabstop>
+  <tabstop>chkDIN_04</tabstop>
+  <tabstop>chkDIN_01</tabstop>
+  <tabstop>chkDIN_02</tabstop>
  </tabstops>
  <resources/>
  <connections/>

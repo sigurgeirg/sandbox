@@ -1,9 +1,6 @@
 #include "../inc/myscale.h"
 
 
-
-
-
 MyScale::MyScale(QObject *parent) :
     QThread(parent)
 {
@@ -253,7 +250,7 @@ void MyScale::enteringProductSensorSignal()
     enteringProduct = true;
     productCounter++;
     productID++;
-    if (productID >= NUMBER_OF_ELEMENTS_IN_LIST) {
+    if (productID >= numberOfElementsInList) {
         productID = 0;
     }
 
@@ -291,31 +288,31 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
 
         if (beltRoundPulse == true) {
 
-            if ((numberOfBeltRoundsZero > -1) && (numberOfBeltRoundsZero < NUMBER_OF_BELTROUNDS)) {
+            if ((numberOfBeltRoundsZero > -1) && (numberOfBeltRoundsZero < numbersOfBeltRounds)) {
                 // Assign weight value from scale in initializing matrix
-                if (sampleCounter < SAMPLES_PER_BELTROUND) {
+                if (sampleCounter < samplesPerBeltRound) {
 
                     zeroUnfilteredArray[numberOfBeltRoundsZero][sampleCounter] = weightValueFromScale;
 
-                    if ((numberOfBeltRoundsZero > 0) && (lastSampleCounter+sampleCounter < SAMPLES_PER_BELTROUND)) {
+                    if ((numberOfBeltRoundsZero > 0) && (lastSampleCounter+sampleCounter < samplesPerBeltRound)) {
                         zeroUnfilteredArray[numberOfBeltRoundsZero-1][lastSampleCounter+sampleCounter] = weightValueFromScale;
                     }
                 }
             }
 
 
-            if (numberOfBeltRoundsZero >= NUMBER_OF_BELTROUNDS) {
+            if (numberOfBeltRoundsZero >= numbersOfBeltRounds) {
 
                 // /////////////////////////////////////////////////////////////////////
                 // Median of number of samples per BeltRound
                 // /////////////////////////////////////////////////////////////////////
 
-                for (int _rounds = 0; _rounds < NUMBER_OF_BELTROUNDS; _rounds++) {
+                for (int _rounds = 0; _rounds < numbersOfBeltRounds; _rounds++) {
                     dSorted[_rounds] = (double)pulseCounterInEachRow[_rounds];
                 }
 
                 // Sort numerical values in array by size for further processing
-                for (int _round = (NUMBER_OF_BELTROUNDS - 1); _round > 0; --_round) {
+                for (int _round = (numbersOfBeltRounds - 1); _round > 0; --_round) {
                     for (int _sample = 0; _sample < _round; ++_sample) {
                         if (dSorted[_sample] > dSorted[_sample+1]) {
                             double dTemp = dSorted[_sample];
@@ -326,10 +323,10 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
                 }
 
                 // Median values returned from a sorted array.
-                if ((NUMBER_OF_BELTROUNDS % 2) == 0) {
-                    dMedian = (dSorted[NUMBER_OF_BELTROUNDS/2] + dSorted[(NUMBER_OF_BELTROUNDS/2) - 1])/2.0;
+                if ((numbersOfBeltRounds % 2) == 0) {
+                    dMedian = (dSorted[numbersOfBeltRounds/2] + dSorted[(numbersOfBeltRounds/2) - 1])/2.0;
                 } else {
-                    dMedian = dSorted[NUMBER_OF_BELTROUNDS/2];
+                    dMedian = dSorted[numbersOfBeltRounds/2];
                 }
 
                 dMedian = dMedian + 0.5;                    // rounding by adding half and then cutting out the comma value
@@ -339,7 +336,7 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
                 // If beltRounds are more than 5% from median value, use the median value instead.
                 // /////////////////////////////////////////////////////////////////////
 
-                for (int _round = 0; _round < NUMBER_OF_BELTROUNDS; _round++) {
+                for (int _round = 0; _round < numbersOfBeltRounds; _round++) {
 
                      if (( fabs((double)pulseCounterInEachRow[_round] - (double)medianZeroSample) / (double)medianZeroSample ) >= 0.05) {
 
@@ -356,7 +353,7 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
                 requestBeltRoundPulse = false;
                 beltRoundPulse = false;
 
-                pulsesPerBeltRound = pulseCounterInAllRows / NUMBER_OF_BELTROUNDS;
+                pulsesPerBeltRound = pulseCounterInAllRows / numbersOfBeltRounds;
                 pulseResolution = lengthOfEachBeltPeriod / pulsesPerBeltRound;
 
                 zeroTracking = zt_CalculateMedianOfZeroPath;
@@ -375,7 +372,7 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
             zeroUnfilteredArray[nextZeroUpdatePosition][i] = updateZeroArray[i];
         }
 
-        if (nextZeroUpdatePosition >= NUMBER_OF_BELTROUNDS) {
+        if (nextZeroUpdatePosition >= numbersOfBeltRounds) {
             nextZeroUpdatePosition = 0;
         } else {
             nextZeroUpdatePosition++;
@@ -395,14 +392,14 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
         // Median of ZERO weight values over entire beltlength
         // /////////////////////////////////////////////////////////////////////
 
-        for (int _sampleColumn = 0; _sampleColumn < SAMPLES_PER_BELTROUND; _sampleColumn++) {
+        for (int _sampleColumn = 0; _sampleColumn < samplesPerBeltRound; _sampleColumn++) {
 
-            for (int _rounds = 0; _rounds < NUMBER_OF_BELTROUNDS; _rounds++) {
+            for (int _rounds = 0; _rounds < numbersOfBeltRounds; _rounds++) {
                 dSorted[_rounds] = (double)zeroUnfilteredArray[_rounds][_sampleColumn];
             }
 
             // Sort numerical values in array by size for further processing
-            for (int _round = (NUMBER_OF_BELTROUNDS - 1); _round > 0; --_round) {
+            for (int _round = (numbersOfBeltRounds - 1); _round > 0; --_round) {
                 for (int _sample = 0; _sample < _round; ++_sample) {
                     if (dSorted[_sample] > dSorted[_sample+1]) {
                         double dTemp = dSorted[_sample];
@@ -413,10 +410,10 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
             }
 
             // Median values returned from a sorted array.
-            if ((NUMBER_OF_BELTROUNDS % 2) == 0) {
-                dMedian = (dSorted[NUMBER_OF_BELTROUNDS/2] + dSorted[(NUMBER_OF_BELTROUNDS/2) - 1])/2.0;
+            if ((numbersOfBeltRounds % 2) == 0) {
+                dMedian = (dSorted[numbersOfBeltRounds/2] + dSorted[(numbersOfBeltRounds/2) - 1])/2.0;
             } else {
-                dMedian = dSorted[NUMBER_OF_BELTROUNDS/2];
+                dMedian = dSorted[numbersOfBeltRounds/2];
             }
 
             dMedian = dMedian + 0.5;                    // rounding by adding half and then cutting out the comma value
@@ -425,10 +422,10 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
 
         // /////////////////////////////////////////////////////////////////////
 
-        productEntryPulse = (int)((double)(PRODUCT_ENTRY)/pulseResolution + 0.5);
-        weightStartPulse = (int)((double)(PRODUCT_WEIGHING_START_DISTANCE)/pulseResolution + 0.5);
-        weightEndPulse = (int)((double)(PRODUCT_WEIGHING_STOP_DISTANCE)/pulseResolution + 0.5);
-        productReleasePulse = (int)((double)(PRODUCT_RELEASE)/pulseResolution + 0.5);
+        productEntryPulse = (int)((double)(productEntry)/pulseResolution + 0.5);
+        weightStartPulse = (int)((double)(productWeighingStartDistance)/pulseResolution + 0.5);
+        weightEndPulse = (int)((double)(productWeightingStopDistance)/pulseResolution + 0.5);
+        productReleasePulse = (int)((double)(productRelease)/pulseResolution + 0.5);
 
         zeroTracking = zt_ReturnResultsToFile;
     }
@@ -441,9 +438,11 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
 
         if (filezero.is_open()) {
 
-            for (int _rounds = 0; _rounds < NUMBER_OF_BELTROUNDS; _rounds++) {
+            for (int _rounds = 0; _rounds < numbersOfBeltRounds; _rounds++) {
 
-                for (int _samples = 0; _samples < SAMPLES_PER_BELTROUND; _samples++) {
+                filezero << "Zero sample " << _rounds << ": " << ",";
+
+                for (int _samples = 0; _samples < samplesPerBeltRound; _samples++) {
                     filezero << zeroUnfilteredArray[_rounds][_samples] << ",";
                 }
                 filezero << std::endl;
@@ -452,7 +451,8 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
             filezero << std::endl;
             filezero << std::endl;
 
-            for (int _samples = 0; _samples < SAMPLES_PER_BELTROUND; _samples++) {
+            filezero << "Mean Zero sample: " << ",";
+            for (int _samples = 0; _samples < samplesPerBeltRound; _samples++) {
                 filezero << zeroArray[_samples] <<  ",";
             }
 
@@ -463,7 +463,7 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
             filezero << std::endl;
             filezero << "Resolution of each pulse: " << pulseResolution << " mm " << std::endl;
             filezero << std::endl;
-            for (int i = 0; i < NUMBER_OF_BELTROUNDS; i++) {
+            for (int i = 0; i < numbersOfBeltRounds; i++) {
                 filezero << "PulseCounterInZeroRow number " << i << ": " << pulseCounterInEachRow[i] << "" << std::endl;
             }
 
@@ -526,13 +526,13 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
 
         // Track elements from product sensor (>=0) and over weighing area on program-scantime resolution +1
 
-        for (int _elementId = 0; _elementId < NUMBER_OF_ELEMENTS_IN_LIST; _elementId++) {
+        for (int _elementId = 0; _elementId < numberOfElementsInList; _elementId++) {
             if (productTempId[_elementId] >= 0) {
                 productTempId[_elementId]++;
 
                 if (productTempId[_elementId] == productEntryPulse) {
 
-                    proData.productLengthCounter[productID] = PRODUCT_ENTRY;
+                    proData.productLengthCounter[productID] = productEntry;
                 }
 
                 if (between(productEntryPulse, productTempId[_elementId], weightEndPulse)) {
@@ -542,32 +542,38 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
 
 
 
-                // Track active weight on scale AREA and give each position weight
-                if (between(weightStartPulse, productTempId[_elementId], weightEndPulse)) {
+//                // Track active weight on scale AREA and give each position weight
+//                if (between(weightStartPulse, productTempId[_elementId], weightEndPulse)) {
 
-                    productIDweights[_elementId][productTempId[_elementId]-weightStartPulse] = weightValueFromScale-zeroArray[sampleCounter];
+//                    productIDweights[_elementId][productTempId[_elementId]] = weightValueFromScale-zeroArray[sampleCounter];
+//                }
+
+                // Track weight from productEntry sensor to the productDelivery point.
+                if (between(productEntryPulse, productTempId[_elementId], productReleasePulse)) {
+
+                    productIDweights[_elementId][productTempId[_elementId]] = weightValueFromScale-zeroArray[sampleCounter];
                 }
 
 
                 // At weiging endpoint on scale platform calculate mean value and emit modeled weight
                 if (productTempId[_elementId] == weightEndPulse) {
-                    meanWeightSamples = 0;
+                    meanWeightSample = 0;
 
-                    for (int _sample = 0; _sample < weightEndPulse-weightStartPulse; _sample++) {
-                        meanWeightSamples += productIDweights[_elementId][_sample];
+                    for (int _sample = weightStartPulse; _sample < weightEndPulse; _sample++) {
+                        meanWeightSample += productIDweights[_elementId][_sample];
                     }
 
-                    meanWeightSamples = meanWeightSamples / (weightEndPulse-weightStartPulse);
+                    meanWeightSample = meanWeightSample / (weightEndPulse-weightStartPulse);
 
-                    proData.productWeight[_elementId] = meanWeightSamples;
+                    proData.productWeight[_elementId] = meanWeightSample;
 
                     qDebug() << "_elementId: " << _elementId
                              << " - Serial: " << proData.serialId[_elementId] << " - Batch: " << proData.batchId[_elementId]
                              << " - Weight: " << proData.productWeight[_elementId] << " - Length: " << proData.productLength[_elementId];
 
 
-                    emit sendFilteredWeight(meanWeightSamples);
-                    emit sendDebugData(productTempId[_elementId]);
+                    emit sendFilteredWeight(meanWeightSample);
+                    emit sendDebugData(_elementId);
 
                     proData.productLengthCounter[productID] = 0;
                 }
@@ -575,6 +581,8 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
 
                 // Product is leaving the main platform, at delivery point, then we can consider to update the ZERO weight again.
                 if (productTempId[_elementId] ==  productReleasePulse) {
+
+                    emit plotData(_elementId);
 
                     enteringProduct = false;
                 }
@@ -592,15 +600,16 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
                     filezero.open("zeroweight.csv", std::ofstream::out | std::ofstream::app); // trunc changed to app, trunc clears the file while app appends it
 
                     if (filezero.is_open()) {
-                        filezero << meanWeightSamples << ",";
 
-                        for (int _samples = 0; _samples < weightEndPulse-weightStartPulse; _samples++) {
-                            filezero << productIDweights[_elementId][_samples] << ",";
+                        filezero << "Mean weight sample is :" << meanWeightSample <<",";
+
+                        for (int _sample = weightStartPulse; _sample < weightEndPulse; _sample++) {
+                            filezero << productIDweights[_elementId][_sample] << ",";
                         }
                         filezero << std::endl;
                     }
                     filezero.close();
-                    emit sendDebugData(_elementId);
+
                     productTempId[_elementId] = -1;
                 }
 
@@ -613,34 +622,73 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
 }
 
 
+void MyScale::setupPlot(QCustomPlot *customPlot, int workingID) {
+
+    QVector<double> x(200), y0(200), y1(200); // initialize (this many) vector entries
+    for (int i=0; i<150; ++i)   //up to max: NUMBER_OF_WEIGHT_SAMPLES
+    {
+      x[i] = i;
+      y0[i] = productIDweights[workingID][i];
+      y1[i] = proData.productWeight[workingID];
+    }
+
+
+    // create graph and assign data to it:
+    customPlot->addGraph();
+
+    QPen pen;
+    pen.setStyle(Qt::DashLine);
+    pen.setWidth(1);
+    pen.setColor(Qt::red);
+
+    //customPlot->graph(0)->setData(x, y);
+    // give the axes some labels:
+    //customPlot->xAxis->setLabel("Ticks [cnt]");
+    //customPlot->yAxis->setLabel("Weight [gr]");
+    // set axes ranges, so we see all data:
+    customPlot->xAxis->setRange(0,150);
+    customPlot->yAxis->setRange(500, 1500);
+    //customPlot->yAxis->setRange(950, 1050);
+    customPlot->graph(0)->setData(x, y0);
+
+    customPlot->addGraph();
+    customPlot->graph(1)->setPen(pen);
+    customPlot->graph(1)->setData(x, y1);
+
+    emit plotWeight( proData.productWeight[workingID] );
+
+    customPlot->replot();
+}
+
+
 void MyScale::run() {
     
     int sign = 0;
 
     if (zeroTracking == zt_InitializeZeroVectors) {
 
-        for (int _rounds = 0; _rounds < NUMBER_OF_BELTROUNDS; _rounds++) {
-            for (int _samples = 0; _samples < SAMPLES_PER_BELTROUND; _samples++) {
+        for (int _rounds = 0; _rounds < numbersOfBeltRounds; _rounds++) {
+            for (int _samples = 0; _samples < samplesPerBeltRound; _samples++) {
                 zeroUnfilteredArray[_rounds][_samples] = 0;
             }
         }
-        for (int _rounds = 0; _rounds < NUMBER_OF_ELEMENTS_IN_LIST; _rounds++) {
-            for (int _samples = 0; _samples < SAMPLES_PER_BELTROUND; _samples++) {
+        for (int _rounds = 0; _rounds < numberOfElementsInList; _rounds++) {
+            for (int _samples = 0; _samples < samplesPerBeltRound; _samples++) {
                 productIDweights[_rounds][_samples] = 0;
             }
         }
-        for (int _samples = 0; _samples < SAMPLES_PER_BELTROUND; _samples++) {
+        for (int _samples = 0; _samples < samplesPerBeltRound; _samples++) {
             zeroArray[_samples] = 0;
             updateZeroArray[_samples] = 0;
         }
-        for (int _rounds = 0; _rounds < NUMBER_OF_BELTROUNDS; _rounds++) {
+        for (int _rounds = 0; _rounds < numbersOfBeltRounds; _rounds++) {
             zeroColumn[_rounds] = 0;
             dSorted[_rounds] = 0;
         }
-        for (int _samples = 0; _samples < FILTER_DELAY; _samples++) {
+        for (int _samples = 0; _samples < filterDelay; _samples++) {
             runningFilter[_samples] = 0;
         }
-        for (int _samples = 0; _samples < NUMBER_OF_ELEMENTS_IN_LIST; _samples++) {
+        for (int _samples = 0; _samples < numberOfElementsInList; _samples++) {
             productTempId[_samples] = -1;
         }
         pulseCounterInAllRows = 0.0;

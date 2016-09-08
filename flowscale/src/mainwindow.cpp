@@ -1,6 +1,7 @@
 #include "../inc/mainwindow.h"
 #include "ui_mainwindow.h"
 
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -16,14 +17,14 @@ MainWindow::MainWindow(QWidget *parent) :
     scale = new MyScale(this);
     //zero = new Zerofilter(this);
     dio = new MyDio(this);
-    graph = new MyGraph(this);
+    //graph = new MyGraph(this);
     mosq = new MyMessages(this);
     numberOfBeltRounds = new int;
 
     weightValueFromScale = 0;
     sampleCount = 0;
     step = 0;
-
+    currentWorkingID = 0;
 
 
 
@@ -35,20 +36,25 @@ MainWindow::MainWindow(QWidget *parent) :
         connect(dio,   SIGNAL(enteringProductSensorSignal()),   scale, SLOT(enteringProductSensorSignal()));
         connect(dio,   SIGNAL(leavingProductSensorSignal()),    scale, SLOT(leavingProductSensorSignal()));
 
-        connect(scale, SIGNAL(sendFilteredWeight(int)),     this,  SLOT(displayFilteredWeight(int)));
-        connect(scale, SIGNAL(sendDebugData(int)),     this,  SLOT(displayDebugData(int)));
+        connect(scale, SIGNAL(sendFilteredWeight(int)),         this,  SLOT(displayFilteredWeight(int)));
+        connect(scale, SIGNAL(sendDebugData(int)),              this,  SLOT(displayDebugData(int)));
+
 
         //This is the output array from zerofilter, and it will be sent to destination when ready.
         //connect(zero, SIGNAL(filteredZeroArray(int)),         this, SLOT(givethisnewnameandcreatefunction(int)));
 
     // Show live weight on display (FIXME see below):
-        connect(scale, SIGNAL(receivedWeight(int)),         this, SLOT(displayReceivedWeight(int)));
+        connect(scale, SIGNAL(receivedWeight(int)),             this, SLOT(displayReceivedWeight(int)));
 
     // Collect live weight to a csv-file:
-        connect(scale, SIGNAL(receivedWeight(int)),         this, SLOT(recordWeight(int)));
+        connect(scale, SIGNAL(receivedWeight(int)),             this, SLOT(recordWeight(int)));
+
+
+        connect(scale, SIGNAL(plotData(int)),                   this,  SLOT(plotProductGraph(int)));
+        connect(scale, SIGNAL(plotWeight(int)),                 this,  SLOT(plotProductWeight(int)));
 
     // Return avg weight to next component:
-        connect(this, SIGNAL(avgWeight(int)),               mosq, SLOT(processReceivedWeight(int)));
+        connect(this, SIGNAL(avgWeight(int)),                   mosq, SLOT(processReceivedWeight(int)));
 
     // Read from physical inputs and write to physical outputs:
         connect(dio,   SIGNAL(inputValue(unsigned long)),   this, SLOT(displayInputValue(unsigned long)));
@@ -68,7 +74,7 @@ MainWindow::~MainWindow()
     delete ui;
     delete scale;
     delete dio;
-    delete graph;
+    //delete graph;
     delete mosq;
     delete numberOfBeltRounds;
 }
@@ -201,15 +207,69 @@ void MainWindow::recordWeight(int weightValueFromScale)
     */
 }
 
+void MainWindow::plotProductWeight(int meanWeight)
+{
+    currentMeanWeight = meanWeight;
+    ui->lblFilteredWeight->setText(QString::number(currentMeanWeight));
+}
+
+
+
+void MainWindow::plotProductGraph(int workingID)
+{
+    ui->PenguinImage->clear();
+
+    //graph->setupPlot(ui->customPlot, workingID);
+    scale->setupPlot(ui->customPlot, workingID);
+
+    currentWorkingID = workingID;
+
+
+//    //QCustomPlot *customPlot;
+//    //ui -> customPlot;
+
+//    QVector<double> x(1000), y(1000); // initialize (this many) vector entries
+//    for (int i=0; i<1000; ++i)   //up to max: NUMBER_OF_WEIGHT_SAMPLES
+//    {
+//      x[i] = i;
+//      y[i] = productIDweights[workingID][i];
+//    }
+
+
+//    // create graph and assign data to it:
+//    customPlot->addGraph();
+//    customPlot->graph(0)->setData(x, y);
+//    // give the axes some labels:
+//    customPlot->xAxis->setLabel("Ticks [cnt]");
+//    customPlot->yAxis->setLabel("Weight [gr]");
+//    // set axes ranges, so we see all data:
+//    customPlot->xAxis->setRange(0,1000);
+//    customPlot->yAxis->setRange(0, 1200);
+
+//    customPlot->graph(0)->setData(x, y);
+//    customPlot->replot();
+
+
+//    int sumWeight, averageWeight, entryPosition, exitPosition;
+//    sumWeight = 0;
+//    averageWeight = 0;
+//    entryPosition = 30;
+//    exitPosition = 50;
+
+//    for (int i =  entryPosition; i < exitPosition; i++)
+//    {
+//        sumWeight = sumWeight + productIDweights[i][1];
+//    }
+//    averageWeight = sumWeight / (exitPosition - entryPosition);
+
+//    //emit avgWeight(averageWeight);
+//    ui->lblFilteredWeight->setText(QString::number(averageWeight));
+}
+
 
 void MainWindow::displayReceivedWeight(int weightValueFromScale)
 {
-    // /////////////////////////////////////////////////////////////////////////////////////////////
-    // FIXME: This part might possibly put some load on the CPU, haven't checked although,
-    // but it can either be opt'ed out for debugging or removed completely
-    // /////////////////////////////////////////////////////////////////////////////////////////////
 
-    weightValueFromScale = weightValueFromScale;
     ui->lblReceivedWeight->setText(QString::number(weightValueFromScale));
 
 }
@@ -217,6 +277,7 @@ void MainWindow::displayReceivedWeight(int weightValueFromScale)
 void MainWindow::displayFilteredWeight(int filteredWeight){
 
     ui->lblReceivedWeight_2->setText(QString::number(filteredWeight));
+    ui->lblFilteredWeight->setText(QString::number(currentMeanWeight));
 
 }
 
@@ -319,3 +380,27 @@ void MainWindow::on_btnNetWeight_clicked()
     scale->netWeight();
 }
 
+
+void MainWindow::on_btnReverse_clicked()
+{
+    if (currentWorkingID > 0) {
+        currentWorkingID--;
+    } else {
+        currentWorkingID = numberOfElementsInList-1;
+    }
+
+    ui->lblElementId->setText(QString::number(currentWorkingID));
+    scale->setupPlot(ui->customPlot, currentWorkingID);
+}
+
+void MainWindow::on_btnForward_clicked()
+{
+    if (currentWorkingID >= numberOfElementsInList-1) {
+        currentWorkingID = 0;
+    } else {
+        currentWorkingID++;
+    }
+
+    ui->lblElementId->setText(QString::number(currentWorkingID));
+    scale->setupPlot(ui->customPlot, currentWorkingID);
+}

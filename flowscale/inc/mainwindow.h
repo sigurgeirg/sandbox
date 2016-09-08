@@ -1,10 +1,11 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include "myscale.h"
-#include "zerofilter.h"
+#include "constants.h"
 #include "mydio.h"
-#include "mygraph.h"
+#include "myscale.h"
+//#include "mygraph.h"
+//#include "zerofilter.h"
 #include "mymessages.h"
 #include <QMainWindow>
 #include <QtCore>
@@ -14,9 +15,6 @@
 #include <sstream>
 #include <iostream>
 #include <fstream>
-
-#define NUMBER_OF_WEIGHT_SAMPLES 1000
-
 
 namespace Ui {
 class MainWindow;
@@ -31,9 +29,9 @@ public:
     ~MainWindow();
 
     MyScale *scale;
-    Zerofilter *zero;
+    //Zerofilter *zero;
     MyDio *dio;
-    MyGraph *graph;
+    //MyGraph *graph;
     MyMessages *mosq;
     Dio io;
 
@@ -44,10 +42,13 @@ private:
     Ui::MainWindow *ui;
     int *numberOfBeltRounds;
     int step;
+    int currentWorkingID;
+    int currentMeanWeight;
     long sampleCount;
     int weightValueFromScale;
     long counter;
-    int array[NUMBER_OF_WEIGHT_SAMPLES][2];
+    int array[samplesPerBeltRound][2];
+//    int productIDweights[numberOfElementsInList][samplesPerBeltRound];
 
 signals:
     void avgWeight(int);
@@ -75,6 +76,9 @@ private slots:
 //    void on_chkDIN_04_clicked();
     // /////////////////////////
 
+    void on_btnReverse_clicked();
+    void on_btnForward_clicked();
+
 public slots:
     void conveyorBeltSignal();
     void recordWeight(int);
@@ -82,6 +86,9 @@ public slots:
     void displayFilteredWeight(int);
     void displayDebugData(int);
     void displayInputValue(unsigned long);
+    void plotProductWeight(int);
+    void plotProductGraph(int);
+
 
 };
 

@@ -1,7 +1,9 @@
 #ifndef MYGRAPH_H
 #define MYGRAPH_H
 
+#include "constants.h"
 #include <QThread>
+#include "myscale.h"
 #include <QDebug>
 #include "../../QCustomPlot/qcustomplot.h"
 #include <fstream>
@@ -9,7 +11,7 @@
 #include <iostream>
 #include <string>
 
-#define NUMBER_OF_WEIGHT_SAMPLES 1000
+
 
 class MyGraph : public QThread
 {
@@ -20,17 +22,19 @@ public:
 
     //void newInput(unsigned char address);
     void run();
-    void setupPlot(QCustomPlot* customPlot);
+    void setupPlot(QCustomPlot* customPlot, int workingID);
+
+
 
 private:
-    double array[NUMBER_OF_WEIGHT_SAMPLES][2];
+    // FIXME: Throw away array[][] when it has been cleared out of mygraph.cpp
+    double array[samplesPerBeltRound][2];
     QVector<double> x, y; // initialize (this many) vector entries
 
 signals:
 
 
 public slots:
-
 
 };
 

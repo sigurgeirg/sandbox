@@ -8,9 +8,6 @@
 #include <math.h>
 #include <QDebug>
 
-#define SAMPLES_PER_BELTROUND 1000
-#define NUMBER_OF_BELTROUNDS 10
-#define FILTER_DELAY 10
 
 class Zerofilter : public QThread
 {
@@ -22,6 +19,10 @@ public:
     void run();
 
     //std::ofstream filezero;
+
+    static const int SAMPLES_PER_BELTROUND = 1000;
+    static const int NUMBER_OF_BELTROUNDS = 10;
+    static const int FILTER_DELAY = 10;
 
 
 private:
