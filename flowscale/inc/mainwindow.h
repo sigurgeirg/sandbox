@@ -4,13 +4,14 @@
 #include "constants.h"
 #include "mydio.h"
 #include "myscale.h"
-//#include "mygraph.h"
-//#include "zerofilter.h"
 #include "mymessages.h"
 #include <QMainWindow>
+#include "keypad.h"
+#include <QLineEdit>
+#include <QTextEdit>
 #include <QtCore>
-#include "../../QCustomPlot/qcustomplot.h"
 #include <QDebug>
+#include "../../QCustomPlot/qcustomplot.h"
 #include <string>
 #include <sstream>
 #include <iostream>
@@ -29,17 +30,19 @@ public:
     ~MainWindow();
 
     MyScale *scale;
-    //Zerofilter *zero;
     MyDio *dio;
-    //MyGraph *graph;
     MyMessages *mosq;
     Dio io;
+    QLineEdit *lineEdit;
+    QTextEdit *textEdit;
+    QString val;
 
     std::ofstream fout;
 
 
 private:
     Ui::MainWindow *ui;
+    KeyPad keypad;
     int *numberOfBeltRounds;
     int step;
     int currentWorkingID;
@@ -52,6 +55,7 @@ private:
 
 signals:
     void avgWeight(int);
+    void value(QString);
     // /////////////////////////
     // Simulation
     // void reply(unsigned char, bool);
@@ -67,6 +71,7 @@ private slots:
     void on_btnSemiAutoZERO_clicked();
     void on_btnGrossWeight_clicked();
     void on_btnNetWeight_clicked();
+    void on_edtCalibrationWeight_2_clicked();
 
     // /////////////////////////
     // Simulation
@@ -79,6 +84,9 @@ private slots:
     void on_btnReverse_clicked();
     void on_btnForward_clicked();
 
+
+    void on_btnNetWeightConnect_clicked();
+
 public slots:
     void conveyorBeltSignal();
     void recordWeight(int);
@@ -88,6 +96,7 @@ public slots:
     void displayInputValue(unsigned long);
     void plotProductWeight(int);
     void plotProductGraph(int);
+    void keyValue(QString);
 
 
 };

@@ -716,7 +716,7 @@ void MyScale::run() {
                 sign = pow((-1),(statusRegisterBinaryReturnValue[8]));
                 modelZeroWeight(sign*data[4]);
                 emit receivedWeight(sign*data[4]);
-                //qDebug() << " WeightNetto: " << sign*data[4];
+                qDebug() << " WeightNetto: " << sign*data[4];
             }
         }
         else
@@ -724,7 +724,7 @@ void MyScale::run() {
             if(mbCommand[0] != 0)
             {
                 modbus_write_registers(ctx, writeToRegister, 1, mbCommand);
-                //qDebug() << "mbCommand: " << mbCommand[0];
+                qDebug() << "mbCommand: " << mbCommand[0];
 
                 if(mbCommand[0] == grossDisplay)
                 {

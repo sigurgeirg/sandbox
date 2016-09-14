@@ -15,25 +15,26 @@ INCLUDEPATH += ./inc ./src ./forms ./images
 # Input
 HEADERS +=  inc/constants.h \
             inc/mainwindow.h \
+            inc/keypad.h \
             inc/mydio.h \
             inc/myscale.h \
             inc/mymessages.h \
             inc/brokerpub.h \
             inc/clientsub.h \
             ../QCustomPlot/qcustomplot.h
-            #inc/mygraph.h \
 
 SOURCES +=  src/main.cpp \
             src/mainwindow.cpp \
+            src/keypad.cpp \
             src/mydio.cpp \
             src/myscale.cpp \
             src/mymessages.cpp \
             src/brokerpub.cpp \
             src/clientsub.cpp \
             ../QCustomPlot/qcustomplot.cpp
-            #src/mygraph.cpp \
 
-FORMS += forms/mainwindow.ui
+FORMS +=    forms/mainwindow.ui \
+            forms/keypad.ui
 
 RESOURCES += rsc/qre.qrc
 

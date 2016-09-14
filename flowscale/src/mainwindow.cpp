@@ -1,5 +1,6 @@
 #include "../inc/mainwindow.h"
 #include "ui_mainwindow.h"
+#include "ui_keypad.h"
 
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -15,10 +16,12 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
     scale = new MyScale(this);
-    //zero = new Zerofilter(this);
     dio = new MyDio(this);
-    //graph = new MyGraph(this);
     mosq = new MyMessages(this);
+
+    lineEdit = new QLineEdit();
+    textEdit = new QTextEdit();
+
     numberOfBeltRounds = new int;
 
     weightValueFromScale = 0;
@@ -74,9 +77,32 @@ MainWindow::~MainWindow()
     delete ui;
     delete scale;
     delete dio;
-    //delete graph;
     delete mosq;
     delete numberOfBeltRounds;
+}
+
+void MainWindow::on_edtCalibrationWeight_2_clicked()
+{
+    keypad.show();
+    connect(&keypad, SIGNAL(value(QString)),            this,SLOT(keyValue(QString)));
+}
+
+void MainWindow::keyValue(QString value)
+{
+    QString str;
+    str = ui->edtCalibrationWeight->text();
+
+    if (value == "91") {
+        ui->edtCalibrationWeight->backspace();
+
+    } else if (value == "92") {
+        disconnect(&keypad, SIGNAL(value(QString)),         this,SLOT(keyValue(QString)));
+        keypad.close();
+
+    } else {
+        str.append(value);
+        ui->edtCalibrationWeight->setText(str);
+    }
 }
 
 void MainWindow::conveyorBeltSignal()
@@ -217,12 +243,12 @@ void MainWindow::plotProductWeight(int meanWeight)
 
 void MainWindow::plotProductGraph(int workingID)
 {
+    currentWorkingID = workingID;
+
     ui->PenguinImage->clear();
 
-    //graph->setupPlot(ui->customPlot, workingID);
-    scale->setupPlot(ui->customPlot, workingID);
-
-    currentWorkingID = workingID;
+    ui->lblElementId->setText(QString::number(currentWorkingID));
+    scale->setupPlot(ui->customPlot, currentWorkingID);
 
 
 //    //QCustomPlot *customPlot;
@@ -332,7 +358,31 @@ void MainWindow::displayInputValue(unsigned long)
 
 void MainWindow::on_btnConnect_clicked()
 {
-    //zero->start();
+    scale->connectToSlaveDevice();
+    scale->start();
+    dio->start();
+}
+
+void MainWindow::on_btnNetWeightConnect_clicked()
+{
+    // Switch to netto weight and write to loadCell controller:
+    scale->netWeight();
+    scale->toggleWriteToLoadcell(true);
+
+    // Connect over modbus and start processes:
+    scale->connectToSlaveDevice();
+    scale->start();
+    dio->start();
+
+    // Disconnect from modbus and stop processes:
+    scale->disconnectFromSlaveDevice();
+    scale->exit();
+    dio->exit();
+
+    // From now on, only read from loadCell controller:
+    scale->toggleWriteToLoadcell(false);
+
+    // Connect over modbus and start processes again:
     scale->connectToSlaveDevice();
     scale->start();
     dio->start();
@@ -404,3 +454,5 @@ void MainWindow::on_btnForward_clicked()
     ui->lblElementId->setText(QString::number(currentWorkingID));
     scale->setupPlot(ui->customPlot, currentWorkingID);
 }
+
+

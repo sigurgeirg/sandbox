@@ -127,6 +127,9 @@
      <enum>QFrame::Raised</enum>
     </property>
     <widget class="QTabWidget" name="tabWidget">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
      <property name="geometry">
       <rect>
        <x>20</x>
@@ -591,42 +594,195 @@
       <attribute name="title">
        <string>Home</string>
       </attribute>
-      <widget class="QLabel" name="FlowScaleImage">
+      <widget class="QFrame" name="receiveFrame">
        <property name="geometry">
         <rect>
-         <x>60</x>
+         <x>10</x>
          <y>60</y>
-         <width>211</width>
-         <height>61</height>
+         <width>301</width>
+         <height>81</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true"/>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::StyledPanel</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Raised</enum>
+       </property>
+       <widget class="QLabel" name="lblReceivedWeight">
+        <property name="geometry">
+         <rect>
+          <x>80</x>
+          <y>30</y>
+          <width>141</width>
+          <height>31</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>20</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">color: rgb(255, 255, 255);</string>
+        </property>
+        <property name="text">
+         <string>Number</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="lblWeight">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>0</y>
+          <width>67</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Weight:</string>
+        </property>
+       </widget>
+      </widget>
+      <widget class="QFrame" name="receiveFrame_3">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>140</y>
+         <width>591</width>
+         <height>51</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true"/>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::StyledPanel</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Raised</enum>
+       </property>
+       <widget class="QLabel" name="lblReceivedWeight_3">
+        <property name="geometry">
+         <rect>
+          <x>120</x>
+          <y>10</y>
+          <width>141</width>
+          <height>31</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>20</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">color: rgb(255, 255, 255);</string>
+        </property>
+        <property name="text">
+         <string>Number</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="lblWeight_3">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>20</y>
+          <width>67</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Info:</string>
+        </property>
+       </widget>
+      </widget>
+      <widget class="QFrame" name="receiveFrame_2">
+       <property name="geometry">
+        <rect>
+         <x>310</x>
+         <y>60</y>
+         <width>291</width>
+         <height>81</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true"/>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::StyledPanel</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Raised</enum>
+       </property>
+       <widget class="QLabel" name="lblReceivedWeight_2">
+        <property name="geometry">
+         <rect>
+          <x>80</x>
+          <y>30</y>
+          <width>141</width>
+          <height>31</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>20</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">color: rgb(255, 255, 255);</string>
+        </property>
+        <property name="text">
+         <string>Number</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="lblWeight_2">
+        <property name="geometry">
+         <rect>
+          <x>6</x>
+          <y>0</y>
+          <width>151</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Filtered Weight:</string>
+        </property>
+       </widget>
+      </widget>
+      <widget class="QPushButton" name="btnNetWeightConnect">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>10</y>
+         <width>97</width>
+         <height>41</height>
         </rect>
        </property>
        <property name="text">
-        <string>FlowScale</string>
+        <string>Connect</string>
        </property>
       </widget>
-      <widget class="QLabel" name="PenguinImage">
+      <widget class="QPushButton" name="btnDisconnect">
        <property name="geometry">
         <rect>
-         <x>60</x>
-         <y>60</y>
-         <width>61</width>
-         <height>21</height>
+         <x>110</x>
+         <y>10</y>
+         <width>97</width>
+         <height>41</height>
         </rect>
        </property>
-       <property name="accessibleDescription">
-        <string/>
-       </property>
-       <property name="midLineWidth">
-        <number>0</number>
-       </property>
        <property name="text">
-        <string>Penguin</string>
-       </property>
-       <property name="margin">
-        <number>0</number>
-       </property>
-       <property name="indent">
-        <number>-1</number>
+        <string>Disconnect</string>
        </property>
       </widget>
      </widget>
@@ -657,8 +813,8 @@
          <rect>
           <x>10</x>
           <y>70</y>
-          <width>131</width>
-          <height>33</height>
+          <width>101</width>
+          <height>31</height>
          </rect>
         </property>
        </widget>
@@ -738,70 +894,12 @@
          <string>Calibration weight:</string>
         </property>
        </widget>
-      </widget>
-      <widget class="QPushButton" name="btnDisconnect">
-       <property name="geometry">
-        <rect>
-         <x>110</x>
-         <y>10</y>
-         <width>97</width>
-         <height>31</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Disconnect</string>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="btnConnect">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>10</y>
-         <width>97</width>
-         <height>31</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Connect</string>
-       </property>
-      </widget>
-      <widget class="QCheckBox" name="chkWriteToLoadcell">
-       <property name="geometry">
-        <rect>
-         <x>220</x>
-         <y>10</y>
-         <width>151</width>
-         <height>26</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Write Commands</string>
-       </property>
-      </widget>
-      <widget class="QFrame" name="receiveFrame">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>50</y>
-         <width>301</width>
-         <height>81</height>
-        </rect>
-       </property>
-       <property name="styleSheet">
-        <string notr="true"/>
-       </property>
-       <property name="frameShape">
-        <enum>QFrame::StyledPanel</enum>
-       </property>
-       <property name="frameShadow">
-        <enum>QFrame::Raised</enum>
-       </property>
-       <widget class="QLabel" name="lblReceivedWeight">
+       <widget class="QPushButton" name="edtCalibrationWeight_2">
         <property name="geometry">
          <rect>
-          <x>80</x>
-          <y>30</y>
-          <width>141</width>
+          <x>110</x>
+          <y>70</y>
+          <width>31</width>
           <height>31</height>
          </rect>
         </property>
@@ -812,26 +910,23 @@
           <bold>true</bold>
          </font>
         </property>
-        <property name="styleSheet">
-         <string notr="true">color: rgb(255, 255, 255);</string>
-        </property>
         <property name="text">
-         <string>Number</string>
+         <string>✍</string>
         </property>
        </widget>
-       <widget class="QLabel" name="lblWeight">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>0</y>
-          <width>67</width>
-          <height>21</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Weight:</string>
-        </property>
-       </widget>
+      </widget>
+      <widget class="QCheckBox" name="chkWriteToLoadcell">
+       <property name="geometry">
+        <rect>
+         <x>230</x>
+         <y>150</y>
+         <width>151</width>
+         <height>26</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Write Commands</string>
+       </property>
       </widget>
       <widget class="QFrame" name="frame">
        <property name="geometry">
@@ -904,115 +999,31 @@
         </property>
        </widget>
       </widget>
-      <widget class="QFrame" name="receiveFrame_2">
+      <widget class="QPushButton" name="btnDisconnect_2">
        <property name="geometry">
         <rect>
-         <x>310</x>
-         <y>50</y>
-         <width>291</width>
-         <height>81</height>
+         <x>120</x>
+         <y>150</y>
+         <width>97</width>
+         <height>31</height>
         </rect>
        </property>
-       <property name="styleSheet">
-        <string notr="true"/>
+       <property name="text">
+        <string>Disconnect</string>
        </property>
-       <property name="frameShape">
-        <enum>QFrame::StyledPanel</enum>
-       </property>
-       <property name="frameShadow">
-        <enum>QFrame::Raised</enum>
-       </property>
-       <widget class="QLabel" name="lblReceivedWeight_2">
-        <property name="geometry">
-         <rect>
-          <x>80</x>
-          <y>30</y>
-          <width>141</width>
-          <height>31</height>
-         </rect>
-        </property>
-        <property name="font">
-         <font>
-          <pointsize>20</pointsize>
-          <weight>75</weight>
-          <bold>true</bold>
-         </font>
-        </property>
-        <property name="styleSheet">
-         <string notr="true">color: rgb(255, 255, 255);</string>
-        </property>
-        <property name="text">
-         <string>Number</string>
-        </property>
-       </widget>
-       <widget class="QLabel" name="lblWeight_2">
-        <property name="geometry">
-         <rect>
-          <x>6</x>
-          <y>0</y>
-          <width>151</width>
-          <height>21</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Filtered Weight:</string>
-        </property>
-       </widget>
       </widget>
-      <widget class="QFrame" name="receiveFrame_3">
+      <widget class="QPushButton" name="btnConnect">
        <property name="geometry">
         <rect>
-         <x>10</x>
-         <y>130</y>
-         <width>591</width>
-         <height>51</height>
+         <x>20</x>
+         <y>150</y>
+         <width>97</width>
+         <height>31</height>
         </rect>
        </property>
-       <property name="styleSheet">
-        <string notr="true"/>
+       <property name="text">
+        <string>Connect</string>
        </property>
-       <property name="frameShape">
-        <enum>QFrame::StyledPanel</enum>
-       </property>
-       <property name="frameShadow">
-        <enum>QFrame::Raised</enum>
-       </property>
-       <widget class="QLabel" name="lblReceivedWeight_3">
-        <property name="geometry">
-         <rect>
-          <x>120</x>
-          <y>10</y>
-          <width>141</width>
-          <height>31</height>
-         </rect>
-        </property>
-        <property name="font">
-         <font>
-          <pointsize>20</pointsize>
-          <weight>75</weight>
-          <bold>true</bold>
-         </font>
-        </property>
-        <property name="styleSheet">
-         <string notr="true">color: rgb(255, 255, 255);</string>
-        </property>
-        <property name="text">
-         <string>Number</string>
-        </property>
-       </widget>
-       <widget class="QLabel" name="lblWeight_3">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>20</y>
-          <width>67</width>
-          <height>21</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Info:</string>
-        </property>
-       </widget>
       </widget>
      </widget>
      <widget class="QWidget" name="tabGraph">
@@ -1532,6 +1543,54 @@
        </layout>
       </widget>
      </widget>
+     <widget class="QWidget" name="tabStuff">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <attribute name="title">
+       <string>Page</string>
+      </attribute>
+      <widget class="QLabel" name="PenguinImage">
+       <property name="geometry">
+        <rect>
+         <x>50</x>
+         <y>40</y>
+         <width>61</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="accessibleDescription">
+        <string/>
+       </property>
+       <property name="midLineWidth">
+        <number>0</number>
+       </property>
+       <property name="text">
+        <string>Penguin</string>
+       </property>
+       <property name="margin">
+        <number>0</number>
+       </property>
+       <property name="indent">
+        <number>-1</number>
+       </property>
+      </widget>
+      <widget class="QLabel" name="FlowScaleImage">
+       <property name="geometry">
+        <rect>
+         <x>50</x>
+         <y>40</y>
+         <width>211</width>
+         <height>61</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>FlowScale</string>
+       </property>
+      </widget>
+      <zorder>FlowScaleImage</zorder>
+      <zorder>PenguinImage</zorder>
+     </widget>
     </widget>
     <widget class="QFrame" name="frame_3">
      <property name="geometry">
@@ -1565,7 +1624,6 @@
   </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>btnCalibrateWEIGHT</tabstop>
   <tabstop>btnAPPLY</tabstop>
   <tabstop>btnSemiAutoZERO</tabstop>
   <tabstop>edtCalibrationWeight</tabstop>
@@ -1573,13 +1631,19 @@
   <tabstop>btnGrossWeight</tabstop>
   <tabstop>btnNetWeight</tabstop>
   <tabstop>btnCalibrateZERO</tabstop>
-  <tabstop>btnConnect</tabstop>
-  <tabstop>btnDisconnect</tabstop>
   <tabstop>chkWriteToLoadcell</tabstop>
   <tabstop>chkDIN_03</tabstop>
   <tabstop>chkDIN_04</tabstop>
   <tabstop>chkDIN_01</tabstop>
   <tabstop>chkDIN_02</tabstop>
+  <tabstop>btnNetWeightConnect</tabstop>
+  <tabstop>btnDisconnect</tabstop>
+  <tabstop>btnCalibrateWEIGHT</tabstop>
+  <tabstop>btnForward</tabstop>
+  <tabstop>btnReverse</tabstop>
+  <tabstop>edtCalibrationWeight_2</tabstop>
+  <tabstop>btnDisconnect_2</tabstop>
+  <tabstop>btnConnect</tabstop>
  </tabstops>
  <resources/>
  <connections/>
