@@ -6,4 +6,5 @@
 /dio_on virtualmachine/d.*
 /dio_on virtualmachine/t.*
 /dio_on virtualmachine/test*
+/mqttTest/debug.py
 /.gitignore
