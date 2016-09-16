@@ -17,6 +17,13 @@
     static const int productWeightingStopDistance = 770; // FIXME: was 666
     static const int productRelease = 1400; // FIXME
 
+    static const int plotXvalueMIN = 0;
+    static const int plotXvalueMAX = 150;
+
+    static const int plotYvalueMIN = 500;
+    static const int plotYvalueMAX = 1500;
+
+
 
 
 

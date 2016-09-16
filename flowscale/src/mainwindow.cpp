@@ -374,10 +374,14 @@ void MainWindow::on_btnNetWeightConnect_clicked()
     scale->start();
     dio->start();
 
+    usleep(20*1000);
+
     // Disconnect from modbus and stop processes:
     scale->disconnectFromSlaveDevice();
     scale->exit();
     dio->exit();
+
+    usleep(20*1000);
 
     // From now on, only read from loadCell controller:
     scale->toggleWriteToLoadcell(false);

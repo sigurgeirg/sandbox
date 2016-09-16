@@ -16,6 +16,7 @@
 #include <sstream>
 #include <iostream>
 #include <fstream>
+#include <unistd.h>
 
 namespace Ui {
 class MainWindow;

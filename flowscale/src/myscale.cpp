@@ -624,36 +624,49 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
 
 void MyScale::setupPlot(QCustomPlot *customPlot, int workingID) {
 
+    QCPItemLine *startWeighingMark = new QCPItemLine(customPlot);
+    QCPItemLine *endWeighingMark = new QCPItemLine(customPlot);
+
+    customPlot->addItem(startWeighingMark);
+    customPlot->addItem(endWeighingMark);
+
+    QPen pen1;
+    pen1.setStyle(Qt::DashLine);
+    pen1.setWidth(1);
+    pen1.setColor(Qt::red);
+
+    QPen pen2;
+    pen2.setStyle(Qt::DashLine);
+    pen2.setWidth(1);
+    pen2.setColor(Qt::red);
+
     QVector<double> x(200), y0(200), y1(200); // initialize (this many) vector entries
     for (int i=0; i<150; ++i)   //up to max: NUMBER_OF_WEIGHT_SAMPLES
     {
       x[i] = i;
       y0[i] = productIDweights[workingID][i];
       y1[i] = proData.productWeight[workingID];
-    }
+    }   
 
-
-    // create graph and assign data to it:
+    // create graph
     customPlot->addGraph();
-
-    QPen pen;
-    pen.setStyle(Qt::DashLine);
-    pen.setWidth(1);
-    pen.setColor(Qt::red);
-
-    //customPlot->graph(0)->setData(x, y);
-    // give the axes some labels:
-    //customPlot->xAxis->setLabel("Ticks [cnt]");
-    //customPlot->yAxis->setLabel("Weight [gr]");
-    // set axes ranges, so we see all data:
-    customPlot->xAxis->setRange(0,150);
-    customPlot->yAxis->setRange(500, 1500);
-    //customPlot->yAxis->setRange(950, 1050);
+    // set axis ranges and assign sampled weight data to it:
+    customPlot->xAxis->setRange(plotXvalueMIN, plotXvalueMAX);
+    customPlot->yAxis->setRange(plotYvalueMIN, plotYvalueMAX);
     customPlot->graph(0)->setData(x, y0);
 
+    // create graph
     customPlot->addGraph();
-    customPlot->graph(1)->setPen(pen);
+    // set axis ranges and assign median weight data to it:
+    customPlot->graph(1)->setPen(pen1);
     customPlot->graph(1)->setData(x, y1);
+
+    startWeighingMark->setPen(pen2);
+    startWeighingMark->start->setCoords(weightStartPulse, plotYvalueMIN);
+    startWeighingMark->end->setCoords(weightStartPulse, plotYvalueMAX);
+    endWeighingMark->setPen(pen2);
+    endWeighingMark->start->setCoords(weightEndPulse, plotYvalueMIN);
+    endWeighingMark->end->setCoords(weightEndPulse, plotYvalueMAX);
 
     emit plotWeight( proData.productWeight[workingID] );
 
@@ -716,7 +729,7 @@ void MyScale::run() {
                 sign = pow((-1),(statusRegisterBinaryReturnValue[8]));
                 modelZeroWeight(sign*data[4]);
                 emit receivedWeight(sign*data[4]);
-                qDebug() << " WeightNetto: " << sign*data[4];
+                //qDebug() << " WeightNetto: " << sign*data[4];
             }
         }
         else
@@ -724,7 +737,7 @@ void MyScale::run() {
             if(mbCommand[0] != 0)
             {
                 modbus_write_registers(ctx, writeToRegister, 1, mbCommand);
-                qDebug() << "mbCommand: " << mbCommand[0];
+                //qDebug() << "mbCommand: " << mbCommand[0];
 
                 if(mbCommand[0] == grossDisplay)
                 {
