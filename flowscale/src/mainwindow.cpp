@@ -14,7 +14,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->FlowScaleImage->setFixedSize(480,240);
     ui->FlowScaleImage->setPixmap(conveyorObject);
 
-
     scale = new MyScale(this);
     dio = new MyDio(this);
     mosq = new MyMessages(this);
@@ -28,6 +27,8 @@ MainWindow::MainWindow(QWidget *parent) :
     sampleCount = 0;
     step = 0;
     currentWorkingID = 0;
+    boundary = -1;
+
 
 
 
@@ -81,8 +82,9 @@ MainWindow::~MainWindow()
     delete numberOfBeltRounds;
 }
 
-void MainWindow::on_edtCalibrationWeight_2_clicked()
+void MainWindow::on_btnEditCalibrationWeight_clicked()
 {
+    keypad.clearDisplay();
     keypad.show();
     connect(&keypad, SIGNAL(value(QString)),            this,SLOT(keyValue(QString)));
 }
@@ -104,6 +106,75 @@ void MainWindow::keyValue(QString value)
         ui->edtCalibrationWeight->setText(str);
     }
 }
+
+// //////////////////////////////////////////////////////////////////////////7
+// FIXME: Finish on Thisday - 21.sept 2016
+// //////////////////////////////////////////////////////////////////////////7
+
+void MainWindow::on_xmin_clicked()
+{
+    keypad.clearDisplay();
+    keypad.show();
+    connect(&keypad, SIGNAL(value(QString)),     this,SLOT(graphBoundaries(QString)));
+    boundary = 1;
+}
+
+void MainWindow::on_xmax_clicked()
+{
+    keypad.clearDisplay();
+    keypad.show();
+    connect(&keypad, SIGNAL(value(QString)),            this,SLOT(graphBoundaries(QString)));
+    boundary = 2;
+}
+
+void MainWindow::on_ymin_clicked()
+{
+    keypad.clearDisplay();
+    keypad.show();
+    connect(&keypad, SIGNAL(value(QString)),            this,SLOT(graphBoundaries(QString)));
+    boundary = 3;
+}
+
+void MainWindow::on_ymax_clicked()
+{
+    keypad.clearDisplay();
+    keypad.show();
+    connect(&keypad, SIGNAL(value(QString)),            this,SLOT(graphBoundaries(QString)));
+    boundary = 4;
+}
+
+void MainWindow::graphBoundaries(QString value)
+{
+    QString str;
+
+    if (value == "91") {
+        ui->edtCalibrationWeight->backspace();
+
+    } else if (value == "92") {
+        disconnect(&keypad, SIGNAL(value(QString)),         this,SLOT(graphBoundaries(QString)));
+        keypad.close();
+
+        if (boundary == 1) {
+            emit xmin(str);
+        } else if (boundary == 2) {
+            emit xmax(str);
+        } else if (boundary == 3) {
+            emit ymin(str);
+        } else if (boundary == 4) {
+            emit ymax(str);
+        }
+
+    } else {
+        str.append(value);
+    }
+
+    boundary = -1;
+}
+
+// //////////////////////////////////////////////////////////////////////////7
+// //////////////////////////////////////////////////////////////////////////7
+
+
 
 void MainWindow::conveyorBeltSignal()
 {
@@ -433,7 +504,6 @@ void MainWindow::on_btnNetWeight_clicked()
 {
     scale->netWeight();
 }
-
 
 void MainWindow::on_btnReverse_clicked()
 {

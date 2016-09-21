@@ -38,7 +38,7 @@ public:
     std::ofstream filezero;
 
     int zeroUnfilteredArray[numbersOfBeltRounds][samplesPerBeltRound];
-    int productIDweights[numberOfElementsInList][samplesPerBeltRound];
+    int productIDweights[numberOfElementsInList][weightSamplesInWindowOfInterest];
 
     struct productData {
 
@@ -102,7 +102,7 @@ private:
     double dSorted[numbersOfBeltRounds];
     bool elementOnScaleArea[numberOfElementsInList];
     // zeroUnfilteredArray[numbersOfBeltRounds][samplesPerBeltRound];
-    // int productIDweights[numberOfElementsInList][samplesPerBeltRound];
+    // int productIDweights[numberOfElementsInList][weightSamplesInWindowOfInterest];
     int zeroArray[samplesPerBeltRound];
     int updateZeroArray[samplesPerBeltRound];
     int zeroColumn[numbersOfBeltRounds];
@@ -136,6 +136,11 @@ private:
     int medianZeroSample;
     int meanWeightSample;
 
+    int plotXvalueMIN;
+    int plotXvalueMAX;
+    int plotYvalueMIN;
+    int plotYvalueMAX;
+
 
 signals:
     void receivedWeight(int);
@@ -149,6 +154,10 @@ public slots:
     void enteringProductSensorSignal();
     void leavingProductSensorSignal();
     void modelZeroWeight(int);
+    void xmin(QString);
+    void xmax(QString);
+    void ymin(QString);
+    void ymax(QString);
     
 };
 

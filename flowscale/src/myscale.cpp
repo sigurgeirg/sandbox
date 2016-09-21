@@ -67,6 +67,11 @@ MyScale::MyScale(QObject *parent) :
 
     nextZeroUpdatePosition = 0;
 
+    plotXvalueMIN = XvalueMIN;
+    plotXvalueMAX = XvalueMAX;
+    plotYvalueMIN = YvalueMIN;
+    plotYvalueMAX = YvalueMAX;
+
 }
 
 
@@ -621,6 +626,21 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
     sampleCounter++;
 }
 
+void MyScale::xmin(QString str) {
+    plotXvalueMIN = str.toInt();
+}
+
+void MyScale::xmax(QString str) {
+    plotXvalueMAX = str.toInt();
+}
+
+void MyScale::ymin(QString str) {
+    plotYvalueMIN = str.toInt();
+}
+
+void MyScale::ymax(QString str) {
+    plotYvalueMAX = str.toInt();
+}
 
 void MyScale::setupPlot(QCustomPlot *customPlot, int workingID) {
 
@@ -686,7 +706,7 @@ void MyScale::run() {
             }
         }
         for (int _rounds = 0; _rounds < numberOfElementsInList; _rounds++) {
-            for (int _samples = 0; _samples < samplesPerBeltRound; _samples++) {
+            for (int _samples = 0; _samples < weightSamplesInWindowOfInterest; _samples++) {
                 productIDweights[_rounds][_samples] = 0;
             }
         }
@@ -701,8 +721,8 @@ void MyScale::run() {
         for (int _samples = 0; _samples < filterDelay; _samples++) {
             runningFilter[_samples] = 0;
         }
-        for (int _samples = 0; _samples < numberOfElementsInList; _samples++) {
-            productTempId[_samples] = -1;
+        for (int _count = 0; _count < numberOfElementsInList; _count++) {
+            productTempId[_count] = -1;
         }
         pulseCounterInAllRows = 0.0;
 

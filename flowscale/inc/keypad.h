@@ -14,6 +14,7 @@ class KeyPad : public QDialog
 public:
     explicit KeyPad(QWidget *parent = 0);
     ~KeyPad();
+    void clearDisplay();
 
 private slots:
     void on_pushButton_00_clicked();

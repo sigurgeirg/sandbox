@@ -579,7 +579,7 @@
       <enum>QTabWidget::Rounded</enum>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>2</number>
      </property>
      <property name="iconSize">
       <size>
@@ -894,7 +894,7 @@
          <string>Calibration weight:</string>
         </property>
        </widget>
-       <widget class="QPushButton" name="edtCalibrationWeight_2">
+       <widget class="QPushButton" name="btnEditCalibrationWeight">
         <property name="geometry">
          <rect>
           <x>110</x>
@@ -1036,10 +1036,10 @@
          <widget class="QFrame" name="frame_4">
           <property name="geometry">
            <rect>
-            <x>10</x>
+            <x>40</x>
             <y>10</y>
-            <width>581</width>
-            <height>201</height>
+            <width>551</width>
+            <height>181</height>
            </rect>
           </property>
           <property name="frameShape">
@@ -1056,8 +1056,8 @@
             <rect>
              <x>10</x>
              <y>10</y>
-             <width>561</width>
-             <height>181</height>
+             <width>531</width>
+             <height>161</height>
             </rect>
            </property>
            <property name="autoFillBackground">
@@ -1135,6 +1135,86 @@
           </property>
           <property name="text">
            <string>ElementId</string>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="ymax">
+          <property name="geometry">
+           <rect>
+            <x>0</x>
+            <y>10</y>
+            <width>41</width>
+            <height>31</height>
+           </rect>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Ymax</string>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="ymin">
+          <property name="geometry">
+           <rect>
+            <x>0</x>
+            <y>160</y>
+            <width>41</width>
+            <height>31</height>
+           </rect>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Ymin</string>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="xmin">
+          <property name="geometry">
+           <rect>
+            <x>60</x>
+            <y>190</y>
+            <width>41</width>
+            <height>31</height>
+           </rect>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Xmin</string>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="xmax">
+          <property name="geometry">
+           <rect>
+            <x>550</x>
+            <y>190</y>
+            <width>41</width>
+            <height>31</height>
+           </rect>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Xmax</string>
           </property>
          </widget>
         </widget>
@@ -1641,7 +1721,7 @@
   <tabstop>btnCalibrateWEIGHT</tabstop>
   <tabstop>btnForward</tabstop>
   <tabstop>btnReverse</tabstop>
-  <tabstop>edtCalibrationWeight_2</tabstop>
+  <tabstop>btnEditCalibrationWeight</tabstop>
   <tabstop>btnDisconnect_2</tabstop>
   <tabstop>btnConnect</tabstop>
  </tabstops>
