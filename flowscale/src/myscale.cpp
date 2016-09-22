@@ -628,18 +628,22 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
 
 void MyScale::xmin(QString str) {
     plotXvalueMIN = str.toInt();
+    qDebug() << "plotXvalueMIN: " << plotXvalueMIN;
 }
 
 void MyScale::xmax(QString str) {
     plotXvalueMAX = str.toInt();
+    qDebug() << "plotXvalueMAX: " << plotXvalueMAX;
 }
 
 void MyScale::ymin(QString str) {
     plotYvalueMIN = str.toInt();
+    qDebug() << "plotYvalueMIN: " << plotYvalueMIN;
 }
 
 void MyScale::ymax(QString str) {
     plotYvalueMAX = str.toInt();
+    qDebug() << "plotYvalueMAX: " << plotYvalueMAX;
 }
 
 void MyScale::setupPlot(QCustomPlot *customPlot, int workingID) {

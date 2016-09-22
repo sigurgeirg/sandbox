@@ -28,6 +28,7 @@ MainWindow::MainWindow(QWidget *parent) :
     step = 0;
     currentWorkingID = 0;
     boundary = -1;
+    limits = "";
 
 
 
@@ -42,6 +43,12 @@ MainWindow::MainWindow(QWidget *parent) :
 
         connect(scale, SIGNAL(sendFilteredWeight(int)),         this,  SLOT(displayFilteredWeight(int)));
         connect(scale, SIGNAL(sendDebugData(int)),              this,  SLOT(displayDebugData(int)));
+
+
+        connect(this, SIGNAL(xmin(QString)),                    scale,  SLOT(xmin(QString)));
+        connect(this, SIGNAL(xmax(QString)),                    scale,  SLOT(xmax(QString)));
+        connect(this, SIGNAL(ymin(QString)),                    scale,  SLOT(ymin(QString)));
+        connect(this, SIGNAL(ymax(QString)),                    scale,  SLOT(ymax(QString)));
 
 
         //This is the output array from zerofilter, and it will be sent to destination when ready.
@@ -107,10 +114,6 @@ void MainWindow::keyValue(QString value)
     }
 }
 
-// //////////////////////////////////////////////////////////////////////////7
-// FIXME: Finish on Thisday - 21.sept 2016
-// //////////////////////////////////////////////////////////////////////////7
-
 void MainWindow::on_xmin_clicked()
 {
     keypad.clearDisplay();
@@ -145,7 +148,6 @@ void MainWindow::on_ymax_clicked()
 
 void MainWindow::graphBoundaries(QString value)
 {
-    QString str;
 
     if (value == "91") {
         ui->edtCalibrationWeight->backspace();
@@ -155,26 +157,21 @@ void MainWindow::graphBoundaries(QString value)
         keypad.close();
 
         if (boundary == 1) {
-            emit xmin(str);
+            emit xmin(limits);
         } else if (boundary == 2) {
-            emit xmax(str);
+            emit xmax(limits);
         } else if (boundary == 3) {
-            emit ymin(str);
+            emit ymin(limits);
         } else if (boundary == 4) {
-            emit ymax(str);
+            emit ymax(limits);
         }
+        boundary = -1;
+        limits = "";
 
     } else {
-        str.append(value);
+        limits.append(value);
     }
-
-    boundary = -1;
 }
-
-// //////////////////////////////////////////////////////////////////////////7
-// //////////////////////////////////////////////////////////////////////////7
-
-
 
 void MainWindow::conveyorBeltSignal()
 {

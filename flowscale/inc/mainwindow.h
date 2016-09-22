@@ -37,6 +37,7 @@ public:
     QLineEdit *lineEdit;
     QTextEdit *textEdit;
     int boundary;
+    QString limits;
 
     std::ofstream fout;
 

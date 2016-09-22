@@ -1180,7 +1180,7 @@
          <widget class="QPushButton" name="xmin">
           <property name="geometry">
            <rect>
-            <x>60</x>
+            <x>40</x>
             <y>190</y>
             <width>41</width>
             <height>31</height>
