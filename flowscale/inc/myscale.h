@@ -2,15 +2,19 @@
 #define MYSCALE_H
 
 #include "constants.h"
+#include "settings.h"
 #include <QThread>
+#include <QDebug>
 #include <modbus/modbus.h>
 #include <modbus/modbus-rtu.h>
 #include <inttypes.h>
 #include <iostream>
+#include <sstream>
+#include <fstream>
+#include <string>
 #include <math.h>
 #include <cmath>
-#include <QDebug>
-#include <fstream>
+#include <stdlib.h>
 #include "../../QCustomPlot/qcustomplot.h"
 
 
@@ -21,6 +25,8 @@ class MyScale : public QThread
 public:
     explicit MyScale(QObject *parent = 0);
     ~MyScale();
+
+    Settings *sett;
 
     bool between(int less, int value, int greater);
     void connectToSlaveDevice();
@@ -36,9 +42,11 @@ public:
     void run();
     int *statusRegisterBinary(uint16_t number[]);
     std::ofstream filezero;
+    std::string recipeArray[100][5];
 
-    int zeroUnfilteredArray[numbersOfBeltRounds][samplesPerBeltRound];
+    int zeroUnfilteredArray[numberOfBeltRounds][samplesPerBeltRound];
     int productIDweights[numberOfElementsInList][weightSamplesInWindowOfInterest];
+
 
     struct productData {
 
@@ -75,11 +83,10 @@ private:
     int sampleWeightStorage;        // Command 101
     int readFromRegister;   // Points to some register, fx. statusRegister ...
     int writeToRegister;    // Points to some register, fx. commandRegister ...
-    int calibrationWeight;  // Variable that keeps calibration weight value in terms of [g]
+    //int calibrationWeight;  // Variable that keeps calibration weight value in terms of [g]
     int weightGROSSorNET[1];// Indicates whether selected weight is GROSS or NET weight.
 
 
-    // from zerofilter
     bool enteringProduct;
     bool requestBeltRoundPulse;
     bool beltRoundPulse;
@@ -99,27 +106,31 @@ private:
     double lengthOfEachBeltPeriod;
     double dMedian;
 
-    double dSorted[numbersOfBeltRounds];
+    double dSorted[numberOfBeltRounds];
     bool elementOnScaleArea[numberOfElementsInList];
-    // zeroUnfilteredArray[numbersOfBeltRounds][samplesPerBeltRound];
-    // int productIDweights[numberOfElementsInList][weightSamplesInWindowOfInterest];
     int zeroArray[samplesPerBeltRound];
     int updateZeroArray[samplesPerBeltRound];
-    int zeroColumn[numbersOfBeltRounds];
-    int runningFilter[filterDelay];
+    int zeroColumn[numberOfBeltRounds];
     int productTempId[numberOfElementsInList];
-    int pulseCounterInEachRow[numbersOfBeltRounds];  //henda þessu þegar þetta hefur verið notað og sannprófað
+    int pulseCounterInEachRow[numberOfBeltRounds];  //henda þessu þegar þetta hefur verið notað og sannprófað
 
     int filterCounter;
     int numberOfBeltRoundsZero;
     int countFewBeltRounds;
+    int productEntry;
+    int productWeighingStartDistance;
+    int productWeighingStopDistance;
+    int productRelease;
+    int plotXvalueMIN;
+    int plotXvalueMAX;
+    int plotYvalueMIN;
+    int plotYvalueMAX;
 
     int zt_InitializeZeroVectors;
     int zt_UpdateZeroWeightSamples;
     int zt_CollectInitialZeroWeightSamples;
     int zt_CalculateMedianOfZeroPath;
     int zt_ReturnResultsToFile;
-    int zt_RunningFilter;
     int zt_ProductFilter;
 
     int filterValue;
@@ -135,11 +146,6 @@ private:
     int productReleasePulse;
     int medianZeroSample;
     int meanWeightSample;
-
-    int plotXvalueMIN;
-    int plotXvalueMAX;
-    int plotYvalueMIN;
-    int plotYvalueMAX;
 
 
 signals:

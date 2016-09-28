@@ -14,6 +14,8 @@ INCLUDEPATH += ./inc ./src ./forms ./images
 
 # Input
 HEADERS +=  inc/constants.h \
+            inc/recipe.h \
+            inc/settings.h \
             inc/mainwindow.h \
             inc/keypad.h \
             inc/mydio.h \
@@ -24,6 +26,8 @@ HEADERS +=  inc/constants.h \
             ../QCustomPlot/qcustomplot.h
 
 SOURCES +=  src/main.cpp \
+            src/recipe.cpp \
+            src/settings.cpp \
             src/mainwindow.cpp \
             src/keypad.cpp \
             src/mydio.cpp \

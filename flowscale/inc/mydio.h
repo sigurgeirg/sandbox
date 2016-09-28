@@ -17,12 +17,12 @@ public:
     explicit MyDio(QObject *parent = 0);
     ~MyDio();
 
+    Dio io;
+
     void updateInputs();
     void updateOutputs();
     void newInput(unsigned char address);
     void run();
-
-    Dio io;
 
     static unsigned long lastValue[numberOfUsedDigitalInputs];
     static unsigned long newValue[numberOfUsedDigitalInputs];

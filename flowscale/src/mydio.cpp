@@ -17,6 +17,7 @@ unsigned char MyDio::tickOrTime[] 		= {0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0};
 MyDio::MyDio(QObject *parent) :
     QThread(parent)
 {
+
     io.DICfgMode(0,DI_MODE_DIRECT);
     io.DICfgMode(1,DI_MODE_DIRECT);
     io.DICfgMode(2,DI_MODE_DIRECT);
@@ -156,10 +157,8 @@ void MyDio::newInput(unsigned char address) {
 
 void MyDio::run() {
 
-    int _NUMBER_OF_USED_INPUTS = 16;
-
     // Only runs once
-    for (int i = 0; i < _NUMBER_OF_USED_INPUTS; i++) {
+    for (int i = 0; i < numberOfUsedDigitalInputs; i++) {
 
         //io.DICfgMode(i,DI_MODE_DIRECT);
         io.DOCfgMode(i, DO_MODE_DIRECT, 0);
@@ -194,7 +193,7 @@ void MyDio::run() {
         updateInputs();
         updateOutputs();
 
-        for (int i = 0; i < _NUMBER_OF_USED_INPUTS; i++) {
+        for (int i = 0; i < numberOfUsedDigitalInputs; i++) {
             // rising and falling are reset after one scan-cycle for other processes to be able to monitor these.
             rising[i] = 0;
             falling[i] = 0;
@@ -264,7 +263,7 @@ void MyDio::run() {
         // once for every scan (every 20ms), that should cover all changes on initialized inputs.
         if (trigger == true) {
 
-            for (int i = 0; i < _NUMBER_OF_USED_INPUTS; i++) {
+            for (int i = 0; i < numberOfUsedDigitalInputs; i++) {
                 emit inputValue(value[i]);
             }
             trigger = false;
