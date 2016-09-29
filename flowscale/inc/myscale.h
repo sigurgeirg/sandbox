@@ -3,6 +3,7 @@
 
 #include "constants.h"
 #include "settings.h"
+#include "recipe.h"
 #include <QThread>
 #include <QDebug>
 #include <modbus/modbus.h>
@@ -26,7 +27,9 @@ public:
     explicit MyScale(QObject *parent = 0);
     ~MyScale();
 
-    Settings *sett;
+    Settings *settings;
+    Recipe * recipe;
+
 
     bool between(int less, int value, int greater);
     void connectToSlaveDevice();
@@ -50,7 +53,6 @@ public:
 
     struct productData {
 
-        int tempId[numberOfElementsInList];
         int serialId[numberOfElementsInList];
         int batchId[numberOfElementsInList];
         int productId[numberOfElementsInList];
@@ -126,6 +128,16 @@ private:
     int plotYvalueMIN;
     int plotYvalueMAX;
 
+    std::string productDescription;
+    std::string recipeID;
+    std::string productID;
+    std::string productType;
+    std::string batchID;
+    int serialStartsAt;
+    int minProductLength;
+    int maxProductLength;
+    int maxProductPieceGap;
+
     int zt_InitializeZeroVectors;
     int zt_UpdateZeroWeightSamples;
     int zt_CollectInitialZeroWeightSamples;
@@ -136,7 +148,7 @@ private:
     int filterValue;
     int filterSUM;
 
-    int productID;
+    int tempID;
 
     int nextZeroUpdatePosition;
     int zeroTracking;

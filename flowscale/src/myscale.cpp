@@ -4,7 +4,8 @@
 MyScale::MyScale(QObject *parent) :
     QThread(parent)
 {
-    sett = new Settings(this);
+    settings = new Settings(this);
+    recipe = new Recipe(this);
 
     modbusConnected = false;
     mbCommand[0] = 0;
@@ -41,18 +42,30 @@ MyScale::MyScale(QObject *parent) :
     pulseResolution = 0.0;
     lengthOfEachBeltPeriod = 0.0;
 
-    lengthOfEachBeltChain           = QString::fromStdString(sett->lengthOfEachBeltChain.c_str()).toFloat();
-    numberOfBeltChains              = QString::fromStdString(sett->numberOfBeltChains.c_str()).toFloat();
-    productEntry                    = QString::fromStdString(sett->productEntry.c_str()).toInt();
-    productWeighingStartDistance    = QString::fromStdString(sett->productWeighingStartDistance.c_str()).toInt();
-    productWeighingStopDistance     = QString::fromStdString(sett->productWeighingStopDistance.c_str()).toInt();
-    productRelease                  = QString::fromStdString(sett->productRelease.c_str()).toInt();
-    plotXvalueMIN                   = QString::fromStdString(sett->XvalueMIN.c_str()).toInt();
-    plotXvalueMAX                   = QString::fromStdString(sett->XvalueMAX.c_str()).toInt();
-    plotYvalueMIN                   = QString::fromStdString(sett->YvalueMIN.c_str()).toInt();
-    plotYvalueMAX                   = QString::fromStdString(sett->YvalueMAX.c_str()).toInt();
+    // System settings variabales
+    lengthOfEachBeltChain           = QString::fromStdString(settings->lengthOfEachBeltChain.c_str()).toFloat();
+    numberOfBeltChains              = QString::fromStdString(settings->numberOfBeltChains.c_str()).toFloat();
+    productEntry                    = QString::fromStdString(settings->productEntry.c_str()).toInt();
+    productWeighingStartDistance    = QString::fromStdString(settings->productWeighingStartDistance.c_str()).toInt();
+    productWeighingStopDistance     = QString::fromStdString(settings->productWeighingStopDistance.c_str()).toInt();
+    productRelease                  = QString::fromStdString(settings->productRelease.c_str()).toInt();
+    plotXvalueMIN                   = QString::fromStdString(settings->XvalueMIN.c_str()).toInt();
+    plotXvalueMAX                   = QString::fromStdString(settings->XvalueMAX.c_str()).toInt();
+    plotYvalueMIN                   = QString::fromStdString(settings->YvalueMIN.c_str()).toInt();
+    plotYvalueMAX                   = QString::fromStdString(settings->YvalueMAX.c_str()).toInt();
 
     lengthOfEachBeltPeriod  = (lengthOfEachBeltChain * numberOfBeltChains);
+
+    // Recipe variables
+    productDescription              = recipe->productDescription;
+    recipeID                        = recipe->recipeID;
+    productID                       = recipe->productID;
+    productType                     = recipe->productType;
+    batchID                         = recipe->batchID;
+    serialStartsAt                  = QString::fromStdString(recipe->serialStartsAt.c_str()).toInt();
+    minProductLength                = QString::fromStdString(recipe->minProductLength.c_str()).toInt();
+    maxProductLength                = QString::fromStdString(recipe->maxProductLength.c_str()).toInt();
+    maxProductPieceGap              = QString::fromStdString(recipe->maxProductPieceGap.c_str()).toInt();
 
     dMedian = 0.0;
 
@@ -74,7 +87,7 @@ MyScale::MyScale(QObject *parent) :
     filterValue = 0;
     filterSUM = 0;
 
-    productID = -1;
+    tempID = -1;
 
     nextZeroUpdatePosition = 0;
 
@@ -85,7 +98,7 @@ MyScale::~MyScale()
 {
     delete statusRegisterBinaryTempValue;
     delete statusRegisterBinaryReturnValue;
-    delete sett;
+    delete settings;
 }
 
 
@@ -257,33 +270,32 @@ void MyScale::enteringProductSensorSignal()
 {
     enteringProduct = true;
     productCounter++;
-    productID++;
-    if (productID >= numberOfElementsInList) {
-        productID = 0;
+    tempID++;
+    if (tempID >= numberOfElementsInList) {
+        tempID = 0;
     }
 
-    productTempId[productID] = 0;
+    productTempId[tempID] = 0;
 
     // //////////////////////////////////////////////////////////
     // FIXME: Data that follows product from scale to grader - find better location later
     // //////////////////////////////////////////////////////////
-    proData.tempId[productID] = 0;
-    proData.serialId[productID] = productCounter;
-    proData.batchId[productID] = 100;
-    proData.productId[productID] = 0;
-    proData.productType[productID] = 0;
-    proData.productSensorEntryPosition[productID] = 0;
-    proData.productLength[productID] = 0;
-    proData.productWeight[productID] = 0;
-    proData.productLengthCounter[productID] = 0;
-    proData.destinationGate[productID] = 0;
+    proData.serialId[tempID] = productCounter;
+    proData.batchId[tempID] = 100;
+    proData.productId[tempID] = 0;
+    proData.productType[tempID] = 0;
+    proData.productSensorEntryPosition[tempID] = 0;
+    proData.productLength[tempID] = 0;
+    proData.productWeight[tempID] = 0;
+    proData.productLengthCounter[tempID] = 0;
+    proData.destinationGate[tempID] = 0;
     // //////////////////////////////////////////////////////////
 }
 
 
 void MyScale::leavingProductSensorSignal() {
 
-    proData.productLength[productID] = proData.productLengthCounter[productID] * pulseResolution;
+    proData.productLength[tempID] = proData.productLengthCounter[tempID] * pulseResolution;
 }
 
 
@@ -517,12 +529,12 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
 
                 if (productTempId[_elementId] == productEntryPulse) {
 
-                    proData.productLengthCounter[productID] = productEntry;
+                    proData.productLengthCounter[tempID] = productEntry;
                 }
 
                 if (between(productEntryPulse, productTempId[_elementId], weightEndPulse)) {
 
-                    proData.productLengthCounter[productID]++;
+                    proData.productLengthCounter[tempID]++;
                 }
 
 
@@ -560,7 +572,7 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
                     emit sendFilteredWeight(meanWeightSample);
                     emit sendDebugData(_elementId);
 
-                    proData.productLengthCounter[productID] = 0;
+                    proData.productLengthCounter[tempID] = 0;
                 }
 
 
