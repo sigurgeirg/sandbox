@@ -2,7 +2,6 @@
 #define MAINWINDOW_H
 
 #include "constants.h"
-//#include "recipe.h"
 #include "mydio.h"
 #include "myscale.h"
 #include "mymessages.h"
@@ -39,7 +38,6 @@ public:
     MyScale *scale;
     MyDio *dio;
     MyMessages *mosq;
-//    Recipe *recipe;
     Dio io;
     QLineEdit *lineEdit;
     QTextEdit *textEdit;
@@ -106,9 +104,13 @@ private slots:
 
     void on_btnNetWeightConnect_clicked();
 
-    void on_btnNetWeightConnect_2_clicked();
+    void on_btnRefreshRecipeList_clicked();
 
-    void on_comboBox_currentIndexChanged(const QString &arg1);
+    void on_cbRecipeMenu_currentIndexChanged(const QString &arg1);
+
+    void on_btnRefreshSettingsList_clicked();
+
+    void on_cbSettingsMenu_currentIndexChanged(const QString &arg1);
 
 public slots:
     void conveyorBeltSignal();

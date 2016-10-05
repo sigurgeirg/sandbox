@@ -31,6 +31,7 @@ public:
     Recipe *recipe;
 
     bool between(int less, int value, int greater);
+    int  returnToGate(int measuredWeight);
     void connectToSlaveDevice();
     void disconnectFromSlaveDevice();
     void toggleWriteToLoadcell(bool checked);
@@ -51,17 +52,15 @@ public:
 
 
     struct productData {
-
+        int recipeId[numberOfElementsInList];
         int serialId[numberOfElementsInList];
         int batchId[numberOfElementsInList];
         int productId[numberOfElementsInList];
         int productType[numberOfElementsInList];
-        int productSensorEntryPosition[numberOfElementsInList];
-        int productSensorExitPosition[numberOfElementsInList];
+        int productLengthPulseCounter[numberOfElementsInList];
         int productLength[numberOfElementsInList];
         int productWeight[numberOfElementsInList];
         int productStdDev[numberOfElementsInList];
-        int productLengthCounter[numberOfElementsInList];
         int destinationGate[numberOfElementsInList];
     } proData;
 
@@ -99,7 +98,6 @@ private:
     long lastRound;
 
     double pulseCounterInAllRows;
-    double productCounter;
     double pulsesPerBeltRound;
     double pulseResolution;
     double lengthOfEachBeltChain;
@@ -115,6 +113,7 @@ private:
     int productTempId[numberOfElementsInList];
     int pulseCounterInEachRow[numberOfBeltRounds];  //henda þessu þegar þetta hefur verið notað og sannprófað
 
+    int productCounter;
     int filterCounter;
     int numberOfBeltRoundsZero;
     int countFewBeltRounds;

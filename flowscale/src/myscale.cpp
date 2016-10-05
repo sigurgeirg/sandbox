@@ -7,7 +7,7 @@ MyScale::MyScale(QObject *parent) :
     settings = new Settings(this);
     recipe = new Recipe(this);
 
-    connect(this, SIGNAL(requestNewRecipe(QString)),       recipe, SLOT(updateRecipe(QString)));
+    //connect(this, SIGNAL(requestNewRecipe(QString)),       recipe, SLOT(updateRecipe(QString)));
 
     modbusConnected = false;
     mbCommand[0] = 0;
@@ -39,7 +39,6 @@ MyScale::MyScale(QObject *parent) :
     lastRound = 0;
 
     pulseCounterInAllRows = 0.0;
-    productCounter = 0.0;
     pulsesPerBeltRound = 0.0;
     pulseResolution = 0.0;
     lengthOfEachBeltPeriod = 0.0;
@@ -60,6 +59,7 @@ MyScale::MyScale(QObject *parent) :
 
     dMedian = 0.0;
 
+    productCounter = 0;
     filterCounter = 0;
     numberOfBeltRoundsZero = -4;
     countFewBeltRounds = 0;
@@ -103,20 +103,22 @@ void MyScale::updateRecipe(QString selectedRecipe) {
     productID                       = recipe->productID;
     productType                     = recipe->productType;
     batchID                         = recipe->batchID;
-    serialStartsAt                  = QString::fromStdString(recipe->serialStartsAt.c_str()).toInt();
-    minProductLength                = QString::fromStdString(recipe->minProductLength.c_str()).toInt();
-    maxProductLength                = QString::fromStdString(recipe->maxProductLength.c_str()).toInt();
-    maxProductPieceGap              = QString::fromStdString(recipe->maxProductPieceGap.c_str()).toInt();
+//    serialStartsAt                  = QString::fromStdString(recipe->serialStartsAt.c_str()).toInt();
+//    minProductLength                = QString::fromStdString(recipe->minProductLength.c_str()).toInt();
+//    maxProductLength                = QString::fromStdString(recipe->maxProductLength.c_str()).toInt();
+//    maxProductPieceGap              = QString::fromStdString(recipe->maxProductPieceGap.c_str()).toInt();
 
     for (int t = 0; t < 50; t++) {
 
-        weightRangeLower[t] = QString::fromStdString(recipe->weightRangeLower[t].c_str()).toInt();
-        weightRangeUpper[t] = QString::fromStdString(recipe->weightRangeUpper[t].c_str()).toInt();
-        destinationGate[t]  = QString::fromStdString(recipe->destinationGate[t].c_str()).toInt();
+//        weightRangeLower[t] = QString::fromStdString(recipe->weightRangeLower[t].c_str()).toInt();
+//        weightRangeUpper[t] = QString::fromStdString(recipe->weightRangeUpper[t].c_str()).toInt();
+//        destinationGate[t]  = QString::fromStdString(recipe->destinationGate[t].c_str()).toInt();
+
+        weightRangeLower[t] = 100;
+        weightRangeUpper[t] = 2000;
+        destinationGate[t]  = 3;
     }
-//    qDebug() << "Lower: " << QString::fromUtf8(recipe->weightRangeLower[3].c_str());
-//    qDebug() << "Upper: " << QString::fromUtf8(recipe->weightRangeUpper[3].c_str());
-//    qDebug() << "Desti: " << QString::fromUtf8(recipe->destinationGate[3].c_str());
+    //    qDebug() << "Lower: " << QString::fromUtf8(recipe->weightRangeLower[3].c_str());
 }
 
 
@@ -126,6 +128,56 @@ bool MyScale::between(int less, int value, int greater) {
         return true;
     } else {
         return false;
+    }
+}
+
+
+int MyScale::returnToGate(int measuredWeight) {
+
+    if        (between(weightRangeLower[0], measuredWeight, weightRangeUpper[0])){
+
+        return destinationGate[0];
+
+    } else if (between(weightRangeLower[1], measuredWeight, weightRangeUpper[1])){
+
+        return destinationGate[1];
+
+    } else if (between(weightRangeLower[2], measuredWeight, weightRangeUpper[2])){
+
+        return destinationGate[2];
+
+    } else if (between(weightRangeLower[3], measuredWeight, weightRangeUpper[3])){
+
+        return destinationGate[3];
+
+    } else if (between(weightRangeLower[4], measuredWeight, weightRangeUpper[4])){
+
+        return destinationGate[4];
+
+    } else if (between(weightRangeLower[5], measuredWeight, weightRangeUpper[5])){
+
+        return destinationGate[5];
+
+    } else if (between(weightRangeLower[6], measuredWeight, weightRangeUpper[6])){
+
+        return destinationGate[6];
+
+    } else if (between(weightRangeLower[7], measuredWeight, weightRangeUpper[7])){
+
+        return destinationGate[7];
+
+    } else if (between(weightRangeLower[8], measuredWeight, weightRangeUpper[8])){
+
+        return destinationGate[8];
+
+    } else if (between(weightRangeLower[9], measuredWeight, weightRangeUpper[9])){
+
+        return destinationGate[9];
+
+    } else {
+
+        return 0;
+
     }
 }
 
@@ -295,17 +347,41 @@ void MyScale::enteringProductSensorSignal()
 
     productTempId[tempID] = 0;
 
+
+
+
+    // Recipe variables
+
+    //    serialStartsAt;
+    //    minProductLength;
+    //    maxProductLength;
+    //    maxProductPieceGap;
+
+    //    for (int t = 0; t < 50; t++) {
+    //        weightRangeLower[t];
+    //        weightRangeUpper[t];
+    //        destinationGate[t];
+    //    }
+
     // //////////////////////////////////////////////////////////
     // FIXME: Data that follows product from scale to grader - find better location later
     // //////////////////////////////////////////////////////////
-    proData.serialId[tempID] = productCounter;
-    proData.batchId[tempID] = 100;
-    proData.productId[tempID] = 0;
-    proData.productType[tempID] = 0;
-    proData.productSensorEntryPosition[tempID] = 0;
+
+//    proData.recipeId[tempID] = QString::fromStdString(recipeID.c_str()).toInt();
+//    proData.serialId[tempID] = productCounter;
+//    proData.batchId[tempID] = QString::fromStdString(batchID.c_str()).toInt();
+//    proData.productId[tempID] = QString::fromStdString(productID.c_str()).toInt();
+//    proData.productType[tempID] = QString::fromStdString(productType.c_str()).toInt();
+
+    proData.recipeId[tempID] = 111;
+    proData.serialId[tempID] = 1;
+    proData.batchId[tempID] = 2;
+    proData.productId[tempID] = 3;
+    proData.productType[tempID] = 4;
+
+    proData.productLengthPulseCounter[tempID] = 0;
     proData.productLength[tempID] = 0;
     proData.productWeight[tempID] = 0;
-    proData.productLengthCounter[tempID] = 0;
     proData.destinationGate[tempID] = 0;
     // //////////////////////////////////////////////////////////
 }
@@ -313,7 +389,7 @@ void MyScale::enteringProductSensorSignal()
 
 void MyScale::leavingProductSensorSignal() {
 
-    proData.productLength[tempID] = proData.productLengthCounter[tempID] * pulseResolution;
+    proData.productLength[tempID] = proData.productLengthPulseCounter[tempID] * pulseResolution;
 }
 
 
@@ -547,12 +623,12 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
 
                 if (productTempId[_elementId] == productEntryPulse) {
 
-                    proData.productLengthCounter[tempID] = productEntry;
+                    proData.productLengthPulseCounter[tempID] = productEntry;
                 }
 
                 if (between(productEntryPulse, productTempId[_elementId], weightEndPulse)) {
 
-                    proData.productLengthCounter[tempID]++;
+                    proData.productLengthPulseCounter[tempID]++;
                 }
 
 
@@ -582,15 +658,18 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
 
                     proData.productWeight[_elementId] = meanWeightSample;
 
+                    proData.destinationGate[_elementId] = returnToGate(proData.productWeight[_elementId]);
+
+
                     qDebug() << "_elementId: " << _elementId
                              << " - Serial: " << proData.serialId[_elementId] << " - Batch: " << proData.batchId[_elementId]
-                             << " - Weight: " << proData.productWeight[_elementId] << " - Length: " << proData.productLength[_elementId];
-
+                             << " - Weight: " << proData.productWeight[_elementId] << " - Length: " << proData.productLength[_elementId]
+                             << " - Destination: " << proData.destinationGate[_elementId];
 
                     emit sendFilteredWeight(meanWeightSample);
                     emit sendDebugData(_elementId);
 
-                    proData.productLengthCounter[tempID] = 0;
+                    proData.productLengthPulseCounter[tempID] = 0;
                 }
 
 
