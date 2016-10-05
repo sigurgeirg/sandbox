@@ -14,8 +14,6 @@ INCLUDEPATH += ./inc ./src ./forms ./images
 
 # Input
 HEADERS +=  inc/constants.h \
-            inc/recipe.h \
-            inc/settings.h \
             inc/mainwindow.h \
             inc/keypad.h \
             inc/mydio.h \
@@ -23,11 +21,12 @@ HEADERS +=  inc/constants.h \
             inc/mymessages.h \
             inc/brokerpub.h \
             inc/clientsub.h \
-            ../QCustomPlot/qcustomplot.h
+            ../QCustomPlot/qcustomplot.h \
+            inc/settings.h \
+            inc/recipe.h
+
 
 SOURCES +=  src/main.cpp \
-            src/recipe.cpp \
-            src/settings.cpp \
             src/mainwindow.cpp \
             src/keypad.cpp \
             src/mydio.cpp \
@@ -35,7 +34,9 @@ SOURCES +=  src/main.cpp \
             src/mymessages.cpp \
             src/brokerpub.cpp \
             src/clientsub.cpp \
-            ../QCustomPlot/qcustomplot.cpp
+            ../QCustomPlot/qcustomplot.cpp \
+            src/settings.cpp \
+            src/recipe.cpp
 
 FORMS +=    forms/mainwindow.ui \
             forms/keypad.ui

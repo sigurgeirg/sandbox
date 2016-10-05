@@ -17,6 +17,7 @@ MainWindow::MainWindow(QWidget *parent) :
     scale = new MyScale(this);
     dio = new MyDio(this);
     mosq = new MyMessages(this);
+//    recipe = new Recipe(this);
 
     lineEdit = new QLineEdit();
     textEdit = new QTextEdit();
@@ -29,8 +30,6 @@ MainWindow::MainWindow(QWidget *parent) :
     currentWorkingID = 0;
     boundary = -1;
     limits = "";
-
-
 
 
     // ZERO Filtering:
@@ -50,12 +49,13 @@ MainWindow::MainWindow(QWidget *parent) :
         connect(this, SIGNAL(ymin(QString)),                    scale,  SLOT(ymin(QString)));
         connect(this, SIGNAL(ymax(QString)),                    scale,  SLOT(ymax(QString)));
 
+        connect(this, SIGNAL(setCurrentRecipe(QString)),        scale, SLOT(updateRecipe(QString)));
 
         //This is the output array from zerofilter, and it will be sent to destination when ready.
         //connect(zero, SIGNAL(filteredZeroArray(int)),         this, SLOT(givethisnewnameandcreatefunction(int)));
 
     // Show live weight on display (FIXME see below):
-        connect(scale, SIGNAL(receivedWeight(int)),             this, SLOT(displayReceivedWeight(int)));
+        connect(scale, SIGNAL(receivedWeight(int)),            this, SLOT(displayReceivedWeight(int)));
 
     // Collect live weight to a csv-file:
         connect(scale, SIGNAL(receivedWeight(int)),             this, SLOT(recordWeight(int)));
@@ -526,4 +526,63 @@ void MainWindow::on_btnForward_clicked()
     scale->setupPlot(ui->customPlot, currentWorkingID);
 }
 
+
+
+void MainWindow::on_btnNetWeightConnect_2_clicked()
+{
+    QDir dir("recipes");
+    dir.setFilter(QDir::Files | QDir::NoSymLinks);
+
+    QStringList filters;
+    filters << "*.csv";
+    dir.setNameFilters(filters);
+
+    QFileInfoList files = dir.entryInfoList();
+
+    ui->comboBox->clear();
+
+    foreach (QFileInfo file, files) {
+
+        ui->comboBox->addItem(file.fileName());
+    }
+}
+
+
+
+void MainWindow::on_comboBox_currentIndexChanged(const QString &arg1)
+{
+
+    QString fileName = ui->comboBox->currentText();
+    QString data;
+    QString file = "recipes/" + fileName;
+    QFile importedCSV(file);
+    QStringList rowOfData;
+    QStringList rowData;
+    data.clear();
+    rowOfData.clear();
+    rowData.clear();
+
+    ui->recipeTable->setColumnWidth(0,200);
+    ui->recipeTable->setColumnWidth(1,100);
+    ui->recipeTable->setColumnWidth(2,100);
+
+    if (importedCSV.open(QFile::ReadOnly)) {
+
+        data = importedCSV.readAll();
+        rowOfData = data.split("\n");
+        importedCSV.close();
+    }
+
+    for (int x = 0; x < rowOfData.size(); x++)
+    {
+        rowData = rowOfData.at(x).split(";");
+
+        for (int y = 0; y < rowData.size(); y++)
+        {
+            ui->recipeTable->setItem(x,y,new QTableWidgetItem(rowData[y]));
+        }
+    }
+
+    emit setCurrentRecipe(file);
+}
 

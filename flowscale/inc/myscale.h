@@ -28,8 +28,7 @@ public:
     ~MyScale();
 
     Settings *settings;
-    Recipe * recipe;
-
+    Recipe *recipe;
 
     bool between(int less, int value, int greater);
     void connectToSlaveDevice();
@@ -128,6 +127,9 @@ private:
     int plotYvalueMIN;
     int plotYvalueMAX;
 
+
+    // Recipe variables
+    QString currentRecipe;
     std::string productDescription;
     std::string recipeID;
     std::string productID;
@@ -137,7 +139,11 @@ private:
     int minProductLength;
     int maxProductLength;
     int maxProductPieceGap;
+    int weightRangeLower[50];
+    int weightRangeUpper[50];
+    int destinationGate[50];
 
+    // ZeroTracking
     int zt_InitializeZeroVectors;
     int zt_UpdateZeroWeightSamples;
     int zt_CollectInitialZeroWeightSamples;
@@ -166,6 +172,7 @@ signals:
     void sendDebugData(int);
     void plotData(int);
     void plotWeight(int);
+    void requestNewRecipe(QString);
 
 public slots:
     void conveyorBeltSignal();
@@ -176,7 +183,8 @@ public slots:
     void xmax(QString);
     void ymin(QString);
     void ymax(QString);
-    
+    void updateRecipe(QString);
+
 };
 
 #endif // MYSCALE_H

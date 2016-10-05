@@ -7,6 +7,8 @@ MyScale::MyScale(QObject *parent) :
     settings = new Settings(this);
     recipe = new Recipe(this);
 
+    connect(this, SIGNAL(requestNewRecipe(QString)),       recipe, SLOT(updateRecipe(QString)));
+
     modbusConnected = false;
     mbCommand[0] = 0;
     commandRegister = 5;
@@ -56,17 +58,6 @@ MyScale::MyScale(QObject *parent) :
 
     lengthOfEachBeltPeriod  = (lengthOfEachBeltChain * numberOfBeltChains);
 
-    // Recipe variables
-    productDescription              = recipe->productDescription;
-    recipeID                        = recipe->recipeID;
-    productID                       = recipe->productID;
-    productType                     = recipe->productType;
-    batchID                         = recipe->batchID;
-    serialStartsAt                  = QString::fromStdString(recipe->serialStartsAt.c_str()).toInt();
-    minProductLength                = QString::fromStdString(recipe->minProductLength.c_str()).toInt();
-    maxProductLength                = QString::fromStdString(recipe->maxProductLength.c_str()).toInt();
-    maxProductPieceGap              = QString::fromStdString(recipe->maxProductPieceGap.c_str()).toInt();
-
     dMedian = 0.0;
 
     filterCounter = 0;
@@ -99,6 +90,33 @@ MyScale::~MyScale()
     delete statusRegisterBinaryTempValue;
     delete statusRegisterBinaryReturnValue;
     delete settings;
+}
+
+
+void MyScale::updateRecipe(QString selectedRecipe) {
+
+    emit requestNewRecipe(selectedRecipe);
+
+    // Recipe variables
+    productDescription              = recipe->description;
+    recipeID                        = recipe->recipeID;
+    productID                       = recipe->productID;
+    productType                     = recipe->productType;
+    batchID                         = recipe->batchID;
+    serialStartsAt                  = QString::fromStdString(recipe->serialStartsAt.c_str()).toInt();
+    minProductLength                = QString::fromStdString(recipe->minProductLength.c_str()).toInt();
+    maxProductLength                = QString::fromStdString(recipe->maxProductLength.c_str()).toInt();
+    maxProductPieceGap              = QString::fromStdString(recipe->maxProductPieceGap.c_str()).toInt();
+
+    for (int t = 0; t < 50; t++) {
+
+        weightRangeLower[t] = QString::fromStdString(recipe->weightRangeLower[t].c_str()).toInt();
+        weightRangeUpper[t] = QString::fromStdString(recipe->weightRangeUpper[t].c_str()).toInt();
+        destinationGate[t]  = QString::fromStdString(recipe->destinationGate[t].c_str()).toInt();
+    }
+//    qDebug() << "Lower: " << QString::fromUtf8(recipe->weightRangeLower[3].c_str());
+//    qDebug() << "Upper: " << QString::fromUtf8(recipe->weightRangeUpper[3].c_str());
+//    qDebug() << "Desti: " << QString::fromUtf8(recipe->destinationGate[3].c_str());
 }
 
 

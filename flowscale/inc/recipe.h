@@ -17,8 +17,9 @@ public:
     explicit Recipe(QObject *parent = 0);
     ~Recipe();
 
+    QString recipePathAndName;
     std::string recipeArray[100][5];
-    std::string weightRange[30][5];
+    std::string weightRange[50][5];
 
     std::string recipeID;
     std::string productID;
@@ -28,10 +29,13 @@ public:
     std::string minProductLength;
     std::string maxProductLength;
     std::string maxProductPieceGap;
-    std::string productDescription;
-    std::string weightRangeLower[30];
-    std::string weightRangeUpper[30];
-    std::string destinationGate[30];
+    std::string description;
+    std::string weightRangeLower[50];
+    std::string weightRangeUpper[50];
+    std::string destinationGate[50];
+
+public slots:
+    void updateRecipe(QString);
 
 };
 

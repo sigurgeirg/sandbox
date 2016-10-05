@@ -2,15 +2,21 @@
 #define MAINWINDOW_H
 
 #include "constants.h"
+//#include "recipe.h"
 #include "mydio.h"
 #include "myscale.h"
 #include "mymessages.h"
 #include <QMainWindow>
 #include "keypad.h"
+#include <QDir>
+#include <QFile>
+#include <QTextStream>
+#include <QMessageBox>
 #include <QLineEdit>
 #include <QTextEdit>
 #include <QtCore>
 #include <QDebug>
+#include <QStandardItemModel>
 #include "../../QCustomPlot/qcustomplot.h"
 #include <string>
 #include <sstream>
@@ -33,6 +39,7 @@ public:
     MyScale *scale;
     MyDio *dio;
     MyMessages *mosq;
+//    Recipe *recipe;
     Dio io;
     QLineEdit *lineEdit;
     QTextEdit *textEdit;
@@ -55,6 +62,7 @@ private:
     int array[samplesPerBeltRound][2];
 //    int productIDweights[numberOfElementsInList][samplesPerBeltRound];
 
+
 signals:
     void avgWeight(int);
     void value(QString);
@@ -62,6 +70,7 @@ signals:
     void xmax(QString);
     void ymin(QString);
     void ymax(QString);
+    void setCurrentRecipe(QString);
     // /////////////////////////
     // Simulation
     // void reply(unsigned char, bool);
@@ -95,9 +104,11 @@ private slots:
     void on_btnReverse_clicked();
     void on_btnForward_clicked();
 
-
     void on_btnNetWeightConnect_clicked();
 
+    void on_btnNetWeightConnect_2_clicked();
+
+    void on_comboBox_currentIndexChanged(const QString &arg1);
 
 public slots:
     void conveyorBeltSignal();
