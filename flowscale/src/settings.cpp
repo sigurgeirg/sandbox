@@ -4,7 +4,7 @@ Settings::Settings(QObject *parent) :
     QThread(parent)
 {
 
-    std::ifstream inputfile("flowscale_settings.csv");
+    std::ifstream inputfile("settings/flowscale_settings.csv");
     std::string line = "";
     std::string delimiter = ";";
     std::string token1;

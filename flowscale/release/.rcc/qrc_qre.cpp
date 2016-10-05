@@ -1,8 +1,7 @@
 /****************************************************************************
 ** Resource object code
 **
-** Created: Wed Oct 15 22:44:00 2014
-**      by: The Resource Compiler for Qt version 4.8.1
+** Created by: The Resource Compiler for Qt version 4.8.6
 **
 ** WARNING! All changes made in this file will be lost!
 *****************************************************************************/
@@ -10,7 +9,7 @@
 #include <QtCore/qglobal.h>
 
 static const unsigned char qt_resource_data[] = {
-  // /home/sigurgeir/current_project/ReadFromLoadCell/images/drawing.svg
+  // /home/sig/Desktop/sandbox/flowscale/images/drawing.svg
   0x0,0x0,0x9,0x99,
   0x3c,
   0x3f,0x78,0x6d,0x6c,0x20,0x76,0x65,0x72,0x73,0x69,0x6f,0x6e,0x3d,0x22,0x31,0x2e,

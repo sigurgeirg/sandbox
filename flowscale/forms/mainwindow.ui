@@ -1263,6 +1263,9 @@
          <height>0</height>
         </size>
        </property>
+       <property name="autoScrollMargin">
+        <number>16</number>
+       </property>
        <row>
         <property name="text">
          <string>01</string>
