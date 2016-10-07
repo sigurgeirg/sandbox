@@ -7,8 +7,6 @@ MyScale::MyScale(QObject *parent) :
     settings = new Settings(this);
     recipe = new Recipe(this);
 
-    connect(this, SIGNAL(requestNewRecipe(QString)),       recipe, SLOT(updateRecipe(QString)));
-
     modbusConnected = false;
     mbCommand[0] = 0;
     commandRegister = 5;
@@ -95,7 +93,8 @@ MyScale::~MyScale()
 
 void MyScale::updateRecipe(QString selectedRecipe) {
 
-    emit requestNewRecipe(selectedRecipe);
+
+    recipe->updateRecipe(selectedRecipe);
 
     // Recipe variables
     productDescription              = recipe->description;

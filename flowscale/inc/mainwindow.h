@@ -58,7 +58,6 @@ private:
     int weightValueFromScale;
     long counter;
     int array[samplesPerBeltRound][2];
-//    int productIDweights[numberOfElementsInList][samplesPerBeltRound];
 
 
 signals:

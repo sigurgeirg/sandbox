@@ -44,6 +44,7 @@ void Recipe::updateRecipe(QString selectedRecipe) {
         int i = 0;
         int j = 0;
 
+
         while (!getline(inputfile, line).eof())
         {
              if (line.size() > 0)

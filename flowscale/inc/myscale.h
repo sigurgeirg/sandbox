@@ -30,6 +30,7 @@ public:
     Settings *settings;
     Recipe *recipe;
 
+    void updateRecipe(QString);
     bool between(int less, int value, int greater);
     int  returnToGate(int measuredWeight);
     void connectToSlaveDevice();
@@ -182,7 +183,7 @@ public slots:
     void xmax(QString);
     void ymin(QString);
     void ymax(QString);
-    void updateRecipe(QString);
+//    void updateRecipe(QString);
 
 };
 

@@ -16,6 +16,7 @@ class Recipe : public QThread
 public:
     explicit Recipe(QObject *parent = 0);
     ~Recipe();
+    void updateRecipe(QString);
 
     QString recipePathAndName;
     std::string recipeArray[100][5];
@@ -35,7 +36,7 @@ public:
     std::string destinationGate[50];
 
 public slots:
-    void updateRecipe(QString);
+
 
 };
 

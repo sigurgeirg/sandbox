@@ -48,7 +48,6 @@ MainWindow::MainWindow(QWidget *parent) :
         connect(this, SIGNAL(ymin(QString)),                    scale,  SLOT(ymin(QString)));
         connect(this, SIGNAL(ymax(QString)),                    scale,  SLOT(ymax(QString)));
 
-        connect(this, SIGNAL(setCurrentRecipe(QString)),        scale, SLOT(updateRecipe(QString)));
 
         //This is the output array from zerofilter, and it will be sent to destination when ready.
         //connect(zero, SIGNAL(filteredZeroArray(int)),         this, SLOT(givethisnewnameandcreatefunction(int)));
@@ -376,14 +375,17 @@ void MainWindow::on_btnForward_clicked()
 
 void MainWindow::on_btnRefreshRecipeList_clicked()
 {
-    QDir dir("recipes");
-    dir.setFilter(QDir::Files | QDir::NoSymLinks);
 
+    QDir dir("recipes");
     QStringList filters;
+    QFileInfoList files;
+
     filters << "*.csv";
+
+    dir.setFilter(QDir::Files | QDir::NoSymLinks);
     dir.setNameFilters(filters);
 
-    QFileInfoList files = dir.entryInfoList();
+    files = dir.entryInfoList();
 
     ui->cbRecipeMenu->clear();
 
@@ -399,12 +401,20 @@ void MainWindow::on_cbRecipeMenu_currentIndexChanged(const QString &arg1)
 {
     Q_UNUSED( arg1 );
 
-    QString fileName = ui->cbRecipeMenu->currentText();
+    QString fileName;
     QString data;
-    QString file = "recipes/" + fileName;
-    QFile importedCSV(file);
+    QString file;
     QStringList rowOfData;
     QStringList rowData;
+
+    //disconnect(this, SIGNAL(setCurrentRecipe(QString)),        scale, SLOT(updateRecipe(QString)));
+    //connect(this, SIGNAL(setCurrentRecipe(QString)),        scale, SLOT(updateRecipe(QString)));
+
+
+    fileName = ui->cbRecipeMenu->currentText();
+    file = "recipes/" + fileName;
+    QFile importedCSV(file);
+
     data.clear();
     rowOfData.clear();
     rowData.clear();
@@ -430,8 +440,7 @@ void MainWindow::on_cbRecipeMenu_currentIndexChanged(const QString &arg1)
             ui->recipeTable->setItem(x,y,new QTableWidgetItem(rowData[y]));
         }
     }
-
-    emit setCurrentRecipe(file);
+    scale->updateRecipe(file);
 }
 
 

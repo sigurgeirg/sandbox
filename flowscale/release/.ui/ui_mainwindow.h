@@ -516,7 +516,7 @@ public:
         settingsTable->setObjectName(QString::fromUtf8("settingsTable"));
         settingsTable->setGeometry(QRect(10, 60, 451, 281));
         settingsTable->setMinimumSize(QSize(451, 0));
-        settingsTable->setAutoScrollMargin(160);
+        settingsTable->setAutoScrollMargin(16);
         tabWidget->addTab(tabSettings, QString());
         tabRecipe = new QWidget();
         tabRecipe->setObjectName(QString::fromUtf8("tabRecipe"));
