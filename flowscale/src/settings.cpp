@@ -4,38 +4,39 @@ Settings::Settings(QObject *parent) :
     QThread(parent)
 {
 
-    std::ifstream inputfile("settings/flowscale_settings.csv");
-    std::string line = "";
-    std::string delimiter = ";";
-    std::string token1;
-    size_t pos = 0;
+    QString fileName;
+    QString file;
+    QString data;
+    QStringList rowOfData;
+    QStringList rowData;
 
-    //getline(inputfile, line);
+    fileName = "flowscale_settings.csv";
+    file = "settings/" + fileName;
+    QFile importedCSV(file);
 
-    int i = 0;
-    int j = 0;
+    data.clear();
+    rowOfData.clear();
+    rowData.clear();
 
-    while (!getline(inputfile, line).eof())
-    {
-         if (line.size() > 0)
-         {
+    if (importedCSV.open(QFile::ReadOnly)) {
 
-             while ((pos = line.find(delimiter)) != std::string::npos)
-             {
-                 token1 = line.substr(0, pos);
-                 line.erase(0, pos+1);
-
-                 settingsArray[i][j] = token1.c_str();
-
-                 j++;
-             }
-
-             j = 0;
-             i = i + 1;
-         }
+        data = importedCSV.readAll();
+        rowOfData = data.split("\n");
+        importedCSV.close();
     }
 
-    for (int k = 0; k < i; k++) {
+    for (int x = 0; x < rowOfData.size(); x++)
+    {
+        rowData = rowOfData.at(x).split(";");
+
+        for (int y = 0; y < rowData.size(); y++)
+        {
+            settingsArray[x][y] = rowData[y].toStdString();
+        }
+    }
+
+
+    for (int k = 0; k < rowOfData.size(); k++) {
 
         if (settingsArray[k][0] == "Length_Of_Each_BeltChain"){
             lengthOfEachBeltChain = settingsArray[k][1];
@@ -58,7 +59,6 @@ Settings::Settings(QObject *parent) :
         } else if (settingsArray[k][0] == "Y_Value_Max"){
             YvalueMAX = settingsArray[k][1];
         }
-
     }
 
     // ///////////////////////////////////////////////////////////////////////////////////

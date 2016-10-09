@@ -3,6 +3,8 @@
 
 #include <QThread>
 #include <QDebug>
+#include <QFile>
+#include <QStandardItemModel>
 #include <iostream>
 #include <sstream>
 #include <fstream>

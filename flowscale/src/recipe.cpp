@@ -32,110 +32,109 @@ Recipe::~Recipe()
 
 void Recipe::updateRecipe(QString selectedRecipe) {
 
+    QString fileName;
+    QString file;
+    QString data;
+    QStringList rowOfData;
+    QStringList rowData;
 
-        std::ifstream inputfile(selectedRecipe.toStdString().c_str());
-        std::string line = "";
-        std::string delimiter = ";";
-        std::string token1;
-        size_t pos = 0;
+    fileName = selectedRecipe.toStdString().c_str();
+    file = "recipes/" + fileName;
+    QFile importedCSV(file);
 
-        //getline(inputfile, line);
+    data.clear();
+    rowOfData.clear();
+    rowData.clear();
 
-        int i = 0;
-        int j = 0;
+    if (importedCSV.open(QFile::ReadOnly)) {
 
+        data = importedCSV.readAll();
+        rowOfData = data.split("\n");
+        importedCSV.close();
+    }
 
-        while (!getline(inputfile, line).eof())
+    for (int x = 0; x < rowOfData.size(); x++)
+    {
+        rowData = rowOfData.at(x).split(";");
+
+        for (int y = 0; y < rowData.size(); y++)
         {
-             if (line.size() > 0)
-             {
-
-                 while ((pos = line.find(delimiter)) != std::string::npos)
-                 {
-                     token1 = line.substr(0, pos);
-                     line.erase(0, pos+1);
-
-                     recipeArray[i][j] = token1.c_str();
-
-                     j++;
-                 }
-
-                 j = 0;
-                 i = i + 1;
-             }
+            recipeArray[x][y] = rowData[y].toStdString();
         }
+    }
 
 
-        for (int k = 0; k < i; k++) {
+    for (int k = 0; k < rowOfData.size(); k++) {
 
-            if (recipeArray[k][0] == "Recipe_ID"){
-                recipeID = recipeArray[k][1];
-            } else if (recipeArray[k][0] == "Product_ID"){
-                productID = recipeArray[k][1];
-            } else if (recipeArray[k][0] == "Product_Type"){
-                productType = recipeArray[k][1];
-            } else if (recipeArray[k][0] == "Batch_ID"){
-                batchID = recipeArray[k][1];
-            } else if (recipeArray[k][0] == "Serial_Starts_At"){
-                serialStartsAt = recipeArray[k][1];
-            } else if (recipeArray[k][0] == "Min_Prod_Length"){
-                minProductLength = recipeArray[k][1];
-            } else if (recipeArray[k][0] == "Max_Prod_Length"){
-                maxProductLength = recipeArray[k][1];
-            } else if (recipeArray[k][0] == "Max_Prod_Piece_Gap"){
-                maxProductPieceGap = recipeArray[k][1];
-            } else if (recipeArray[k][0] == "Recipe_Description"){
-                description = recipeArray[k][1];
-            } else if (recipeArray[k][0] == "Weight_Range_00"){
-                for (int s = 1; s < 4; s++) weightRange[0][s] = recipeArray[k][s];
-            } else if (recipeArray[k][0] == "Weight_Range_01"){
-                for (int s = 1; s < 4; s++) weightRange[1][s] = recipeArray[k][s];
-            } else if (recipeArray[k][0] == "Weight_Range_02"){
-                for (int s = 1; s < 4; s++) weightRange[2][s] = recipeArray[k][s];
-            } else if (recipeArray[k][0] == "Weight_Range_03"){
-                for (int s = 1; s < 4; s++) weightRange[3][s] = recipeArray[k][s];
-            } else if (recipeArray[k][0] == "Weight_Range_04"){
-                for (int s = 1; s < 4; s++) weightRange[4][s] = recipeArray[k][s];
-            } else if (recipeArray[k][0] == "Weight_Range_05"){
-                for (int s = 1; s < 4; s++) weightRange[5][s] = recipeArray[k][s];
-            } else if (recipeArray[k][0] == "Weight_Range_06"){
-                for (int s = 1; s < 4; s++) weightRange[6][s] = recipeArray[k][s];
-            } else if (recipeArray[k][0] == "Weight_Range_07"){
-                for (int s = 1; s < 4; s++) weightRange[7][s] = recipeArray[k][s];
-            } else if (recipeArray[k][0] == "Weight_Range_08"){
-                for (int s = 1; s < 4; s++) weightRange[8][s] = recipeArray[k][s];
-            } else if (recipeArray[k][0] == "Weight_Range_09"){
-                for (int s = 1; s < 4; s++) weightRange[9][s] = recipeArray[k][s];
-            } else if (recipeArray[k][0] == "Weight_Range_10"){
-                for (int s = 1; s < 4; s++) weightRange[10][s] = recipeArray[k][s];
-            } else if (recipeArray[k][0] == "Weight_Range_11"){
-                for (int s = 1; s < 4; s++) weightRange[11][s] = recipeArray[k][s];
-            } else if (recipeArray[k][0] == "Weight_Range_12"){
-                for (int s = 1; s < 4; s++) weightRange[12][s] = recipeArray[k][s];
-            } else if (recipeArray[k][0] == "Weight_Range_13"){
-                for (int s = 1; s < 4; s++) weightRange[13][s] = recipeArray[k][s];
-            } else if (recipeArray[k][0] == "Weight_Range_14"){
-                for (int s = 1; s < 4; s++) weightRange[14][s] = recipeArray[k][s];
-            } else if (recipeArray[k][0] == "Weight_Range_15"){
-                for (int s = 1; s < 4; s++) weightRange[15][s] = recipeArray[k][s];
-            } else if (recipeArray[k][0] == "Weight_Range_16"){
-                for (int s = 1; s < 4; s++) weightRange[16][s] = recipeArray[k][s];
-            } else if (recipeArray[k][0] == "Weight_Range_17"){
-                for (int s = 1; s < 4; s++) weightRange[17][s] = recipeArray[k][s];
-            } else if (recipeArray[k][0] == "Weight_Range_18"){
-                for (int s = 1; s < 4; s++) weightRange[18][s] = recipeArray[k][s];
-            } else if (recipeArray[k][0] == "Weight_Range_19"){
-                for (int s = 1; s < 4; s++) weightRange[19][s] = recipeArray[k][s];
-            } else if (recipeArray[k][0] == "Weight_Range_20"){
-                for (int s = 1; s < 4; s++) weightRange[20][s] = recipeArray[k][s];
-            }
+        if (recipeArray[k][0] == "Recipe_ID"){
+            recipeID = recipeArray[k][1];
+        } else if (recipeArray[k][0] == "Product_ID"){
+            productID = recipeArray[k][1];
+        } else if (recipeArray[k][0] == "Product_Type"){
+            productType = recipeArray[k][1];
+        } else if (recipeArray[k][0] == "Batch_ID"){
+            batchID = recipeArray[k][1];
+        } else if (recipeArray[k][0] == "Serial_Starts_At"){
+            serialStartsAt = recipeArray[k][1];
+        } else if (recipeArray[k][0] == "Min_Prod_Length"){
+            minProductLength = recipeArray[k][1];
+        } else if (recipeArray[k][0] == "Max_Prod_Length"){
+            maxProductLength = recipeArray[k][1];
+        } else if (recipeArray[k][0] == "Max_Prod_Piece_Gap"){
+            maxProductPieceGap = recipeArray[k][1];
+        } else if (recipeArray[k][0] == "Recipe_Description"){
+            description = recipeArray[k][1];
+        } else if (recipeArray[k][0] == "Weight_Range_00"){
+            for (int s = 1; s < 4; s++) weightRange[0][s] = recipeArray[k][s];
+        } else if (recipeArray[k][0] == "Weight_Range_01"){
+            for (int s = 1; s < 4; s++) weightRange[1][s] = recipeArray[k][s];
+        } else if (recipeArray[k][0] == "Weight_Range_02"){
+            for (int s = 1; s < 4; s++) weightRange[2][s] = recipeArray[k][s];
+        } else if (recipeArray[k][0] == "Weight_Range_03"){
+            for (int s = 1; s < 4; s++) weightRange[3][s] = recipeArray[k][s];
+        } else if (recipeArray[k][0] == "Weight_Range_04"){
+            for (int s = 1; s < 4; s++) weightRange[4][s] = recipeArray[k][s];
+        } else if (recipeArray[k][0] == "Weight_Range_05"){
+            for (int s = 1; s < 4; s++) weightRange[5][s] = recipeArray[k][s];
+        } else if (recipeArray[k][0] == "Weight_Range_06"){
+            for (int s = 1; s < 4; s++) weightRange[6][s] = recipeArray[k][s];
+        } else if (recipeArray[k][0] == "Weight_Range_07"){
+            for (int s = 1; s < 4; s++) weightRange[7][s] = recipeArray[k][s];
+        } else if (recipeArray[k][0] == "Weight_Range_08"){
+            for (int s = 1; s < 4; s++) weightRange[8][s] = recipeArray[k][s];
+        } else if (recipeArray[k][0] == "Weight_Range_09"){
+            for (int s = 1; s < 4; s++) weightRange[9][s] = recipeArray[k][s];
+        } else if (recipeArray[k][0] == "Weight_Range_10"){
+            for (int s = 1; s < 4; s++) weightRange[10][s] = recipeArray[k][s];
+        } else if (recipeArray[k][0] == "Weight_Range_11"){
+            for (int s = 1; s < 4; s++) weightRange[11][s] = recipeArray[k][s];
+        } else if (recipeArray[k][0] == "Weight_Range_12"){
+            for (int s = 1; s < 4; s++) weightRange[12][s] = recipeArray[k][s];
+        } else if (recipeArray[k][0] == "Weight_Range_13"){
+            for (int s = 1; s < 4; s++) weightRange[13][s] = recipeArray[k][s];
+        } else if (recipeArray[k][0] == "Weight_Range_14"){
+            for (int s = 1; s < 4; s++) weightRange[14][s] = recipeArray[k][s];
+        } else if (recipeArray[k][0] == "Weight_Range_15"){
+            for (int s = 1; s < 4; s++) weightRange[15][s] = recipeArray[k][s];
+        } else if (recipeArray[k][0] == "Weight_Range_16"){
+            for (int s = 1; s < 4; s++) weightRange[16][s] = recipeArray[k][s];
+        } else if (recipeArray[k][0] == "Weight_Range_17"){
+            for (int s = 1; s < 4; s++) weightRange[17][s] = recipeArray[k][s];
+        } else if (recipeArray[k][0] == "Weight_Range_18"){
+            for (int s = 1; s < 4; s++) weightRange[18][s] = recipeArray[k][s];
+        } else if (recipeArray[k][0] == "Weight_Range_19"){
+            for (int s = 1; s < 4; s++) weightRange[19][s] = recipeArray[k][s];
+        } else if (recipeArray[k][0] == "Weight_Range_20"){
+            for (int s = 1; s < 4; s++) weightRange[20][s] = recipeArray[k][s];
         }
+    }
 
-        for (int t = 0; t < i; t++) {
+    for (int t = 0; t < rowOfData.size(); t++) {
 
-            weightRangeLower[t] = weightRange[t][1];
-            weightRangeUpper[t] = weightRange[t][2];
-            destinationGate[t]  = weightRange[t][3];
-        }
-
+        weightRangeLower[t] = weightRange[t][1];
+        weightRangeUpper[t] = weightRange[t][2];
+        destinationGate[t]  = weightRange[t][3];
+    }
 }
+
+

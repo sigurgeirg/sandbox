@@ -23,6 +23,10 @@
 #include <fstream>
 #include <unistd.h>
 
+#include "settings.h"
+#include "recipe.h"
+
+
 namespace Ui {
 class MainWindow;
 }
@@ -43,8 +47,11 @@ public:
     QTextEdit *textEdit;
     int boundary;
     QString limits;
-
     std::ofstream fout;
+
+    Settings *settings;
+    Recipe *recipe;
+
 
 
 private:
@@ -58,6 +65,19 @@ private:
     int weightValueFromScale;
     long counter;
     int array[samplesPerBeltRound][2];
+
+    QString recipeFileName;
+    QString recipeFile;
+    QString recipeData;
+    QStringList rowOfRecipeData;
+    QStringList rowRecipeData;
+    QString SettingsFileName;
+    QString SettingsFile;
+    QString settingsData;
+    QString lastRecipeFile;
+    QString lastSettingsFile;
+    QStringList rowOfSettingsData;
+    QStringList rowSettingsData;
 
 
 signals:
@@ -105,11 +125,11 @@ private slots:
 
     void on_btnRefreshRecipeList_clicked();
 
-    void on_cbRecipeMenu_currentIndexChanged(const QString &arg1);
-
     void on_btnRefreshSettingsList_clicked();
 
-    void on_cbSettingsMenu_currentIndexChanged(const QString &arg1);
+    void on_cbRecipeMenu_activated(const QString &arg1);
+
+    void on_cbSettingsMenu_activated(const QString &arg1);
 
 public slots:
     void conveyorBeltSignal();

@@ -570,7 +570,7 @@
       <bool>false</bool>
      </property>
      <property name="styleSheet">
-      <string notr="true">background-color: rgb(100, 135, 223);</string>
+      <string notr="true">QScrollBar:vertical {min-width: 50px; margin-right: 20px;}</string>
      </property>
      <property name="tabPosition">
       <enum>QTabWidget::North</enum>
@@ -1234,6 +1234,13 @@
          <height>41</height>
         </rect>
        </property>
+       <property name="font">
+        <font>
+         <pointsize>16</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
       </widget>
       <widget class="QPushButton" name="btnRefreshSettingsList">
        <property name="geometry">
@@ -1245,7 +1252,7 @@
         </rect>
        </property>
        <property name="text">
-        <string>Refresh Settings</string>
+        <string>Reload Settings</string>
        </property>
       </widget>
       <widget class="QTableWidget" name="settingsTable">
@@ -1253,7 +1260,7 @@
         <rect>
          <x>10</x>
          <y>60</y>
-         <width>451</width>
+         <width>601</width>
          <height>281</height>
         </rect>
        </property>
@@ -1262,6 +1269,9 @@
          <width>451</width>
          <height>0</height>
         </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QScrollBar:vertical {min-width: 50px; margin-right: 20px;}</string>
        </property>
        <property name="autoScrollMargin">
         <number>16</number>
@@ -1492,7 +1502,7 @@
         </rect>
        </property>
        <property name="text">
-        <string>Refresh Recipes</string>
+        <string>Reload Recipes</string>
        </property>
       </widget>
       <widget class="QComboBox" name="cbRecipeMenu">
@@ -1503,6 +1513,25 @@
          <width>451</width>
          <height>41</height>
         </rect>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>16</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="sizeAdjustPolicy">
+        <enum>QComboBox::AdjustToMinimumContentsLengthWithIcon</enum>
+       </property>
+       <property name="minimumContentsLength">
+        <number>10</number>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>16</width>
+         <height>16</height>
+        </size>
        </property>
       </widget>
       <widget class="QTableWidget" name="recipeTable">

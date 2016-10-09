@@ -30,6 +30,9 @@ MainWindow::MainWindow(QWidget *parent) :
     boundary = -1;
     limits = "";
 
+    lastSettingsFile = "";
+    lastRecipeFile = "";
+
 
     // ZERO Filtering:
 
@@ -375,13 +378,11 @@ void MainWindow::on_btnForward_clicked()
 
 void MainWindow::on_btnRefreshRecipeList_clicked()
 {
-
-    QDir dir("recipes");
     QStringList filters;
     QFileInfoList files;
+    QDir dir("recipes");
 
     filters << "*.csv";
-
     dir.setFilter(QDir::Files | QDir::NoSymLinks);
     dir.setNameFilters(filters);
 
@@ -394,66 +395,64 @@ void MainWindow::on_btnRefreshRecipeList_clicked()
         ui->cbRecipeMenu->addItem(file.fileName());
     }
 }
-
-
-
-void MainWindow::on_cbRecipeMenu_currentIndexChanged(const QString &arg1)
+//on_cbRecipeMenu_currentIndexChanged(const QString &arg1)
+void MainWindow::on_cbRecipeMenu_activated(const QString &arg1)
 {
     Q_UNUSED( arg1 );
 
-    QString fileName;
-    QString data;
-    QString file;
-    QStringList rowOfData;
-    QStringList rowData;
-
-    //disconnect(this, SIGNAL(setCurrentRecipe(QString)),        scale, SLOT(updateRecipe(QString)));
-    //connect(this, SIGNAL(setCurrentRecipe(QString)),        scale, SLOT(updateRecipe(QString)));
+    recipeFileName = ui->cbRecipeMenu->currentText();
+    recipeFile = "recipes/" + recipeFileName;
+    QFile importedCSV(recipeFile);
 
 
-    fileName = ui->cbRecipeMenu->currentText();
-    file = "recipes/" + fileName;
-    QFile importedCSV(file);
+    if (recipeFile != lastRecipeFile) {
 
-    data.clear();
-    rowOfData.clear();
-    rowData.clear();
+        recipeData.clear();
+        rowOfRecipeData.clear();
+        rowRecipeData.clear();
+
+        if (importedCSV.open(QFile::ReadOnly)) {
+
+            recipeData = importedCSV.readAll();
+            rowOfRecipeData = recipeData.split("\n");
+            importedCSV.close();
+        }
+
+        for (int x = 0; x < rowOfRecipeData.size(); x++)
+        {
+            rowRecipeData = rowOfRecipeData.at(x).split(";");
+
+            for (int y = 0; y < rowRecipeData.size(); y++)
+            {
+                ui->recipeTable->setItem(x,y,new QTableWidgetItem(rowRecipeData[y]));
+            }
+        }
+    }
+    lastRecipeFile = recipeFile;
+
+    ui->recipeTable->setColumnCount(4);
+    ui->recipeTable->setRowCount(rowOfRecipeData.size());
 
     ui->recipeTable->setColumnWidth(0,200);
     ui->recipeTable->setColumnWidth(1,100);
     ui->recipeTable->setColumnWidth(2,100);
     ui->recipeTable->setColumnWidth(3,100);
 
-    if (importedCSV.open(QFile::ReadOnly)) {
-
-        data = importedCSV.readAll();
-        rowOfData = data.split("\n");
-        importedCSV.close();
-    }
-
-    for (int x = 0; x < rowOfData.size(); x++)
-    {
-        rowData = rowOfData.at(x).split(";");
-
-        for (int y = 0; y < rowData.size(); y++)
-        {
-            ui->recipeTable->setItem(x,y,new QTableWidgetItem(rowData[y]));
-        }
-    }
-    scale->updateRecipe(file);
+    scale->updateRecipe(recipeFile);
 }
 
 
 void MainWindow::on_btnRefreshSettingsList_clicked()
 {
-    QDir dir("settings");
-    dir.setFilter(QDir::Files | QDir::NoSymLinks);
-
     QStringList filters;
+    QFileInfoList files;
+    QDir dir("settings");
+
     filters << "*.csv";
+    dir.setFilter(QDir::Files | QDir::NoSymLinks);
     dir.setNameFilters(filters);
 
-    QFileInfoList files = dir.entryInfoList();
+    files = dir.entryInfoList();
 
     ui->cbSettingsMenu->clear();
 
@@ -463,39 +462,45 @@ void MainWindow::on_btnRefreshSettingsList_clicked()
     }
 }
 
-
-
-void MainWindow::on_cbSettingsMenu_currentIndexChanged(const QString &arg1)
+void MainWindow::on_cbSettingsMenu_activated(const QString &arg1)
 {
     Q_UNUSED( arg1 );
 
-    QString fileName = ui->cbSettingsMenu->currentText();
-    QString data;
-    QString file = "settings/" + fileName;
-    QFile importedCSV(file);
-    QStringList rowOfData;
-    QStringList rowData;
-    data.clear();
-    rowOfData.clear();
-    rowData.clear();
+    ui->settingsTable->setColumnCount(2);
+    ui->settingsTable->setRowCount(rowOfSettingsData.size());
 
     ui->settingsTable->setColumnWidth(0,300);
     ui->settingsTable->setColumnWidth(1,100);
 
-    if (importedCSV.open(QFile::ReadOnly)) {
 
-        data = importedCSV.readAll();
-        rowOfData = data.split("\n");
-        importedCSV.close();
-    }
+    SettingsFileName = ui->cbSettingsMenu->currentText();
+    SettingsFile = "settings/" + SettingsFileName;
+    QFile importedCSV(SettingsFile);
 
-    for (int x = 0; x < rowOfData.size(); x++)
-    {
-        rowData = rowOfData.at(x).split(";");
+//    if (SettingsFile != lastSettingsFile) {
 
-        for (int y = 0; y < rowData.size(); y++)
-        {
-            ui->settingsTable->setItem(x,y,new QTableWidgetItem(rowData[y]));
+        settingsData.clear();
+        rowOfSettingsData.clear();
+        rowSettingsData.clear();
+
+        if (importedCSV.open(QFile::ReadOnly)) {
+
+            settingsData = importedCSV.readAll();
+            rowOfSettingsData = settingsData.split("\n");
+            importedCSV.close();
         }
-    }
+
+        for (int x = 0; x < rowOfSettingsData.size(); x++)
+        {
+            rowSettingsData = rowOfSettingsData.at(x).split(";");
+
+            for (int y = 0; y < rowSettingsData.size(); y++)
+            {
+                ui->settingsTable->setItem(x,y,new QTableWidgetItem(rowSettingsData[y]));
+            }
+        }
+//    }
+
+//    lastSettingsFile = SettingsFile;
+
 }

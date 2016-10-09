@@ -3,11 +3,16 @@
 
 #include <QThread>
 #include <QDebug>
+#include <QFile>
+#include <QStandardItemModel>
 #include <iostream>
 #include <sstream>
 #include <fstream>
 #include <string>
 
+
+#include <vector>
+using namespace std;
 
 class Recipe : public QThread
 {
@@ -19,21 +24,26 @@ public:
     void updateRecipe(QString);
 
     QString recipePathAndName;
-    std::string recipeArray[100][5];
-    std::string weightRange[50][5];
+    string recipeArray[100][5];
+    string weightRange[50][5];
 
-    std::string recipeID;
-    std::string productID;
-    std::string productType;
-    std::string batchID;
-    std::string serialStartsAt;
-    std::string minProductLength;
-    std::string maxProductLength;
-    std::string maxProductPieceGap;
-    std::string description;
-    std::string weightRangeLower[50];
-    std::string weightRangeUpper[50];
-    std::string destinationGate[50];
+    string recipeID;
+    string productID;
+    string productType;
+    string batchID;
+    string serialStartsAt;
+    string minProductLength;
+    string maxProductLength;
+    string maxProductPieceGap;
+    string description;
+    string weightRangeLower[50];
+    string weightRangeUpper[50];
+    string destinationGate[50];
+
+    vector<int> lower;
+    vector<int> upper;
+    vector<int> dest;
+    vector<int>::iterator p;
 
 public slots:
 

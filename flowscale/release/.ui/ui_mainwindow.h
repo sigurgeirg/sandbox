@@ -235,7 +235,7 @@ public:
         tabWidget->setFocusPolicy(Qt::ClickFocus);
         tabWidget->setLayoutDirection(Qt::LeftToRight);
         tabWidget->setAutoFillBackground(false);
-        tabWidget->setStyleSheet(QString::fromUtf8("background-color: rgb(100, 135, 223);"));
+        tabWidget->setStyleSheet(QString::fromUtf8("QScrollBar:vertical {min-width: 50px; margin-right: 20px;}"));
         tabWidget->setTabPosition(QTabWidget::North);
         tabWidget->setTabShape(QTabWidget::Rounded);
         tabWidget->setIconSize(QSize(16, 16));
@@ -421,6 +421,11 @@ public:
         cbSettingsMenu = new QComboBox(tabSettings);
         cbSettingsMenu->setObjectName(QString::fromUtf8("cbSettingsMenu"));
         cbSettingsMenu->setGeometry(QRect(10, 10, 451, 41));
+        QFont font4;
+        font4.setPointSize(16);
+        font4.setBold(true);
+        font4.setWeight(75);
+        cbSettingsMenu->setFont(font4);
         btnRefreshSettingsList = new QPushButton(tabSettings);
         btnRefreshSettingsList->setObjectName(QString::fromUtf8("btnRefreshSettingsList"));
         btnRefreshSettingsList->setGeometry(QRect(480, 10, 131, 41));
@@ -514,8 +519,9 @@ public:
         QTableWidgetItem *__qtablewidgetitem41 = new QTableWidgetItem();
         settingsTable->setVerticalHeaderItem(39, __qtablewidgetitem41);
         settingsTable->setObjectName(QString::fromUtf8("settingsTable"));
-        settingsTable->setGeometry(QRect(10, 60, 451, 281));
+        settingsTable->setGeometry(QRect(10, 60, 601, 281));
         settingsTable->setMinimumSize(QSize(451, 0));
+        settingsTable->setStyleSheet(QString::fromUtf8("QScrollBar:vertical {min-width: 50px; margin-right: 20px;}"));
         settingsTable->setAutoScrollMargin(16);
         tabWidget->addTab(tabSettings, QString());
         tabRecipe = new QWidget();
@@ -526,6 +532,10 @@ public:
         cbRecipeMenu = new QComboBox(tabRecipe);
         cbRecipeMenu->setObjectName(QString::fromUtf8("cbRecipeMenu"));
         cbRecipeMenu->setGeometry(QRect(10, 10, 451, 41));
+        cbRecipeMenu->setFont(font4);
+        cbRecipeMenu->setSizeAdjustPolicy(QComboBox::AdjustToMinimumContentsLengthWithIcon);
+        cbRecipeMenu->setMinimumContentsLength(10);
+        cbRecipeMenu->setIconSize(QSize(16, 16));
         recipeTable = new QTableWidget(tabRecipe);
         if (recipeTable->columnCount() < 4)
             recipeTable->setColumnCount(4);
@@ -889,7 +899,7 @@ public:
         xmin->setText(QApplication::translate("MainWindow", "Xmin", 0, QApplication::UnicodeUTF8));
         xmax->setText(QApplication::translate("MainWindow", "Xmax", 0, QApplication::UnicodeUTF8));
         tabWidget->setTabText(tabWidget->indexOf(tabGraph), QApplication::translate("MainWindow", "Graph", 0, QApplication::UnicodeUTF8));
-        btnRefreshSettingsList->setText(QApplication::translate("MainWindow", "Refresh Settings", 0, QApplication::UnicodeUTF8));
+        btnRefreshSettingsList->setText(QApplication::translate("MainWindow", "Reload Settings", 0, QApplication::UnicodeUTF8));
         QTableWidgetItem *___qtablewidgetitem = settingsTable->horizontalHeaderItem(0);
         ___qtablewidgetitem->setText(QApplication::translate("MainWindow", "01", 0, QApplication::UnicodeUTF8));
         QTableWidgetItem *___qtablewidgetitem1 = settingsTable->horizontalHeaderItem(1);
@@ -975,7 +985,7 @@ public:
         QTableWidgetItem *___qtablewidgetitem41 = settingsTable->verticalHeaderItem(39);
         ___qtablewidgetitem41->setText(QApplication::translate("MainWindow", "40", 0, QApplication::UnicodeUTF8));
         tabWidget->setTabText(tabWidget->indexOf(tabSettings), QApplication::translate("MainWindow", "Settings", 0, QApplication::UnicodeUTF8));
-        btnRefreshRecipeList->setText(QApplication::translate("MainWindow", "Refresh Recipes", 0, QApplication::UnicodeUTF8));
+        btnRefreshRecipeList->setText(QApplication::translate("MainWindow", "Reload Recipes", 0, QApplication::UnicodeUTF8));
         QTableWidgetItem *___qtablewidgetitem42 = recipeTable->horizontalHeaderItem(0);
         ___qtablewidgetitem42->setText(QApplication::translate("MainWindow", "01", 0, QApplication::UnicodeUTF8));
         QTableWidgetItem *___qtablewidgetitem43 = recipeTable->horizontalHeaderItem(1);
