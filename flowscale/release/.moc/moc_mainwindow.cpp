@@ -57,19 +57,19 @@ static const uint qt_meta_data_MainWindow[] = {
      520,   11,   11,   11, 0x08,
      544,   11,   11,   11, 0x08,
      577,   11,   11,   11, 0x08,
-     616,  611,   11,   11, 0x08,
-     661,   11,   11,   11, 0x08,
-     697,  611,   11,   11, 0x08,
-     744,   11,   11,   11, 0x0a,
-     765,   11,   11,   11, 0x0a,
-     783,   11,   11,   11, 0x0a,
-     810,   11,   11,   11, 0x0a,
-     837,   11,   11,   11, 0x0a,
-     859,   11,   11,   11, 0x0a,
-     884,   11,   11,   11, 0x0a,
-     907,   11,   11,   11, 0x0a,
-     929,   11,   11,   11, 0x0a,
-     947,   11,   11,   11, 0x0a,
+     611,   11,   11,   11, 0x08,
+     652,  647,   11,   11, 0x08,
+     687,  647,   11,   11, 0x08,
+     724,   11,   11,   11, 0x0a,
+     745,   11,   11,   11, 0x0a,
+     763,   11,   11,   11, 0x0a,
+     790,   11,   11,   11, 0x0a,
+     817,   11,   11,   11, 0x0a,
+     839,   11,   11,   11, 0x0a,
+     864,   11,   11,   11, 0x0a,
+     887,   11,   11,   11, 0x0a,
+     909,   11,   11,   11, 0x0a,
+     927,   11,   11,   11, 0x0a,
 
        0        // eod
 };
@@ -93,9 +93,9 @@ static const char qt_meta_stringdata_MainWindow[] = {
     "on_btnReverse_clicked()\0on_btnForward_clicked()\0"
     "on_btnNetWeightConnect_clicked()\0"
     "on_btnRefreshRecipeList_clicked()\0"
-    "arg1\0on_cbRecipeMenu_currentIndexChanged(QString)\0"
     "on_btnRefreshSettingsList_clicked()\0"
-    "on_cbSettingsMenu_currentIndexChanged(QString)\0"
+    "arg1\0on_cbRecipeMenu_activated(QString)\0"
+    "on_cbSettingsMenu_activated(QString)\0"
     "conveyorBeltSignal()\0recordWeight(int)\0"
     "displayReceivedWeight(int)\0"
     "displayFilteredWeight(int)\0"
@@ -135,9 +135,9 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         case 22: _t->on_btnForward_clicked(); break;
         case 23: _t->on_btnNetWeightConnect_clicked(); break;
         case 24: _t->on_btnRefreshRecipeList_clicked(); break;
-        case 25: _t->on_cbRecipeMenu_currentIndexChanged((*reinterpret_cast< const QString(*)>(_a[1]))); break;
-        case 26: _t->on_btnRefreshSettingsList_clicked(); break;
-        case 27: _t->on_cbSettingsMenu_currentIndexChanged((*reinterpret_cast< const QString(*)>(_a[1]))); break;
+        case 25: _t->on_btnRefreshSettingsList_clicked(); break;
+        case 26: _t->on_cbRecipeMenu_activated((*reinterpret_cast< const QString(*)>(_a[1]))); break;
+        case 27: _t->on_cbSettingsMenu_activated((*reinterpret_cast< const QString(*)>(_a[1]))); break;
         case 28: _t->conveyorBeltSignal(); break;
         case 29: _t->recordWeight((*reinterpret_cast< int(*)>(_a[1]))); break;
         case 30: _t->displayReceivedWeight((*reinterpret_cast< int(*)>(_a[1]))); break;

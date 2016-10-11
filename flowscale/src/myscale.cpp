@@ -372,6 +372,7 @@ void MyScale::enteringProductSensorSignal()
     proData.productLengthPulseCounter[tempID] = 0;
     proData.productLength[tempID] = 0;
     proData.productWeight[tempID] = 0;
+    proData.productConfidence[tempID] = 0;
     proData.destinationGate[tempID] = 0;
     // //////////////////////////////////////////////////////////
 }
@@ -613,12 +614,12 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
 
                 if (productTempId[_elementId] == productEntryPulse) {
 
-                    proData.productLengthPulseCounter[tempID] = productEntry;
+                    proData.productLengthPulseCounter[_elementId] = productEntry;
                 }
 
                 if (between(productEntryPulse, productTempId[_elementId], weightEndPulse)) {
 
-                    proData.productLengthPulseCounter[tempID]++;
+                    proData.productLengthPulseCounter[_elementId]++;
                 }
 
 
@@ -636,6 +637,7 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
                 }
 
 
+
                 // At weiging endpoint on scale platform calculate mean value and emit modeled weight
                 if (productTempId[_elementId] == weightEndPulse) {
                     meanWeightSample = 0;
@@ -646,6 +648,16 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
 
                     meanWeightSample = meanWeightSample / (weightEndPulse-weightStartPulse);
 
+                    // Here calculate some kind of confidence .. how many datapoints of approx. 40 are within 5[gr] relative to meanWeight
+                    for (int _sample = weightStartPulse; _sample < weightEndPulse; _sample++) {
+
+                        if (abs(meanWeightSample - productIDweights[_elementId][_sample]) < 5) {
+
+                            proData.productConfidence[_elementId]++;
+                        }
+                    }
+
+
                     proData.productWeight[_elementId] = meanWeightSample;
 
                     proData.destinationGate[_elementId] = returnToGate(proData.productWeight[_elementId]);
@@ -653,13 +665,13 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
 
                     qDebug() << "_elementId: " << _elementId
                              << " - Serial: " << proData.serialId[_elementId] << " - Batch: " << proData.batchId[_elementId]
-                             << " - Weight: " << proData.productWeight[_elementId] << " - Length: " << proData.productLength[_elementId]
-                             << " - Destination: " << proData.destinationGate[_elementId];
+                             << " - Weight: " << proData.productWeight[_elementId] << " - Confidence: " << proData.productConfidence[_elementId]
+                             << " - Length: " << proData.productLength[_elementId] << " - Destination: " << proData.destinationGate[_elementId];
 
                     emit sendFilteredWeight(meanWeightSample);
                     emit sendDebugData(_elementId);
 
-                    proData.productLengthPulseCounter[tempID] = 0;
+                    proData.productLengthPulseCounter[_elementId] = 0;
                 }
 
 
@@ -695,6 +707,7 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
                     filezero.close();
 
                     productTempId[_elementId] = -1;
+                    proData.productConfidence[_elementId] = -1;
                 }
 
 

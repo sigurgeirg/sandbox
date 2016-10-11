@@ -61,7 +61,7 @@ public:
         int productLengthPulseCounter[numberOfElementsInList];
         int productLength[numberOfElementsInList];
         int productWeight[numberOfElementsInList];
-        int productStdDev[numberOfElementsInList];
+        int productConfidence[numberOfElementsInList];
         int destinationGate[numberOfElementsInList];
     } proData;
 
