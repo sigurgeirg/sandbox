@@ -51,6 +51,8 @@ public:
     int zeroUnfilteredArray[numberOfBeltRounds][samplesPerBeltRound];
     int productIDweights[numberOfElementsInList][weightSamplesInWindowOfInterest];
 
+    int numberOfBeltRoundsZero;
+
 
     struct productData {
         int recipeId[numberOfElementsInList];
@@ -114,9 +116,14 @@ private:
     int productTempId[numberOfElementsInList];
     int pulseCounterInEachRow[numberOfBeltRounds];  //henda þessu þegar þetta hefur verið notað og sannprófað
 
+    int conveyorOff;
+    int conveyorIdle;
+    int conveyorWarmUp;
+    int conveyorZeroCalibration;
+    int conveyorRunning;
+
     int productCounter;
     int filterCounter;
-    int numberOfBeltRoundsZero;
     int countFewBeltRounds;
     int productEntry;
     int productWeighingStartDistance;
@@ -173,6 +180,7 @@ signals:
     void plotData(int);
     void plotWeight(int);
     void requestNewRecipe(QString);
+    void conveyorRunState(QString);
 
 public slots:
     void conveyorBeltSignal();

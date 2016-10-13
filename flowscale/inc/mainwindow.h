@@ -133,6 +133,7 @@ private slots:
 
 public slots:
     void conveyorBeltSignal();
+    void conveyorRunStateIndicator(QString);
     void recordWeight(int);
     void displayReceivedWeight(int);
     void displayFilteredWeight(int);

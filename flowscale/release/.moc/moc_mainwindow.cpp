@@ -22,7 +22,7 @@ static const uint qt_meta_data_MainWindow[] = {
        6,       // revision
        0,       // classname
        0,    0, // classinfo
-      38,   14, // methods
+      39,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -62,14 +62,15 @@ static const uint qt_meta_data_MainWindow[] = {
      687,  647,   11,   11, 0x08,
      724,   11,   11,   11, 0x0a,
      745,   11,   11,   11, 0x0a,
-     763,   11,   11,   11, 0x0a,
-     790,   11,   11,   11, 0x0a,
-     817,   11,   11,   11, 0x0a,
-     839,   11,   11,   11, 0x0a,
-     864,   11,   11,   11, 0x0a,
-     887,   11,   11,   11, 0x0a,
-     909,   11,   11,   11, 0x0a,
-     927,   11,   11,   11, 0x0a,
+     780,   11,   11,   11, 0x0a,
+     798,   11,   11,   11, 0x0a,
+     825,   11,   11,   11, 0x0a,
+     852,   11,   11,   11, 0x0a,
+     874,   11,   11,   11, 0x0a,
+     899,   11,   11,   11, 0x0a,
+     922,   11,   11,   11, 0x0a,
+     944,   11,   11,   11, 0x0a,
+     962,   11,   11,   11, 0x0a,
 
        0        // eod
 };
@@ -96,8 +97,9 @@ static const char qt_meta_stringdata_MainWindow[] = {
     "on_btnRefreshSettingsList_clicked()\0"
     "arg1\0on_cbRecipeMenu_activated(QString)\0"
     "on_cbSettingsMenu_activated(QString)\0"
-    "conveyorBeltSignal()\0recordWeight(int)\0"
-    "displayReceivedWeight(int)\0"
+    "conveyorBeltSignal()\0"
+    "conveyorRunStateIndicator(QString)\0"
+    "recordWeight(int)\0displayReceivedWeight(int)\0"
     "displayFilteredWeight(int)\0"
     "displayDebugData(int)\0displayInputValue(ulong)\0"
     "plotProductWeight(int)\0plotProductGraph(int)\0"
@@ -139,15 +141,16 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         case 26: _t->on_cbRecipeMenu_activated((*reinterpret_cast< const QString(*)>(_a[1]))); break;
         case 27: _t->on_cbSettingsMenu_activated((*reinterpret_cast< const QString(*)>(_a[1]))); break;
         case 28: _t->conveyorBeltSignal(); break;
-        case 29: _t->recordWeight((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 30: _t->displayReceivedWeight((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 31: _t->displayFilteredWeight((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 32: _t->displayDebugData((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 33: _t->displayInputValue((*reinterpret_cast< ulong(*)>(_a[1]))); break;
-        case 34: _t->plotProductWeight((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 35: _t->plotProductGraph((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 36: _t->keyValue((*reinterpret_cast< QString(*)>(_a[1]))); break;
-        case 37: _t->graphBoundaries((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 29: _t->conveyorRunStateIndicator((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 30: _t->recordWeight((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 31: _t->displayReceivedWeight((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 32: _t->displayFilteredWeight((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 33: _t->displayDebugData((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 34: _t->displayInputValue((*reinterpret_cast< ulong(*)>(_a[1]))); break;
+        case 35: _t->plotProductWeight((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 36: _t->plotProductGraph((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 37: _t->keyValue((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 38: _t->graphBoundaries((*reinterpret_cast< QString(*)>(_a[1]))); break;
         default: ;
         }
     }
@@ -185,9 +188,9 @@ int MainWindow::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 38)
+        if (_id < 39)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 38;
+        _id -= 39;
     }
     return _id;
 }

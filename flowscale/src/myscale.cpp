@@ -80,6 +80,7 @@ MyScale::MyScale(QObject *parent) :
 
     nextZeroUpdatePosition = 0;
 
+    emit conveyorRunState("conveyorOff");
 }
 
 
@@ -223,6 +224,7 @@ void MyScale::connectToSlaveDevice() {
                 modbusConnected = true;
                 qDebug() << "ModBus is Connected";
                 start();
+                emit conveyorRunState("conveyorIdle");
             }
     } catch(...) {
             //
@@ -393,7 +395,14 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
 
         if (beltRoundPulse == true) {
 
-            if ((numberOfBeltRoundsZero > -1) && (numberOfBeltRoundsZero < numberOfBeltRounds)) {
+            if (numberOfBeltRoundsZero < -1) {
+
+                emit conveyorRunState("conveyorWarmUp");
+
+            } else if ((numberOfBeltRoundsZero > -1) && (numberOfBeltRoundsZero < numberOfBeltRounds)) {
+
+                emit conveyorRunState("conveyorZeroCalibration");
+
                 // Assign weight value from scale in initializing matrix
                 if (sampleCounter < samplesPerBeltRound) {
 
@@ -403,10 +412,10 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
                         zeroUnfilteredArray[numberOfBeltRoundsZero-1][lastSampleCounter+sampleCounter] = weightValueFromScale;
                     }
                 }
-            }
 
+            } else if (numberOfBeltRoundsZero >= numberOfBeltRounds) {
 
-            if (numberOfBeltRoundsZero >= numberOfBeltRounds) {
+                emit conveyorRunState("conveyorRunning");
 
                 // /////////////////////////////////////////////////////////////////////
                 // Median of number of samples per BeltRound

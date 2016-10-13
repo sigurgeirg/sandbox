@@ -38,13 +38,13 @@ MainWindow::MainWindow(QWidget *parent) :
 
         // FIXME:This next line should be deleted when this part has been implemented inside of the scale class.
         //connect(scale, SIGNAL(receivedWeight(int)),           scale, SLOT(modelZeroWeight(int)));
-        connect(dio,   SIGNAL(conveyorSignal()),                scale, SLOT(conveyorBeltSignal()));
-        connect(dio,   SIGNAL(enteringProductSensorSignal()),   scale, SLOT(enteringProductSensorSignal()));
-        connect(dio,   SIGNAL(leavingProductSensorSignal()),    scale, SLOT(leavingProductSensorSignal()));
+        connect(dio,   SIGNAL(conveyorSignal()),                scale,  SLOT(conveyorBeltSignal()));
+        connect(dio,   SIGNAL(enteringProductSensorSignal()),   scale,  SLOT(enteringProductSensorSignal()));
+        connect(dio,   SIGNAL(leavingProductSensorSignal()),    scale,  SLOT(leavingProductSensorSignal()));
 
-        connect(scale, SIGNAL(sendFilteredWeight(int)),         this,  SLOT(displayFilteredWeight(int)));
-        connect(scale, SIGNAL(sendDebugData(int)),              this,  SLOT(displayDebugData(int)));
-
+        connect(scale, SIGNAL(sendFilteredWeight(int)),         this,   SLOT(displayFilteredWeight(int)));
+        connect(scale, SIGNAL(sendDebugData(int)),              this,   SLOT(displayDebugData(int)));
+        connect(scale, SIGNAL(conveyorRunState(QString)),       this,   SLOT(conveyorRunStateIndicator(QString)));
 
         connect(this, SIGNAL(xmin(QString)),                    scale,  SLOT(xmin(QString)));
         connect(this, SIGNAL(xmax(QString)),                    scale,  SLOT(xmax(QString)));
@@ -79,6 +79,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Simulation, still undone, maybe no use for this:
         //connect(this, SIGNAL(reply(unsigned char, bool)),             dio, SLOT(updateInputSim(unsigned char, bool)));
+
+    ui->frameState->setStyleSheet("background-color: red");
 }
 
 MainWindow::~MainWindow()
@@ -180,6 +182,51 @@ void MainWindow::conveyorBeltSignal()
     //*numberOfBeltRounds = beltRoundCounter;
 }
 
+
+void MainWindow::conveyorRunStateIndicator(QString state)
+{
+    QString stateMessage;
+
+    if        (state == "conveyorOff") {
+
+        stateMessage = "Start conveyor to full speed, then press Connect";
+
+    } else if (state == "conveyorIdle") {
+
+        stateMessage = "System is starting";
+
+    } else if (state == "conveyorWarmUp") {
+
+        stateMessage = "System is warming up";
+
+    } else if (state == "conveyorZeroCalibration") {
+
+        stateMessage = "System is calibrating, wait ...";
+
+    } else if (state == "conveyorRunning") {
+
+        stateMessage = "System is Running";
+    }
+    ui->lblSystemState->setText(stateMessage);
+
+
+    if (state == "conveyorRunning") {
+
+        ui->lblCountDown->setText("");
+        ui->frameState->setStyleSheet("background-color: #15d015");
+
+    } else if (state == "conveyorWarmUp" || state == "conveyorZeroCalibration") {
+
+        ui->lblCountDown->setText(QString::number(numberOfBeltRounds - &scale->numberOfBeltRoundsZero));
+        ui->frameState->setStyleSheet("background-color: orange");
+
+    } else {
+
+        ui->lblCountDown->setText("");
+        ui->frameState->setStyleSheet("background-color: red");
+
+    }
+}
 
 // Record measured weight
 void MainWindow::recordWeight(int weightValueFromScale)

@@ -22,12 +22,12 @@ static const uint qt_meta_data_MyScale[] = {
        6,       // revision
        0,       // classname
        0,    0, // classinfo
-      14,   14, // methods
+      15,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
        0,       // flags
-       6,       // signalCount
+       7,       // signalCount
 
  // signals: signature, parameters, type, tag, flags
        9,    8,    8,    8, 0x05,
@@ -36,16 +36,17 @@ static const uint qt_meta_data_MyScale[] = {
       72,    8,    8,    8, 0x05,
       86,    8,    8,    8, 0x05,
      102,    8,    8,    8, 0x05,
+     128,    8,    8,    8, 0x05,
 
  // slots: signature, parameters, type, tag, flags
-     128,    8,    8,    8, 0x0a,
-     149,    8,    8,    8, 0x0a,
-     179,    8,    8,    8, 0x0a,
-     208,    8,    8,    8, 0x0a,
-     229,    8,    8,    8, 0x0a,
-     243,    8,    8,    8, 0x0a,
-     257,    8,    8,    8, 0x0a,
-     271,    8,    8,    8, 0x0a,
+     154,    8,    8,    8, 0x0a,
+     175,    8,    8,    8, 0x0a,
+     205,    8,    8,    8, 0x0a,
+     234,    8,    8,    8, 0x0a,
+     255,    8,    8,    8, 0x0a,
+     269,    8,    8,    8, 0x0a,
+     283,    8,    8,    8, 0x0a,
+     297,    8,    8,    8, 0x0a,
 
        0        // eod
 };
@@ -55,6 +56,7 @@ static const char qt_meta_stringdata_MyScale[] = {
     "sendFilteredWeight(int)\0sendDebugData(int)\0"
     "plotData(int)\0plotWeight(int)\0"
     "requestNewRecipe(QString)\0"
+    "conveyorRunState(QString)\0"
     "conveyorBeltSignal()\0enteringProductSensorSignal()\0"
     "leavingProductSensorSignal()\0"
     "modelZeroWeight(int)\0xmin(QString)\0"
@@ -73,14 +75,15 @@ void MyScale::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, voi
         case 3: _t->plotData((*reinterpret_cast< int(*)>(_a[1]))); break;
         case 4: _t->plotWeight((*reinterpret_cast< int(*)>(_a[1]))); break;
         case 5: _t->requestNewRecipe((*reinterpret_cast< QString(*)>(_a[1]))); break;
-        case 6: _t->conveyorBeltSignal(); break;
-        case 7: _t->enteringProductSensorSignal(); break;
-        case 8: _t->leavingProductSensorSignal(); break;
-        case 9: _t->modelZeroWeight((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 10: _t->xmin((*reinterpret_cast< QString(*)>(_a[1]))); break;
-        case 11: _t->xmax((*reinterpret_cast< QString(*)>(_a[1]))); break;
-        case 12: _t->ymin((*reinterpret_cast< QString(*)>(_a[1]))); break;
-        case 13: _t->ymax((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 6: _t->conveyorRunState((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 7: _t->conveyorBeltSignal(); break;
+        case 8: _t->enteringProductSensorSignal(); break;
+        case 9: _t->leavingProductSensorSignal(); break;
+        case 10: _t->modelZeroWeight((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 11: _t->xmin((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 12: _t->xmax((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 13: _t->ymin((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 14: _t->ymax((*reinterpret_cast< QString(*)>(_a[1]))); break;
         default: ;
         }
     }
@@ -118,9 +121,9 @@ int MyScale::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 14)
+        if (_id < 15)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 14;
+        _id -= 15;
     }
     return _id;
 }
@@ -165,5 +168,12 @@ void MyScale::requestNewRecipe(QString _t1)
 {
     void *_a[] = { 0, const_cast<void*>(reinterpret_cast<const void*>(&_t1)) };
     QMetaObject::activate(this, &staticMetaObject, 5, _a);
+}
+
+// SIGNAL 6
+void MyScale::conveyorRunState(QString _t1)
+{
+    void *_a[] = { 0, const_cast<void*>(reinterpret_cast<const void*>(&_t1)) };
+    QMetaObject::activate(this, &staticMetaObject, 6, _a);
 }
 QT_END_MOC_NAMESPACE

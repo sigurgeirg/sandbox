@@ -127,7 +127,9 @@ public:
     QWidget *tabStuff;
     QLabel *PenguinImage;
     QLabel *FlowScaleImage;
-    QFrame *frame_3;
+    QFrame *frameState;
+    QLabel *lblSystemState;
+    QLabel *lblCountDown;
 
     void setupUi(QMainWindow *MainWindow)
     {
@@ -250,7 +252,7 @@ public:
         receiveFrame->setFrameShadow(QFrame::Raised);
         lblReceivedWeight = new QLabel(receiveFrame);
         lblReceivedWeight->setObjectName(QString::fromUtf8("lblReceivedWeight"));
-        lblReceivedWeight->setGeometry(QRect(80, 30, 141, 31));
+        lblReceivedWeight->setGeometry(QRect(70, 30, 141, 31));
         QFont font1;
         font1.setPointSize(20);
         font1.setBold(true);
@@ -268,12 +270,12 @@ public:
         receiveFrame_3->setFrameShadow(QFrame::Raised);
         lblReceivedWeight_3 = new QLabel(receiveFrame_3);
         lblReceivedWeight_3->setObjectName(QString::fromUtf8("lblReceivedWeight_3"));
-        lblReceivedWeight_3->setGeometry(QRect(120, 10, 141, 31));
+        lblReceivedWeight_3->setGeometry(QRect(60, 10, 141, 31));
         lblReceivedWeight_3->setFont(font1);
         lblReceivedWeight_3->setStyleSheet(QString::fromUtf8("color: rgb(255, 255, 255);"));
         lblWeight_3 = new QLabel(receiveFrame_3);
         lblWeight_3->setObjectName(QString::fromUtf8("lblWeight_3"));
-        lblWeight_3->setGeometry(QRect(10, 20, 67, 21));
+        lblWeight_3->setGeometry(QRect(10, 20, 31, 21));
         receiveFrame_2 = new QFrame(tabHome);
         receiveFrame_2->setObjectName(QString::fromUtf8("receiveFrame_2"));
         receiveFrame_2->setGeometry(QRect(310, 60, 291, 81));
@@ -282,7 +284,7 @@ public:
         receiveFrame_2->setFrameShadow(QFrame::Raised);
         lblReceivedWeight_2 = new QLabel(receiveFrame_2);
         lblReceivedWeight_2->setObjectName(QString::fromUtf8("lblReceivedWeight_2"));
-        lblReceivedWeight_2->setGeometry(QRect(80, 30, 141, 31));
+        lblReceivedWeight_2->setGeometry(QRect(50, 30, 201, 31));
         lblReceivedWeight_2->setFont(font1);
         lblReceivedWeight_2->setStyleSheet(QString::fromUtf8("color: rgb(255, 255, 255);"));
         lblWeight_2 = new QLabel(receiveFrame_2);
@@ -297,6 +299,7 @@ public:
         tabWidget->addTab(tabHome, QString());
         tabCalibrate = new QWidget();
         tabCalibrate->setObjectName(QString::fromUtf8("tabCalibrate"));
+        tabCalibrate->setEnabled(true);
         transmitFrame = new QFrame(tabCalibrate);
         transmitFrame->setObjectName(QString::fromUtf8("transmitFrame"));
         transmitFrame->setGeometry(QRect(0, 190, 301, 151));
@@ -829,12 +832,22 @@ public:
         tabWidget->addTab(tabStuff, QString());
         FlowScaleImage->raise();
         PenguinImage->raise();
-        frame_3 = new QFrame(frame_2);
-        frame_3->setObjectName(QString::fromUtf8("frame_3"));
-        frame_3->setGeometry(QRect(20, 460, 621, 51));
-        frame_3->setStyleSheet(QString::fromUtf8("background-color: rgb(21, 208, 21);"));
-        frame_3->setFrameShape(QFrame::StyledPanel);
-        frame_3->setFrameShadow(QFrame::Raised);
+        frameState = new QFrame(frame_2);
+        frameState->setObjectName(QString::fromUtf8("frameState"));
+        frameState->setGeometry(QRect(20, 460, 621, 51));
+        frameState->setStyleSheet(QString::fromUtf8("background-color: rgb(21, 208, 21);"));
+        frameState->setFrameShape(QFrame::StyledPanel);
+        frameState->setFrameShadow(QFrame::Raised);
+        lblSystemState = new QLabel(frameState);
+        lblSystemState->setObjectName(QString::fromUtf8("lblSystemState"));
+        lblSystemState->setGeometry(QRect(20, 10, 581, 31));
+        lblSystemState->setFont(font1);
+        lblSystemState->setStyleSheet(QString::fromUtf8("color: rgb(255, 255, 255);"));
+        lblCountDown = new QLabel(frameState);
+        lblCountDown->setObjectName(QString::fromUtf8("lblCountDown"));
+        lblCountDown->setGeometry(QRect(500, 10, 111, 31));
+        lblCountDown->setFont(font1);
+        lblCountDown->setStyleSheet(QString::fromUtf8("color: rgb(255, 255, 255);"));
         MainWindow->setCentralWidget(centralWidget);
         QWidget::setTabOrder(btnAPPLY, btnSemiAutoZERO);
         QWidget::setTabOrder(btnSemiAutoZERO, edtCalibrationWeight);
@@ -867,11 +880,11 @@ public:
     void retranslateUi(QMainWindow *MainWindow)
     {
         MainWindow->setWindowTitle(QApplication::translate("MainWindow", "MainWindow", 0, QApplication::UnicodeUTF8));
-        lblReceivedWeight->setText(QApplication::translate("MainWindow", "Number", 0, QApplication::UnicodeUTF8));
+        lblReceivedWeight->setText(QApplication::translate("MainWindow", "raw weight", 0, QApplication::UnicodeUTF8));
         lblWeight->setText(QApplication::translate("MainWindow", "Weight:", 0, QApplication::UnicodeUTF8));
-        lblReceivedWeight_3->setText(QApplication::translate("MainWindow", "Number", 0, QApplication::UnicodeUTF8));
+        lblReceivedWeight_3->setText(QApplication::translate("MainWindow", "serial", 0, QApplication::UnicodeUTF8));
         lblWeight_3->setText(QApplication::translate("MainWindow", "Info:", 0, QApplication::UnicodeUTF8));
-        lblReceivedWeight_2->setText(QApplication::translate("MainWindow", "Number", 0, QApplication::UnicodeUTF8));
+        lblReceivedWeight_2->setText(QApplication::translate("MainWindow", "filtered weight", 0, QApplication::UnicodeUTF8));
         lblWeight_2->setText(QApplication::translate("MainWindow", "Filtered Weight:", 0, QApplication::UnicodeUTF8));
         btnNetWeightConnect->setText(QApplication::translate("MainWindow", "Connect", 0, QApplication::UnicodeUTF8));
         btnDisconnect->setText(QApplication::translate("MainWindow", "Disconnect", 0, QApplication::UnicodeUTF8));
@@ -1102,6 +1115,8 @@ public:
         PenguinImage->setText(QApplication::translate("MainWindow", "Penguin", 0, QApplication::UnicodeUTF8));
         FlowScaleImage->setText(QApplication::translate("MainWindow", "FlowScale", 0, QApplication::UnicodeUTF8));
         tabWidget->setTabText(tabWidget->indexOf(tabStuff), QApplication::translate("MainWindow", "Page", 0, QApplication::UnicodeUTF8));
+        lblSystemState->setText(QApplication::translate("MainWindow", "System state", 0, QApplication::UnicodeUTF8));
+        lblCountDown->setText(QApplication::translate("MainWindow", "Counter", 0, QApplication::UnicodeUTF8));
     } // retranslateUi
 
 };
