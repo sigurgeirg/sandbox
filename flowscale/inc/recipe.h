@@ -11,7 +11,6 @@
 #include <string>
 
 
-#include <vector>
 using namespace std;
 
 class Recipe : public QThread
@@ -40,10 +39,6 @@ public:
     string weightRangeUpper[50];
     string destinationGate[50];
 
-    vector<int> lower;
-    vector<int> upper;
-    vector<int> dest;
-    vector<int>::iterator p;
 
 public slots:
 

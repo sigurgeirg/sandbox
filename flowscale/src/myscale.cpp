@@ -64,6 +64,13 @@ MyScale::MyScale(QObject *parent) :
     pulseCounterInAllRows = 0;
     medianZeroSample = 0;
 
+    filterValue = 0;
+    filterSUM = 0;
+
+    tempID = -1;
+
+    nextZeroUpdatePosition = 0;
+
     zt_InitializeZeroVectors = 1;
     zt_UpdateZeroWeightSamples = 2;
     zt_CollectInitialZeroWeightSamples = 3;
@@ -72,13 +79,6 @@ MyScale::MyScale(QObject *parent) :
     zt_ProductFilter = 6;
 
     zeroTracking = zt_InitializeZeroVectors;
-
-    filterValue = 0;
-    filterSUM = 0;
-
-    tempID = -1;
-
-    nextZeroUpdatePosition = 0;
 
     emit conveyorRunState("conveyorOff");
 }
@@ -94,15 +94,15 @@ MyScale::~MyScale()
 
 void MyScale::updateRecipe(QString selectedRecipe) {
 
-
     recipe->updateRecipe(selectedRecipe);
+
 
     // Recipe variables
     productDescription              = recipe->description;
     recipeID                        = recipe->recipeID;
+    batchID                         = recipe->batchID;
     productID                       = recipe->productID;
     productType                     = recipe->productType;
-    batchID                         = recipe->batchID;
     serialStartsAt                  = QString::fromStdString(recipe->serialStartsAt.c_str()).toInt();
     minProductLength                = QString::fromStdString(recipe->minProductLength.c_str()).toInt();
     maxProductLength                = QString::fromStdString(recipe->maxProductLength.c_str()).toInt();
@@ -115,7 +115,10 @@ void MyScale::updateRecipe(QString selectedRecipe) {
         destinationGate[t]  = QString::fromStdString(recipe->destinationGate[t].c_str()).toInt();
 
     }
-    //    qDebug() << "Lower: " << QString::fromUtf8(recipe->weightRangeLower[3].c_str());
+    //qDebug() << "Lower: " << QString::fromUtf8(recipe->weightRangeLower[3].c_str());
+    qDebug() << "Batch: " << QString::fromStdString(recipe->batchID);
+    qDebug() << "recipe->Batch: " << QString::fromUtf8(recipe->batchID.c_str()).toInt();
+    qDebug() << "SelectedRecipe: " << selectedRecipe;
 }
 
 
@@ -224,6 +227,7 @@ void MyScale::connectToSlaveDevice() {
                 modbusConnected = true;
                 qDebug() << "ModBus is Connected";
                 start();
+
                 emit conveyorRunState("conveyorIdle");
             }
     } catch(...) {
@@ -244,6 +248,9 @@ void MyScale::disconnectFromSlaveDevice() {
             modbus_close(ctx);
             qDebug() << "ModBus is Disconnected";
             //modbus_free(ctx); //This function-call causes segfault if activated here.
+
+            zeroTracking = zt_InitializeZeroVectors;
+            emit conveyorRunState("conveyorOff");
     }
     catch(...) {
         //
@@ -365,12 +372,12 @@ void MyScale::enteringProductSensorSignal()
     // FIXME: Data that follows product from scale to grader - find better location later
     // //////////////////////////////////////////////////////////
 
-    proData.recipeId[tempID] = QString::fromStdString(recipeID.c_str()).toInt();
-    proData.serialId[tempID] = productCounter;
-    proData.batchId[tempID] = QString::fromStdString(batchID.c_str()).toInt();
-    proData.productId[tempID] = QString::fromStdString(productID.c_str()).toInt();
-    proData.productType[tempID] = QString::fromStdString(productType.c_str()).toInt();
+    proData.recipeId[tempID] = recipeID;
+    proData.batchId[tempID] = batchID;
+    proData.productId[tempID] = productID;
+    proData.productType[tempID] = productType;
 
+    proData.serialId[tempID] = productCounter;
     proData.productLengthPulseCounter[tempID] = 0;
     proData.productLength[tempID] = 0;
     proData.productWeight[tempID] = 0;
@@ -672,8 +679,9 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
                     proData.destinationGate[_elementId] = returnToGate(proData.productWeight[_elementId]);
 
 
+
                     qDebug() << "_elementId: " << _elementId
-                             << " - Serial: " << proData.serialId[_elementId] << " - Batch: " << proData.batchId[_elementId]
+                             //<< " - Serial: " << proData.serialId[_elementId]      << " - Batch: " << proData.batchId[_elementId]
                              << " - Weight: " << proData.productWeight[_elementId] << " - Confidence: " << proData.productConfidence[_elementId]
                              << " - Length: " << proData.productLength[_elementId] << " - Destination: " << proData.destinationGate[_elementId];
 

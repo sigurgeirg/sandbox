@@ -21,8 +21,6 @@ MainWindow::MainWindow(QWidget *parent) :
     lineEdit = new QLineEdit();
     textEdit = new QTextEdit();
 
-    numberOfBeltRounds = new int;
-
     weightValueFromScale = 0;
     sampleCount = 0;
     step = 0;
@@ -51,6 +49,7 @@ MainWindow::MainWindow(QWidget *parent) :
         connect(this, SIGNAL(ymin(QString)),                    scale,  SLOT(ymin(QString)));
         connect(this, SIGNAL(ymax(QString)),                    scale,  SLOT(ymax(QString)));
 
+        connect(this, SIGNAL(setCurrentRecipe(QString)),        scale,  SLOT(updateRecipe(QString)));
 
         //This is the output array from zerofilter, and it will be sent to destination when ready.
         //connect(zero, SIGNAL(filteredZeroArray(int)),         this, SLOT(givethisnewnameandcreatefunction(int)));
@@ -89,7 +88,6 @@ MainWindow::~MainWindow()
     delete scale;
     delete dio;
     delete mosq;
-    delete numberOfBeltRounds;
 }
 
 void MainWindow::on_btnEditCalibrationWeight_clicked()
@@ -179,7 +177,6 @@ void MainWindow::graphBoundaries(QString value)
 void MainWindow::conveyorBeltSignal()
 {
     // FIXME: This has to be redifined wrt types *int = bool --- change or remote
-    //*numberOfBeltRounds = beltRoundCounter;
 }
 
 
@@ -215,9 +212,9 @@ void MainWindow::conveyorRunStateIndicator(QString state)
         ui->lblCountDown->setText("");
         ui->frameState->setStyleSheet("background-color: #15d015");
 
-    } else if (state == "conveyorWarmUp" || state == "conveyorZeroCalibration") {
+    } else if (state == "conveyorZeroCalibration") {
 
-        ui->lblCountDown->setText(QString::number(numberOfBeltRounds - &scale->numberOfBeltRoundsZero));
+        ui->lblCountDown->setText(QString::number(numberOfBeltRounds - scale->numberOfBeltRoundsZero));
         ui->frameState->setStyleSheet("background-color: orange");
 
     } else {
@@ -485,7 +482,9 @@ void MainWindow::on_cbRecipeMenu_activated(const QString &arg1)
     ui->recipeTable->setColumnWidth(2,100);
     ui->recipeTable->setColumnWidth(3,100);
 
-    scale->updateRecipe(recipeFile);
+    //scale->updateRecipe(recipeFile);
+    emit setCurrentRecipe(recipeFile);
+
 }
 
 

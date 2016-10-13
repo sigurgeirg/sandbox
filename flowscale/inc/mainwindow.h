@@ -57,7 +57,6 @@ public:
 private:
     Ui::MainWindow *ui;
     KeyPad keypad;
-    int *numberOfBeltRounds;
     int step;
     int currentWorkingID;
     int currentMeanWeight;

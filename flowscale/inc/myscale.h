@@ -18,6 +18,7 @@
 #include <stdlib.h>
 #include "../../QCustomPlot/qcustomplot.h"
 
+using namespace std;
 
 class MyScale : public QThread
 {
@@ -30,7 +31,6 @@ public:
     Settings *settings;
     Recipe *recipe;
 
-    void updateRecipe(QString);
     bool between(int less, int value, int greater);
     int  returnToGate(int measuredWeight);
     void connectToSlaveDevice();
@@ -45,8 +45,8 @@ public:
     void setupPlot(QCustomPlot* customPlot, int workingID);
     void run();
     int *statusRegisterBinary(uint16_t number[]);
-    std::ofstream filezero;
-    std::string recipeArray[100][5];
+    ofstream filezero;
+    string recipeArray[100][5];
 
     int zeroUnfilteredArray[numberOfBeltRounds][samplesPerBeltRound];
     int productIDweights[numberOfElementsInList][weightSamplesInWindowOfInterest];
@@ -55,11 +55,11 @@ public:
 
 
     struct productData {
-        int recipeId[numberOfElementsInList];
+        string recipeId[numberOfElementsInList];
+        string batchId[numberOfElementsInList];
+        string productId[numberOfElementsInList];
+        string productType[numberOfElementsInList];
         int serialId[numberOfElementsInList];
-        int batchId[numberOfElementsInList];
-        int productId[numberOfElementsInList];
-        int productType[numberOfElementsInList];
         int productLengthPulseCounter[numberOfElementsInList];
         int productLength[numberOfElementsInList];
         int productWeight[numberOfElementsInList];
@@ -137,11 +137,11 @@ private:
 
     // Recipe variables
     QString currentRecipe;
-    std::string productDescription;
-    std::string recipeID;
-    std::string productID;
-    std::string productType;
-    std::string batchID;
+    string productDescription;
+    string recipeID;
+    string productID;
+    string productType;
+    string batchID;
     int serialStartsAt;
     int minProductLength;
     int maxProductLength;
@@ -191,7 +191,7 @@ public slots:
     void xmax(QString);
     void ymin(QString);
     void ymax(QString);
-//    void updateRecipe(QString);
+    void updateRecipe(QString);
 
 };
 
