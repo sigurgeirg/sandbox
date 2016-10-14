@@ -96,7 +96,6 @@ void MyScale::updateRecipe(QString selectedRecipe) {
 
     recipe->updateRecipe(selectedRecipe);
 
-
     // Recipe variables
     productDescription              = recipe->description;
     recipeID                        = recipe->recipeID;
@@ -115,10 +114,6 @@ void MyScale::updateRecipe(QString selectedRecipe) {
         destinationGate[t]  = QString::fromStdString(recipe->destinationGate[t].c_str()).toInt();
 
     }
-    //qDebug() << "Lower: " << QString::fromUtf8(recipe->weightRangeLower[3].c_str());
-    qDebug() << "Batch: " << QString::fromStdString(recipe->batchID);
-    qDebug() << "recipe->Batch: " << QString::fromUtf8(recipe->batchID.c_str()).toInt();
-    qDebug() << "SelectedRecipe: " << selectedRecipe;
 }
 
 
@@ -227,8 +222,6 @@ void MyScale::connectToSlaveDevice() {
                 modbusConnected = true;
                 qDebug() << "ModBus is Connected";
                 start();
-
-                emit conveyorRunState("conveyorIdle");
             }
     } catch(...) {
             //
@@ -678,12 +671,16 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
 
                     proData.destinationGate[_elementId] = returnToGate(proData.productWeight[_elementId]);
 
-
-
-                    qDebug() << "_elementId: " << _elementId
-                             //<< " - Serial: " << proData.serialId[_elementId]      << " - Batch: " << proData.batchId[_elementId]
-                             << " - Weight: " << proData.productWeight[_elementId] << " - Confidence: " << proData.productConfidence[_elementId]
-                             << " - Length: " << proData.productLength[_elementId] << " - Destination: " << proData.destinationGate[_elementId];
+                    qDebug() //<< "_elementId: " << _elementId
+                            << " - Serial: " << QString::number(proData.serialId[_elementId])
+                            << " - Batch: " << QString::fromStdString(proData.batchId[_elementId]).toInt()
+                            << " - RecipeId: " << QString::fromStdString(proData.productId[_elementId].c_str())
+                            << " - ProductId: " << QString::fromStdString(proData.productId[_elementId].c_str())
+                            << " - ProductType: " << QString::fromStdString(proData.productType[_elementId].c_str())
+                            << " - Weight: " << proData.productWeight[_elementId]
+                            << " - Confidence: " << proData.productConfidence[_elementId]
+                            << " - Length: " << proData.productLength[_elementId]
+                            << " - Destination: " << proData.destinationGate[_elementId];
 
                     emit sendFilteredWeight(meanWeightSample);
                     emit sendDebugData(_elementId);

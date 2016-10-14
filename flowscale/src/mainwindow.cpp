@@ -49,7 +49,7 @@ MainWindow::MainWindow(QWidget *parent) :
         connect(this, SIGNAL(ymin(QString)),                    scale,  SLOT(ymin(QString)));
         connect(this, SIGNAL(ymax(QString)),                    scale,  SLOT(ymax(QString)));
 
-        connect(this, SIGNAL(setCurrentRecipe(QString)),        scale,  SLOT(updateRecipe(QString)));
+        //connect(this, SIGNAL(setCurrentRecipe(QString)),        scale,  SLOT(updateRecipe(QString)));
 
         //This is the output array from zerofilter, and it will be sent to destination when ready.
         //connect(zero, SIGNAL(filteredZeroArray(int)),         this, SLOT(givethisnewnameandcreatefunction(int)));
@@ -444,9 +444,9 @@ void MainWindow::on_cbRecipeMenu_activated(const QString &arg1)
 {
     Q_UNUSED( arg1 );
 
-    recipeFileName = ui->cbRecipeMenu->currentText();
-    recipeFile = "recipes/" + recipeFileName;
-    QFile importedCSV(recipeFile);
+    recipeFile = ui->cbRecipeMenu->currentText();
+    recipeFileFullPath = "recipes/" + recipeFile;
+    QFile importRecipeCSV(recipeFileFullPath);
 
 
     if (recipeFile != lastRecipeFile) {
@@ -455,12 +455,13 @@ void MainWindow::on_cbRecipeMenu_activated(const QString &arg1)
         rowOfRecipeData.clear();
         rowRecipeData.clear();
 
-        if (importedCSV.open(QFile::ReadOnly)) {
+        if (importRecipeCSV.open(QFile::ReadOnly)) {
 
-            recipeData = importedCSV.readAll();
+            recipeData = importRecipeCSV.readAll();
             rowOfRecipeData = recipeData.split("\n");
-            importedCSV.close();
+            importRecipeCSV.close();
         }
+
 
         for (int x = 0; x < rowOfRecipeData.size(); x++)
         {
@@ -482,9 +483,7 @@ void MainWindow::on_cbRecipeMenu_activated(const QString &arg1)
     ui->recipeTable->setColumnWidth(2,100);
     ui->recipeTable->setColumnWidth(3,100);
 
-    //scale->updateRecipe(recipeFile);
-    emit setCurrentRecipe(recipeFile);
-
+    scale->updateRecipe(recipeFileFullPath);
 }
 
 
@@ -521,7 +520,7 @@ void MainWindow::on_cbSettingsMenu_activated(const QString &arg1)
 
     SettingsFileName = ui->cbSettingsMenu->currentText();
     SettingsFile = "settings/" + SettingsFileName;
-    QFile importedCSV(SettingsFile);
+    QFile importSettingsCSV(SettingsFile);
 
 //    if (SettingsFile != lastSettingsFile) {
 
@@ -529,11 +528,11 @@ void MainWindow::on_cbSettingsMenu_activated(const QString &arg1)
         rowOfSettingsData.clear();
         rowSettingsData.clear();
 
-        if (importedCSV.open(QFile::ReadOnly)) {
+        if (importSettingsCSV.open(QFile::ReadOnly)) {
 
-            settingsData = importedCSV.readAll();
+            settingsData = importSettingsCSV.readAll();
             rowOfSettingsData = settingsData.split("\n");
-            importedCSV.close();
+            importSettingsCSV.close();
         }
 
         for (int x = 0; x < rowOfSettingsData.size(); x++)

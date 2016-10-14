@@ -18,7 +18,6 @@
 #include <stdlib.h>
 #include "../../QCustomPlot/qcustomplot.h"
 
-using namespace std;
 
 class MyScale : public QThread
 {
@@ -31,6 +30,7 @@ public:
     Settings *settings;
     Recipe *recipe;
 
+    void updateRecipe(QString);
     bool between(int less, int value, int greater);
     int  returnToGate(int measuredWeight);
     void connectToSlaveDevice();
@@ -45,8 +45,8 @@ public:
     void setupPlot(QCustomPlot* customPlot, int workingID);
     void run();
     int *statusRegisterBinary(uint16_t number[]);
-    ofstream filezero;
-    string recipeArray[100][5];
+    std::ofstream filezero;
+    std::string recipeArray[100][5];
 
     int zeroUnfilteredArray[numberOfBeltRounds][samplesPerBeltRound];
     int productIDweights[numberOfElementsInList][weightSamplesInWindowOfInterest];
@@ -55,10 +55,10 @@ public:
 
 
     struct productData {
-        string recipeId[numberOfElementsInList];
-        string batchId[numberOfElementsInList];
-        string productId[numberOfElementsInList];
-        string productType[numberOfElementsInList];
+        std::string recipeId[numberOfElementsInList];
+        std::string productId[numberOfElementsInList];
+        std::string productType[numberOfElementsInList];
+        std::string batchId[numberOfElementsInList];
         int serialId[numberOfElementsInList];
         int productLengthPulseCounter[numberOfElementsInList];
         int productLength[numberOfElementsInList];
@@ -117,7 +117,6 @@ private:
     int pulseCounterInEachRow[numberOfBeltRounds];  //henda þessu þegar þetta hefur verið notað og sannprófað
 
     int conveyorOff;
-    int conveyorIdle;
     int conveyorWarmUp;
     int conveyorZeroCalibration;
     int conveyorRunning;
@@ -137,11 +136,11 @@ private:
 
     // Recipe variables
     QString currentRecipe;
-    string productDescription;
-    string recipeID;
-    string productID;
-    string productType;
-    string batchID;
+    std::string productDescription;
+    std::string recipeID;
+    std::string productID;
+    std::string productType;
+    std::string batchID;
     int serialStartsAt;
     int minProductLength;
     int maxProductLength;
@@ -191,7 +190,6 @@ public slots:
     void xmax(QString);
     void ymin(QString);
     void ymax(QString);
-    void updateRecipe(QString);
 
 };
 

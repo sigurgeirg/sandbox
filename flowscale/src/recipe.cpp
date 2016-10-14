@@ -22,6 +22,7 @@ Recipe::Recipe(QObject *parent) :
 //    int value = atoi(recipe->filterDelay.c_str()); //value = 45
 // ///////////////////////////////////////////////////////////////////////////////////
 
+
 }
 
 
@@ -30,28 +31,25 @@ Recipe::~Recipe()
 
 }
 
-void Recipe::updateRecipe(QString selectedRecipe) {
+void Recipe::updateRecipe(QString selectedRecipeFullPath) {
 
-    QString fileName;
-    QString file;
     QString data;
     QStringList rowOfData;
     QStringList rowData;
 
-    fileName = selectedRecipe.toStdString().c_str();
-    file = "recipes/" + fileName;
-    QFile importedCSV(file);
+    QFile importRecCSV(selectedRecipeFullPath);
 
     data.clear();
     rowOfData.clear();
     rowData.clear();
 
-    if (importedCSV.open(QFile::ReadOnly)) {
+    if (importRecCSV.open(QFile::ReadOnly)) {
 
-        data = importedCSV.readAll();
+        data = importRecCSV.readAll();
         rowOfData = data.split("\n");
-        importedCSV.close();
+        importRecCSV.close();
     }
+
 
     for (int x = 0; x < rowOfData.size(); x++)
     {
@@ -60,6 +58,7 @@ void Recipe::updateRecipe(QString selectedRecipe) {
         for (int y = 0; y < rowData.size(); y++)
         {
             recipeArray[x][y] = rowData[y].toStdString();
+
         }
     }
 
@@ -129,6 +128,7 @@ void Recipe::updateRecipe(QString selectedRecipe) {
         }
     }
 
+
     for (int t = 0; t < rowOfData.size(); t++) {
 
         weightRangeLower[t] = weightRange[t][1];
@@ -136,5 +136,4 @@ void Recipe::updateRecipe(QString selectedRecipe) {
         destinationGate[t]  = weightRange[t][3];
     }
 }
-
 

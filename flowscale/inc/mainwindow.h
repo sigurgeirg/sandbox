@@ -38,6 +38,7 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
+    void setCurrentRecipe(QString);
 
     MyScale *scale;
     MyDio *dio;
@@ -50,7 +51,6 @@ public:
     std::ofstream fout;
 
     Settings *settings;
-    Recipe *recipe;
 
 
 
@@ -65,8 +65,8 @@ private:
     long counter;
     int array[samplesPerBeltRound][2];
 
-    QString recipeFileName;
     QString recipeFile;
+    QString recipeFileFullPath;
     QString recipeData;
     QStringList rowOfRecipeData;
     QStringList rowRecipeData;
@@ -86,7 +86,6 @@ signals:
     void xmax(QString);
     void ymin(QString);
     void ymax(QString);
-    void setCurrentRecipe(QString);
     // /////////////////////////
     // Simulation
     // void reply(unsigned char, bool);

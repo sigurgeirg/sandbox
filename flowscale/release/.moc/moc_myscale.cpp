@@ -22,7 +22,7 @@ static const uint qt_meta_data_MyScale[] = {
        6,       // revision
        0,       // classname
        0,    0, // classinfo
-      16,   14, // methods
+      15,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -47,7 +47,6 @@ static const uint qt_meta_data_MyScale[] = {
      269,    8,    8,    8, 0x0a,
      283,    8,    8,    8, 0x0a,
      297,    8,    8,    8, 0x0a,
-     311,    8,    8,    8, 0x0a,
 
        0        // eod
 };
@@ -62,7 +61,6 @@ static const char qt_meta_stringdata_MyScale[] = {
     "leavingProductSensorSignal()\0"
     "modelZeroWeight(int)\0xmin(QString)\0"
     "xmax(QString)\0ymin(QString)\0ymax(QString)\0"
-    "updateRecipe(QString)\0"
 };
 
 void MyScale::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
@@ -86,7 +84,6 @@ void MyScale::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, voi
         case 12: _t->xmax((*reinterpret_cast< QString(*)>(_a[1]))); break;
         case 13: _t->ymin((*reinterpret_cast< QString(*)>(_a[1]))); break;
         case 14: _t->ymax((*reinterpret_cast< QString(*)>(_a[1]))); break;
-        case 15: _t->updateRecipe((*reinterpret_cast< QString(*)>(_a[1]))); break;
         default: ;
         }
     }
@@ -124,9 +121,9 @@ int MyScale::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 16)
+        if (_id < 15)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 16;
+        _id -= 15;
     }
     return _id;
 }

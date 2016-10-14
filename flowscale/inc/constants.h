@@ -5,7 +5,7 @@
 
     static const int numberOfUsedDigitalInputs = 16;
 
-    static const int numberOfBeltRounds = 5; // Was 10 and worked good, just too time consuming
+    static const int numberOfBeltRounds = 10;
     static const int samplesPerBeltRound = 2000;
     static const int weightSamplesInWindowOfInterest = 200;
     static const int numberOfElementsInList = 20;
