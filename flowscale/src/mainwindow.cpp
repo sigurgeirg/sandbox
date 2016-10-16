@@ -263,20 +263,17 @@ void MainWindow::plotProductGraph(int workingID)
 
 void MainWindow::displayReceivedWeight(int weightValueFromScale)
 {
-    ui->lblReceivedWeight->setText(QString::number(weightValueFromScale));
     ui->lblRawWeight->setText(QString::number(weightValueFromScale));
 }
 
 void MainWindow::displayFilteredWeight(int filteredWeight)
 {
-    ui->lblReceivedWeight_2->setText(QString::number(filteredWeight));
     ui->lblProductWeight->setText(QString::number(filteredWeight));
     ui->lblFilteredWeight->setText(QString::number(filteredWeight));
 }
 
 void MainWindow::displaySerialNumber(int serialNumber)
 {
-    ui->lblReceivedWeight_3->setText(QString::number(serialNumber));
     ui->lblSerialNumber->setText(QString::number(serialNumber));
     ui->lblElementId->setText(QString::number(serialNumber));
 }
