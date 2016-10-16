@@ -114,6 +114,11 @@ void MyScale::updateRecipe(QString selectedRecipe) {
         destinationGate[t]  = QString::fromStdString(recipe->destinationGate[t].c_str()).toInt();
 
     }
+    emit sendBatchId(QString::fromStdString(batchID.c_str()));
+    emit sendRecipeId(QString::fromStdString(recipeID.c_str()));
+    emit sendProductId(QString::fromStdString(productID.c_str()));
+    emit sendProductType(QString::fromStdString(productType.c_str()));
+    emit sendDescription(QString::fromStdString(productDescription.c_str()));
 }
 
 
@@ -364,7 +369,7 @@ void MyScale::enteringProductSensorSignal()
     // //////////////////////////////////////////////////////////
     // FIXME: Data that follows product from scale to grader - find better location later
     // //////////////////////////////////////////////////////////
-
+    proData.description[tempID] = productDescription;
     proData.recipeId[tempID] = recipeID;
     proData.batchId[tempID] = batchID;
     proData.productId[tempID] = productID;
@@ -674,7 +679,7 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
                     qDebug() //<< "_elementId: " << _elementId
                             << " - Serial: " << QString::number(proData.serialId[_elementId])
                             << " - Batch: " << QString::fromStdString(proData.batchId[_elementId]).toInt()
-                            << " - RecipeId: " << QString::fromStdString(proData.productId[_elementId].c_str())
+                            << " - RecipeId: " << QString::fromStdString(proData.recipeId[_elementId].c_str())
                             << " - ProductId: " << QString::fromStdString(proData.productId[_elementId].c_str())
                             << " - ProductType: " << QString::fromStdString(proData.productType[_elementId].c_str())
                             << " - Weight: " << proData.productWeight[_elementId]
@@ -682,8 +687,22 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
                             << " - Length: " << proData.productLength[_elementId]
                             << " - Destination: " << proData.destinationGate[_elementId];
 
-                    emit sendFilteredWeight(meanWeightSample);
-                    emit sendDebugData(_elementId);
+                    //emit sendFilteredWeight(meanWeightSample);
+                    //emit sendDebugData(_elementId);
+
+                    emit sendBatchId(QString::fromStdString(proData.batchId[_elementId].c_str()));
+                    emit sendRecipeId(QString::fromStdString(proData.recipeId[_elementId].c_str()));
+                    emit sendProductId(QString::fromStdString(proData.productId[_elementId].c_str()));
+                    emit sendProductType(QString::fromStdString(proData.productType[_elementId].c_str()));
+                    emit sendDescription(QString::fromStdString(proData.description[_elementId].c_str()));
+
+                    emit sendSerialNumber(proData.serialId[_elementId]);
+                    emit sendFilteredWeight(proData.productWeight[_elementId]);
+                    emit sendConfidence(QString::number(proData.productConfidence[_elementId]));
+                    emit sendLength(QString::number(proData.productLength[_elementId]));
+                    emit sendDestinationGate(QString::number(proData.destinationGate[_elementId]));
+
+
 
                     proData.productLengthPulseCounter[_elementId] = 0;
                 }

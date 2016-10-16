@@ -135,7 +135,15 @@ public slots:
     void recordWeight(int);
     void displayReceivedWeight(int);
     void displayFilteredWeight(int);
-    void displayDebugData(int);
+    void displayDescription(QString);
+    void displaySerialNumber(int);
+    void displayBatchId(QString);
+    void displayRecipeId(QString);
+    void displayProductId(QString);
+    void displayProductType(QString);
+    void displayConfidence(QString);
+    void displayLength(QString);
+    void displayDestinationGate(QString);
     void displayInputValue(unsigned long);
     void plotProductWeight(int);
     void plotProductGraph(int);

@@ -40,8 +40,16 @@ MainWindow::MainWindow(QWidget *parent) :
         connect(dio,   SIGNAL(enteringProductSensorSignal()),   scale,  SLOT(enteringProductSensorSignal()));
         connect(dio,   SIGNAL(leavingProductSensorSignal()),    scale,  SLOT(leavingProductSensorSignal()));
 
+        connect(scale, SIGNAL(sendDescription(QString)),        this,   SLOT(displayDescription(QString)));
         connect(scale, SIGNAL(sendFilteredWeight(int)),         this,   SLOT(displayFilteredWeight(int)));
-        connect(scale, SIGNAL(sendDebugData(int)),              this,   SLOT(displayDebugData(int)));
+        connect(scale, SIGNAL(sendSerialNumber(int)),           this,   SLOT(displaySerialNumber(int)));
+        connect(scale, SIGNAL(sendBatchId(QString)),            this,   SLOT(displayBatchId(QString)));
+        connect(scale, SIGNAL(sendRecipeId(QString)),           this,   SLOT(displayRecipeId(QString)));
+        connect(scale, SIGNAL(sendProductId(QString)),          this,   SLOT(displayProductId(QString)));
+        connect(scale, SIGNAL(sendProductType(QString)),        this,   SLOT(displayProductType(QString)));
+        connect(scale, SIGNAL(sendConfidence(QString)),         this,   SLOT(displayConfidence(QString)));
+        connect(scale, SIGNAL(sendLength(QString)),             this,   SLOT(displayLength(QString)));
+        connect(scale, SIGNAL(sendDestinationGate(QString)),    this,   SLOT(displayDestinationGate(QString)));
         connect(scale, SIGNAL(conveyorRunState(QString)),       this,   SLOT(conveyorRunStateIndicator(QString)));
 
         connect(this, SIGNAL(xmin(QString)),                    scale,  SLOT(xmin(QString)));
@@ -248,30 +256,71 @@ void MainWindow::plotProductGraph(int workingID)
 
     ui->PenguinImage->clear();
 
-    ui->lblElementId->setText(QString::number(currentWorkingID));
+    //ui->lblElementId->setText(QString::number(currentWorkingID));
     scale->setupPlot(ui->customPlot, currentWorkingID);
 }
 
 
 void MainWindow::displayReceivedWeight(int weightValueFromScale)
 {
-
     ui->lblReceivedWeight->setText(QString::number(weightValueFromScale));
-
+    ui->lblRawWeight->setText(QString::number(weightValueFromScale));
 }
 
-void MainWindow::displayFilteredWeight(int filteredWeight){
-
+void MainWindow::displayFilteredWeight(int filteredWeight)
+{
     ui->lblReceivedWeight_2->setText(QString::number(filteredWeight));
-    ui->lblFilteredWeight->setText(QString::number(currentMeanWeight));
-
+    ui->lblProductWeight->setText(QString::number(filteredWeight));
+    ui->lblFilteredWeight->setText(QString::number(filteredWeight));
 }
 
-void MainWindow::displayDebugData(int debugData){
-
-    ui->lblReceivedWeight_3->setText(QString::number(debugData));
-
+void MainWindow::displaySerialNumber(int serialNumber)
+{
+    ui->lblReceivedWeight_3->setText(QString::number(serialNumber));
+    ui->lblSerialNumber->setText(QString::number(serialNumber));
+    ui->lblElementId->setText(QString::number(serialNumber));
 }
+
+void MainWindow::displayDescription(QString description)
+{
+    ui->lblDescription->setText(description);
+}
+
+void MainWindow::displayBatchId(QString batchId)
+{
+    ui->lblBatchID->setText(batchId);
+}
+
+void MainWindow::displayRecipeId(QString recipeId)
+{
+    ui->lblRecipeID->setText(recipeId);
+}
+
+void MainWindow::displayProductId(QString productId)
+{
+    ui->lblProductID->setText(productId);
+}
+
+void MainWindow::displayProductType(QString productType)
+{
+    Q_UNUSED( productType );
+}
+
+void MainWindow::displayConfidence(QString confidence)
+{
+    ui->lblWeightConfidence->setText(confidence);
+}
+
+void MainWindow::displayLength(QString length)
+{
+    ui->lblLength->setText(length);
+}
+
+void MainWindow::displayDestinationGate(QString destinationGate)
+{
+    ui->lblDestinationGate->setText(destinationGate);
+}
+
 
 
 // /////////////////////////
@@ -394,6 +443,7 @@ void MainWindow::on_btnNetWeight_clicked()
     scale->netWeight();
 }
 
+// FIXME: Nota serialnumber frekar en currentWorkingID
 void MainWindow::on_btnReverse_clicked()
 {
     if (currentWorkingID > 0) {
@@ -406,6 +456,7 @@ void MainWindow::on_btnReverse_clicked()
     scale->setupPlot(ui->customPlot, currentWorkingID);
 }
 
+// FIXME: Nota serialnumber frekar en currentWorkingID
 void MainWindow::on_btnForward_clicked()
 {
     if (currentWorkingID >= numberOfElementsInList-1) {

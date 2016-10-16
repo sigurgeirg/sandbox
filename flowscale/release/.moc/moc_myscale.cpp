@@ -22,40 +22,52 @@ static const uint qt_meta_data_MyScale[] = {
        6,       // revision
        0,       // classname
        0,    0, // classinfo
-      15,   14, // methods
+      23,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
        0,       // flags
-       7,       // signalCount
+      15,       // signalCount
 
  // signals: signature, parameters, type, tag, flags
        9,    8,    8,    8, 0x05,
       29,    8,    8,    8, 0x05,
       53,    8,    8,    8, 0x05,
-      72,    8,    8,    8, 0x05,
-      86,    8,    8,    8, 0x05,
-     102,    8,    8,    8, 0x05,
-     128,    8,    8,    8, 0x05,
+      75,    8,    8,    8, 0x05,
+     100,    8,    8,    8, 0x05,
+     121,    8,    8,    8, 0x05,
+     143,    8,    8,    8, 0x05,
+     166,    8,    8,    8, 0x05,
+     191,    8,    8,    8, 0x05,
+     215,    8,    8,    8, 0x05,
+     235,    8,    8,    8, 0x05,
+     264,    8,    8,    8, 0x05,
+     278,    8,    8,    8, 0x05,
+     294,    8,    8,    8, 0x05,
+     320,    8,    8,    8, 0x05,
 
  // slots: signature, parameters, type, tag, flags
-     154,    8,    8,    8, 0x0a,
-     175,    8,    8,    8, 0x0a,
-     205,    8,    8,    8, 0x0a,
-     234,    8,    8,    8, 0x0a,
-     255,    8,    8,    8, 0x0a,
-     269,    8,    8,    8, 0x0a,
-     283,    8,    8,    8, 0x0a,
-     297,    8,    8,    8, 0x0a,
+     346,    8,    8,    8, 0x0a,
+     367,    8,    8,    8, 0x0a,
+     397,    8,    8,    8, 0x0a,
+     426,    8,    8,    8, 0x0a,
+     447,    8,    8,    8, 0x0a,
+     461,    8,    8,    8, 0x0a,
+     475,    8,    8,    8, 0x0a,
+     489,    8,    8,    8, 0x0a,
 
        0        // eod
 };
 
 static const char qt_meta_stringdata_MyScale[] = {
     "MyScale\0\0receivedWeight(int)\0"
-    "sendFilteredWeight(int)\0sendDebugData(int)\0"
-    "plotData(int)\0plotWeight(int)\0"
-    "requestNewRecipe(QString)\0"
+    "sendFilteredWeight(int)\0sendSerialNumber(int)\0"
+    "sendDescription(QString)\0sendBatchId(QString)\0"
+    "sendRecipeId(QString)\0sendProductId(QString)\0"
+    "sendProductType(QString)\0"
+    "sendConfidence(QString)\0sendLength(QString)\0"
+    "sendDestinationGate(QString)\0plotData(int)\0"
+    "plotWeight(int)\0requestNewRecipe(QString)\0"
     "conveyorRunState(QString)\0"
     "conveyorBeltSignal()\0enteringProductSensorSignal()\0"
     "leavingProductSensorSignal()\0"
@@ -71,19 +83,27 @@ void MyScale::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, voi
         switch (_id) {
         case 0: _t->receivedWeight((*reinterpret_cast< int(*)>(_a[1]))); break;
         case 1: _t->sendFilteredWeight((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 2: _t->sendDebugData((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 3: _t->plotData((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 4: _t->plotWeight((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 5: _t->requestNewRecipe((*reinterpret_cast< QString(*)>(_a[1]))); break;
-        case 6: _t->conveyorRunState((*reinterpret_cast< QString(*)>(_a[1]))); break;
-        case 7: _t->conveyorBeltSignal(); break;
-        case 8: _t->enteringProductSensorSignal(); break;
-        case 9: _t->leavingProductSensorSignal(); break;
-        case 10: _t->modelZeroWeight((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 11: _t->xmin((*reinterpret_cast< QString(*)>(_a[1]))); break;
-        case 12: _t->xmax((*reinterpret_cast< QString(*)>(_a[1]))); break;
-        case 13: _t->ymin((*reinterpret_cast< QString(*)>(_a[1]))); break;
-        case 14: _t->ymax((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 2: _t->sendSerialNumber((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 3: _t->sendDescription((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 4: _t->sendBatchId((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 5: _t->sendRecipeId((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 6: _t->sendProductId((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 7: _t->sendProductType((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 8: _t->sendConfidence((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 9: _t->sendLength((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 10: _t->sendDestinationGate((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 11: _t->plotData((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 12: _t->plotWeight((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 13: _t->requestNewRecipe((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 14: _t->conveyorRunState((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 15: _t->conveyorBeltSignal(); break;
+        case 16: _t->enteringProductSensorSignal(); break;
+        case 17: _t->leavingProductSensorSignal(); break;
+        case 18: _t->modelZeroWeight((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 19: _t->xmin((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 20: _t->xmax((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 21: _t->ymin((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 22: _t->ymax((*reinterpret_cast< QString(*)>(_a[1]))); break;
         default: ;
         }
     }
@@ -121,9 +141,9 @@ int MyScale::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 15)
+        if (_id < 23)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 15;
+        _id -= 23;
     }
     return _id;
 }
@@ -143,37 +163,93 @@ void MyScale::sendFilteredWeight(int _t1)
 }
 
 // SIGNAL 2
-void MyScale::sendDebugData(int _t1)
+void MyScale::sendSerialNumber(int _t1)
 {
     void *_a[] = { 0, const_cast<void*>(reinterpret_cast<const void*>(&_t1)) };
     QMetaObject::activate(this, &staticMetaObject, 2, _a);
 }
 
 // SIGNAL 3
-void MyScale::plotData(int _t1)
+void MyScale::sendDescription(QString _t1)
 {
     void *_a[] = { 0, const_cast<void*>(reinterpret_cast<const void*>(&_t1)) };
     QMetaObject::activate(this, &staticMetaObject, 3, _a);
 }
 
 // SIGNAL 4
-void MyScale::plotWeight(int _t1)
+void MyScale::sendBatchId(QString _t1)
 {
     void *_a[] = { 0, const_cast<void*>(reinterpret_cast<const void*>(&_t1)) };
     QMetaObject::activate(this, &staticMetaObject, 4, _a);
 }
 
 // SIGNAL 5
-void MyScale::requestNewRecipe(QString _t1)
+void MyScale::sendRecipeId(QString _t1)
 {
     void *_a[] = { 0, const_cast<void*>(reinterpret_cast<const void*>(&_t1)) };
     QMetaObject::activate(this, &staticMetaObject, 5, _a);
 }
 
 // SIGNAL 6
-void MyScale::conveyorRunState(QString _t1)
+void MyScale::sendProductId(QString _t1)
 {
     void *_a[] = { 0, const_cast<void*>(reinterpret_cast<const void*>(&_t1)) };
     QMetaObject::activate(this, &staticMetaObject, 6, _a);
+}
+
+// SIGNAL 7
+void MyScale::sendProductType(QString _t1)
+{
+    void *_a[] = { 0, const_cast<void*>(reinterpret_cast<const void*>(&_t1)) };
+    QMetaObject::activate(this, &staticMetaObject, 7, _a);
+}
+
+// SIGNAL 8
+void MyScale::sendConfidence(QString _t1)
+{
+    void *_a[] = { 0, const_cast<void*>(reinterpret_cast<const void*>(&_t1)) };
+    QMetaObject::activate(this, &staticMetaObject, 8, _a);
+}
+
+// SIGNAL 9
+void MyScale::sendLength(QString _t1)
+{
+    void *_a[] = { 0, const_cast<void*>(reinterpret_cast<const void*>(&_t1)) };
+    QMetaObject::activate(this, &staticMetaObject, 9, _a);
+}
+
+// SIGNAL 10
+void MyScale::sendDestinationGate(QString _t1)
+{
+    void *_a[] = { 0, const_cast<void*>(reinterpret_cast<const void*>(&_t1)) };
+    QMetaObject::activate(this, &staticMetaObject, 10, _a);
+}
+
+// SIGNAL 11
+void MyScale::plotData(int _t1)
+{
+    void *_a[] = { 0, const_cast<void*>(reinterpret_cast<const void*>(&_t1)) };
+    QMetaObject::activate(this, &staticMetaObject, 11, _a);
+}
+
+// SIGNAL 12
+void MyScale::plotWeight(int _t1)
+{
+    void *_a[] = { 0, const_cast<void*>(reinterpret_cast<const void*>(&_t1)) };
+    QMetaObject::activate(this, &staticMetaObject, 12, _a);
+}
+
+// SIGNAL 13
+void MyScale::requestNewRecipe(QString _t1)
+{
+    void *_a[] = { 0, const_cast<void*>(reinterpret_cast<const void*>(&_t1)) };
+    QMetaObject::activate(this, &staticMetaObject, 13, _a);
+}
+
+// SIGNAL 14
+void MyScale::conveyorRunState(QString _t1)
+{
+    void *_a[] = { 0, const_cast<void*>(reinterpret_cast<const void*>(&_t1)) };
+    QMetaObject::activate(this, &staticMetaObject, 14, _a);
 }
 QT_END_MOC_NAMESPACE

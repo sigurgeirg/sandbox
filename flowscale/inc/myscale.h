@@ -55,6 +55,7 @@ public:
 
 
     struct productData {
+        std::string description[numberOfElementsInList];
         std::string recipeId[numberOfElementsInList];
         std::string productId[numberOfElementsInList];
         std::string productType[numberOfElementsInList];
@@ -175,7 +176,15 @@ private:
 signals:
     void receivedWeight(int);
     void sendFilteredWeight(int);
-    void sendDebugData(int);
+    void sendSerialNumber(int);
+    void sendDescription(QString);
+    void sendBatchId(QString);
+    void sendRecipeId(QString);
+    void sendProductId(QString);
+    void sendProductType(QString);
+    void sendConfidence(QString);
+    void sendLength(QString);
+    void sendDestinationGate(QString);
     void plotData(int);
     void plotWeight(int);
     void requestNewRecipe(QString);

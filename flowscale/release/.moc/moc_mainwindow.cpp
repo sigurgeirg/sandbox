@@ -22,7 +22,7 @@ static const uint qt_meta_data_MainWindow[] = {
        6,       // revision
        0,       // classname
        0,    0, // classinfo
-      38,   14, // methods
+      46,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -65,11 +65,19 @@ static const uint qt_meta_data_MainWindow[] = {
      772,   11,   11,   11, 0x0a,
      799,   11,   11,   11, 0x0a,
      826,   11,   11,   11, 0x0a,
-     848,   11,   11,   11, 0x0a,
-     873,   11,   11,   11, 0x0a,
-     896,   11,   11,   11, 0x0a,
-     918,   11,   11,   11, 0x0a,
-     936,   11,   11,   11, 0x0a,
+     854,   11,   11,   11, 0x0a,
+     879,   11,   11,   11, 0x0a,
+     903,   11,   11,   11, 0x0a,
+     928,   11,   11,   11, 0x0a,
+     954,   11,   11,   11, 0x0a,
+     982,   11,   11,   11, 0x0a,
+    1009,   11,   11,   11, 0x0a,
+    1032,   11,   11,   11, 0x0a,
+    1064,   11,   11,   11, 0x0a,
+    1089,   11,   11,   11, 0x0a,
+    1112,   11,   11,   11, 0x0a,
+    1134,   11,   11,   11, 0x0a,
+    1152,   11,   11,   11, 0x0a,
 
        0        // eod
 };
@@ -99,7 +107,16 @@ static const char qt_meta_stringdata_MainWindow[] = {
     "conveyorRunStateIndicator(QString)\0"
     "recordWeight(int)\0displayReceivedWeight(int)\0"
     "displayFilteredWeight(int)\0"
-    "displayDebugData(int)\0displayInputValue(ulong)\0"
+    "displayDescription(QString)\0"
+    "displaySerialNumber(int)\0"
+    "displayBatchId(QString)\0"
+    "displayRecipeId(QString)\0"
+    "displayProductId(QString)\0"
+    "displayProductType(QString)\0"
+    "displayConfidence(QString)\0"
+    "displayLength(QString)\0"
+    "displayDestinationGate(QString)\0"
+    "displayInputValue(ulong)\0"
     "plotProductWeight(int)\0plotProductGraph(int)\0"
     "keyValue(QString)\0graphBoundaries(QString)\0"
 };
@@ -142,12 +159,20 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         case 29: _t->recordWeight((*reinterpret_cast< int(*)>(_a[1]))); break;
         case 30: _t->displayReceivedWeight((*reinterpret_cast< int(*)>(_a[1]))); break;
         case 31: _t->displayFilteredWeight((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 32: _t->displayDebugData((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 33: _t->displayInputValue((*reinterpret_cast< ulong(*)>(_a[1]))); break;
-        case 34: _t->plotProductWeight((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 35: _t->plotProductGraph((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 36: _t->keyValue((*reinterpret_cast< QString(*)>(_a[1]))); break;
-        case 37: _t->graphBoundaries((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 32: _t->displayDescription((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 33: _t->displaySerialNumber((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 34: _t->displayBatchId((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 35: _t->displayRecipeId((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 36: _t->displayProductId((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 37: _t->displayProductType((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 38: _t->displayConfidence((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 39: _t->displayLength((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 40: _t->displayDestinationGate((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 41: _t->displayInputValue((*reinterpret_cast< ulong(*)>(_a[1]))); break;
+        case 42: _t->plotProductWeight((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 43: _t->plotProductGraph((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 44: _t->keyValue((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 45: _t->graphBoundaries((*reinterpret_cast< QString(*)>(_a[1]))); break;
         default: ;
         }
     }
@@ -185,9 +210,9 @@ int MainWindow::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 38)
+        if (_id < 46)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 38;
+        _id -= 46;
     }
     return _id;
 }
