@@ -91,7 +91,7 @@ private:
     int weightGROSSorNET[1];// Indicates whether selected weight is GROSS or NET weight.
 
 
-    bool enteringProduct;
+    bool processingProduct;
     bool requestBeltRoundPulse;
     bool beltRoundPulse;
     bool requestZeroUpdate;
@@ -189,6 +189,7 @@ signals:
     void plotWeight(int);
     void requestNewRecipe(QString);
     void conveyorRunState(QString);
+    void sendMQTT(QString, const char*);
 
 public slots:
     void conveyorBeltSignal();

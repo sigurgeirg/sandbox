@@ -28,7 +28,7 @@ signals:
 
 
 public slots:
-   void processReceivedWeight(int);
+   void sendMessage(QString, const char*);
 
 };
 

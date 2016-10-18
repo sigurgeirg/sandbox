@@ -73,7 +73,8 @@ MainWindow::MainWindow(QWidget *parent) :
         connect(scale, SIGNAL(plotWeight(int)),                 this,  SLOT(plotProductWeight(int)));
 
     // Return avg weight to next component:
-        connect(this, SIGNAL(avgWeight(int)),                   mosq, SLOT(processReceivedWeight(int)));
+        //connect(this, SIGNAL(avgWeight(int)),                   mosq, SLOT(processReceivedWeight(int)));
+        connect(scale, SIGNAL(sendMQTT(QString,const char*)), mosq, SLOT(sendMessage(QString,const char*)));
 
     // Read from physical inputs and write to physical outputs:
         connect(dio,   SIGNAL(inputValue(unsigned long)),   this, SLOT(displayInputValue(unsigned long)));

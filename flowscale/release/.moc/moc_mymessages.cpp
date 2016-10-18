@@ -30,13 +30,13 @@ static const uint qt_meta_data_MyMessages[] = {
        0,       // signalCount
 
  // slots: signature, parameters, type, tag, flags
-      12,   11,   11,   11, 0x0a,
+      14,   12,   11,   11, 0x0a,
 
        0        // eod
 };
 
 static const char qt_meta_stringdata_MyMessages[] = {
-    "MyMessages\0\0processReceivedWeight(int)\0"
+    "MyMessages\0\0,\0sendMessage(QString,const char*)\0"
 };
 
 void MyMessages::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
@@ -45,7 +45,7 @@ void MyMessages::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         Q_ASSERT(staticMetaObject.cast(_o));
         MyMessages *_t = static_cast<MyMessages *>(_o);
         switch (_id) {
-        case 0: _t->processReceivedWeight((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 0: _t->sendMessage((*reinterpret_cast< QString(*)>(_a[1])),(*reinterpret_cast< const char*(*)>(_a[2]))); break;
         default: ;
         }
     }

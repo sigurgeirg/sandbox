@@ -26,7 +26,7 @@ MyScale::MyScale(QObject *parent) :
 
 
 
-    enteringProduct = false;
+    processingProduct = false;
     requestBeltRoundPulse = false;
     beltRoundPulse = false;
     requestZeroUpdate = false;
@@ -341,7 +341,7 @@ void MyScale::conveyorBeltSignal()
 
 void MyScale::enteringProductSensorSignal()
 {
-    enteringProduct = true;
+    processingProduct = true;
     productCounter++;
     tempID++;
     if (tempID >= numberOfElementsInList) {
@@ -598,26 +598,48 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
 
     if (zeroTracking == zt_ProductFilter){
 
-        if (requestZeroUpdate == true) {
+        // ////////////////////////////////////
+        // FIXME: If update zeroWeight samples works (below) then delete this part ASAP
+        // ////////////////////////////////////
+//        if (requestZeroUpdate == true) {
 
-            if (enteringProduct == false) {
+//            if (processingProduct == false) {
+
+//                updateZeroArray[sampleCounter] = weightValueFromScale;
+//                updateSampleCounter++;
+//                // Here we can emit information to display that running ZERO tracking update is being attempted
+
+//            } else {
+//                updateSampleCounter = 0;
+//            }
+
+//            if (updateSampleCounter >= (pulsesPerBeltRound*1.05)) {
+
+//                zeroTracking = zt_UpdateZeroWeightSamples;
+//                qDebug() << "Update ZeroWeight Samples";
+//                // Here we can emit information to display that running ZERO tracking update has been performed
+//            }
+//        }
+        // ////////////////////////////////////
+        if (processingProduct == false) {
+
+            if (requestZeroUpdate == true) {
 
                 updateZeroArray[sampleCounter] = weightValueFromScale;
                 updateSampleCounter++;
                 // Here we can emit information to display that running ZERO tracking update is being attempted
 
-            } else {
+                if (updateSampleCounter >= (pulsesPerBeltRound*1.05)) {
 
-                updateSampleCounter = 0;
+                    zeroTracking = zt_UpdateZeroWeightSamples;
+                    qDebug() << "Update ZeroWeight Samples";
+                    // Here we can emit information to display that running ZERO tracking update has been performed
+                }
             }
-
-            if (updateSampleCounter >= (pulsesPerBeltRound*1.05)) {
-
-                zeroTracking = zt_UpdateZeroWeightSamples;
-                qDebug() << "Update ZeroWeight Samples";
-                // Here we can emit information to display that running ZERO tracking update has been performed
-            }
+        } else {
+            updateSampleCounter = 0;
         }
+        // ////////////////////////////////////
 
 
         // Track elements from product sensor (>=0) and over weighing area on program-scantime resolution +1
@@ -695,14 +717,21 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
                     emit sendProductId(QString::fromStdString(proData.productId[_elementId].c_str()));
                     emit sendProductType(QString::fromStdString(proData.productType[_elementId].c_str()));
                     emit sendDescription(QString::fromStdString(proData.description[_elementId].c_str()));
-
                     emit sendSerialNumber(proData.serialId[_elementId]);
                     emit sendFilteredWeight(proData.productWeight[_elementId]);
                     emit sendConfidence(QString::number(proData.productConfidence[_elementId]));
                     emit sendLength(QString::number(proData.productLength[_elementId]));
                     emit sendDestinationGate(QString::number(proData.destinationGate[_elementId]));
 
-
+                    emit sendMQTT(QString::fromStdString(proData.batchId[_elementId].c_str()), "scale/batchID");
+                    emit sendMQTT(QString::fromStdString(proData.recipeId[_elementId].c_str()), "scale/recipeID");
+                    emit sendMQTT(QString::fromStdString(proData.productId[_elementId].c_str()), "scale/productID");
+                    emit sendMQTT(QString::fromStdString(proData.productType[_elementId].c_str()), "scale/productType");
+                    emit sendMQTT(QString::number(proData.serialId[_elementId]), "scale/serialID");
+                    emit sendMQTT(QString::number(proData.productWeight[_elementId]), "scale/productWeight");
+                    emit sendMQTT(QString::number(proData.productConfidence[_elementId]), "scale/productConfidence");
+                    emit sendMQTT(QString::number(proData.productLength[_elementId]), "scale/productLength");
+                    emit sendMQTT(QString::number(proData.destinationGate[_elementId]), "scale/destinationGate");
 
                     proData.productLengthPulseCounter[_elementId] = 0;
                 }
@@ -713,7 +742,7 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
 
                     emit plotData(_elementId);
 
-                    enteringProduct = false;
+                    processingProduct = false;
                 }
 
 
