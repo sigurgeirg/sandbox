@@ -48,14 +48,14 @@ static const uint qt_meta_data_MyScale[] = {
      348,  346,    8,    8, 0x05,
 
  // slots: signature, parameters, type, tag, flags
-     385,    8,    8,    8, 0x0a,
-     406,    8,    8,    8, 0x0a,
-     436,    8,    8,    8, 0x0a,
-     465,    8,    8,    8, 0x0a,
-     486,    8,    8,    8, 0x0a,
-     500,    8,    8,    8, 0x0a,
-     514,    8,    8,    8, 0x0a,
-     528,    8,    8,    8, 0x0a,
+     378,    8,    8,    8, 0x0a,
+     399,    8,    8,    8, 0x0a,
+     429,    8,    8,    8, 0x0a,
+     458,    8,    8,    8, 0x0a,
+     479,    8,    8,    8, 0x0a,
+     493,    8,    8,    8, 0x0a,
+     507,    8,    8,    8, 0x0a,
+     521,    8,    8,    8, 0x0a,
 
        0        // eod
 };
@@ -70,7 +70,7 @@ static const char qt_meta_stringdata_MyScale[] = {
     "sendDestinationGate(QString)\0plotData(int)\0"
     "plotWeight(int)\0requestNewRecipe(QString)\0"
     "conveyorRunState(QString)\0,\0"
-    "sendMQTTMessage(QString,const char*)\0"
+    "sendMQTT(QString,const char*)\0"
     "conveyorBeltSignal()\0enteringProductSensorSignal()\0"
     "leavingProductSensorSignal()\0"
     "modelZeroWeight(int)\0xmin(QString)\0"
@@ -98,7 +98,7 @@ void MyScale::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, voi
         case 12: _t->plotWeight((*reinterpret_cast< int(*)>(_a[1]))); break;
         case 13: _t->requestNewRecipe((*reinterpret_cast< QString(*)>(_a[1]))); break;
         case 14: _t->conveyorRunState((*reinterpret_cast< QString(*)>(_a[1]))); break;
-        case 15: _t->sendMQTTMessage((*reinterpret_cast< QString(*)>(_a[1])),(*reinterpret_cast< const char*(*)>(_a[2]))); break;
+        case 15: _t->sendMQTT((*reinterpret_cast< QString(*)>(_a[1])),(*reinterpret_cast< const char*(*)>(_a[2]))); break;
         case 16: _t->conveyorBeltSignal(); break;
         case 17: _t->enteringProductSensorSignal(); break;
         case 18: _t->leavingProductSensorSignal(); break;
@@ -257,7 +257,7 @@ void MyScale::conveyorRunState(QString _t1)
 }
 
 // SIGNAL 15
-void MyScale::sendMQTTMessage(QString _t1, const char * _t2)
+void MyScale::sendMQTT(QString _t1, const char * _t2)
 {
     void *_a[] = { 0, const_cast<void*>(reinterpret_cast<const void*>(&_t1)), const_cast<void*>(reinterpret_cast<const void*>(&_t2)) };
     QMetaObject::activate(this, &staticMetaObject, 15, _a);

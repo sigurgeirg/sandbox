@@ -712,11 +712,11 @@ void MyScale::modelZeroWeight(int weightValueFromScale) {
                     //emit sendFilteredWeight(meanWeightSample);
                     //emit sendDebugData(_elementId);
 
+                    emit sendDescription(QString::fromStdString(proData.description[_elementId].c_str()));
                     emit sendBatchId(QString::fromStdString(proData.batchId[_elementId].c_str()));
                     emit sendRecipeId(QString::fromStdString(proData.recipeId[_elementId].c_str()));
                     emit sendProductId(QString::fromStdString(proData.productId[_elementId].c_str()));
                     emit sendProductType(QString::fromStdString(proData.productType[_elementId].c_str()));
-                    emit sendDescription(QString::fromStdString(proData.description[_elementId].c_str()));
                     emit sendSerialNumber(proData.serialId[_elementId]);
                     emit sendFilteredWeight(proData.productWeight[_elementId]);
                     emit sendConfidence(QString::number(proData.productConfidence[_elementId]));

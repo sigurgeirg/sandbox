@@ -1,7 +1,6 @@
 #ifndef MYMESSAGES_H
 #define MYMESSAGES_H
 
-#include "mydio.h"
 #include "clientsub.h"
 #include "brokerpub.h"
 #include <string>
@@ -19,7 +18,6 @@ public:
     void run();
 
     BrokerPub *mqttb;
-    MyDio *dio;
 
 private:
     int rc;

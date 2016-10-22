@@ -23,6 +23,7 @@
 #include <QtGui/QLineEdit>
 #include <QtGui/QMainWindow>
 #include <QtGui/QPushButton>
+#include <QtGui/QRadioButton>
 #include <QtGui/QSpacerItem>
 #include <QtGui/QTabWidget>
 #include <QtGui/QTableWidget>
@@ -71,6 +72,20 @@ public:
     QPushButton *btnNetWeightConnect;
     QPushButton *btnDisconnect;
     QWidget *tab_2;
+    QFrame *destinationFrame_2;
+    QLabel *lblDestinationGate_2;
+    QLabel *lblDestination_2;
+    QFrame *serialFrame_2;
+    QLabel *lblSerialNumber_2;
+    QLabel *lblSerial_2;
+    QFrame *filteredWeightFrame_2;
+    QLabel *lblProductWeight_2;
+    QLabel *lblWeightHeader_2;
+    QFrame *batchFrame_2;
+    QLabel *lblBatchID_2;
+    QLabel *lblBatch_2;
+    QRadioButton *radioButton;
+    QCheckBox *checkBox;
     QWidget *tabCalibrate;
     QFrame *transmitFrame;
     QLineEdit *edtCalibrationWeight;
@@ -437,6 +452,68 @@ public:
         tabWidget->addTab(tab, QString());
         tab_2 = new QWidget();
         tab_2->setObjectName(QString::fromUtf8("tab_2"));
+        destinationFrame_2 = new QFrame(tab_2);
+        destinationFrame_2->setObjectName(QString::fromUtf8("destinationFrame_2"));
+        destinationFrame_2->setGeometry(QRect(10, 250, 111, 71));
+        destinationFrame_2->setStyleSheet(QString::fromUtf8(""));
+        destinationFrame_2->setFrameShape(QFrame::StyledPanel);
+        destinationFrame_2->setFrameShadow(QFrame::Raised);
+        lblDestinationGate_2 = new QLabel(destinationFrame_2);
+        lblDestinationGate_2->setObjectName(QString::fromUtf8("lblDestinationGate_2"));
+        lblDestinationGate_2->setGeometry(QRect(30, 30, 51, 31));
+        lblDestinationGate_2->setFont(font3);
+        lblDestinationGate_2->setStyleSheet(QString::fromUtf8("color: rgb(255, 255, 255);"));
+        lblDestination_2 = new QLabel(destinationFrame_2);
+        lblDestination_2->setObjectName(QString::fromUtf8("lblDestination_2"));
+        lblDestination_2->setGeometry(QRect(10, 0, 81, 21));
+        serialFrame_2 = new QFrame(tab_2);
+        serialFrame_2->setObjectName(QString::fromUtf8("serialFrame_2"));
+        serialFrame_2->setGeometry(QRect(10, 90, 111, 71));
+        serialFrame_2->setStyleSheet(QString::fromUtf8(""));
+        serialFrame_2->setFrameShape(QFrame::StyledPanel);
+        serialFrame_2->setFrameShadow(QFrame::Raised);
+        lblSerialNumber_2 = new QLabel(serialFrame_2);
+        lblSerialNumber_2->setObjectName(QString::fromUtf8("lblSerialNumber_2"));
+        lblSerialNumber_2->setGeometry(QRect(20, 30, 81, 31));
+        lblSerialNumber_2->setFont(font3);
+        lblSerialNumber_2->setStyleSheet(QString::fromUtf8("color: rgb(255, 255, 255);"));
+        lblSerial_2 = new QLabel(serialFrame_2);
+        lblSerial_2->setObjectName(QString::fromUtf8("lblSerial_2"));
+        lblSerial_2->setGeometry(QRect(10, 0, 81, 21));
+        filteredWeightFrame_2 = new QFrame(tab_2);
+        filteredWeightFrame_2->setObjectName(QString::fromUtf8("filteredWeightFrame_2"));
+        filteredWeightFrame_2->setGeometry(QRect(10, 170, 111, 71));
+        filteredWeightFrame_2->setStyleSheet(QString::fromUtf8(""));
+        filteredWeightFrame_2->setFrameShape(QFrame::StyledPanel);
+        filteredWeightFrame_2->setFrameShadow(QFrame::Raised);
+        lblProductWeight_2 = new QLabel(filteredWeightFrame_2);
+        lblProductWeight_2->setObjectName(QString::fromUtf8("lblProductWeight_2"));
+        lblProductWeight_2->setGeometry(QRect(10, 20, 91, 31));
+        lblProductWeight_2->setFont(font1);
+        lblProductWeight_2->setStyleSheet(QString::fromUtf8("color: rgb(255, 255, 255);"));
+        lblWeightHeader_2 = new QLabel(filteredWeightFrame_2);
+        lblWeightHeader_2->setObjectName(QString::fromUtf8("lblWeightHeader_2"));
+        lblWeightHeader_2->setGeometry(QRect(6, 0, 91, 21));
+        batchFrame_2 = new QFrame(tab_2);
+        batchFrame_2->setObjectName(QString::fromUtf8("batchFrame_2"));
+        batchFrame_2->setGeometry(QRect(10, 10, 111, 71));
+        batchFrame_2->setStyleSheet(QString::fromUtf8(""));
+        batchFrame_2->setFrameShape(QFrame::StyledPanel);
+        batchFrame_2->setFrameShadow(QFrame::Raised);
+        lblBatchID_2 = new QLabel(batchFrame_2);
+        lblBatchID_2->setObjectName(QString::fromUtf8("lblBatchID_2"));
+        lblBatchID_2->setGeometry(QRect(10, 30, 91, 31));
+        lblBatchID_2->setFont(font4);
+        lblBatchID_2->setStyleSheet(QString::fromUtf8("color: rgb(255, 255, 255);"));
+        lblBatch_2 = new QLabel(batchFrame_2);
+        lblBatch_2->setObjectName(QString::fromUtf8("lblBatch_2"));
+        lblBatch_2->setGeometry(QRect(10, 0, 81, 21));
+        radioButton = new QRadioButton(tab_2);
+        radioButton->setObjectName(QString::fromUtf8("radioButton"));
+        radioButton->setGeometry(QRect(180, 50, 81, 22));
+        checkBox = new QCheckBox(tab_2);
+        checkBox->setObjectName(QString::fromUtf8("checkBox"));
+        checkBox->setGeometry(QRect(180, 90, 81, 22));
         tabWidget->addTab(tab_2, QString());
         tabCalibrate = new QWidget();
         tabCalibrate->setObjectName(QString::fromUtf8("tabCalibrate"));
@@ -1006,7 +1083,7 @@ public:
 
         retranslateUi(MainWindow);
 
-        tabWidget->setCurrentIndex(0);
+        tabWidget->setCurrentIndex(1);
 
 
         QMetaObject::connectSlotsByName(MainWindow);
@@ -1038,6 +1115,16 @@ public:
         btnNetWeightConnect->setText(QApplication::translate("MainWindow", "Connect", 0, QApplication::UnicodeUTF8));
         btnDisconnect->setText(QApplication::translate("MainWindow", "Disconnect", 0, QApplication::UnicodeUTF8));
         tabWidget->setTabText(tabWidget->indexOf(tab), QApplication::translate("MainWindow", "FlowScale", 0, QApplication::UnicodeUTF8));
+        lblDestinationGate_2->setText(QApplication::translate("MainWindow", "gate", 0, QApplication::UnicodeUTF8));
+        lblDestination_2->setText(QApplication::translate("MainWindow", "destination", 0, QApplication::UnicodeUTF8));
+        lblSerialNumber_2->setText(QApplication::translate("MainWindow", "serial", 0, QApplication::UnicodeUTF8));
+        lblSerial_2->setText(QApplication::translate("MainWindow", "serial", 0, QApplication::UnicodeUTF8));
+        lblProductWeight_2->setText(QApplication::translate("MainWindow", "weight", 0, QApplication::UnicodeUTF8));
+        lblWeightHeader_2->setText(QApplication::translate("MainWindow", "weight", 0, QApplication::UnicodeUTF8));
+        lblBatchID_2->setText(QApplication::translate("MainWindow", "batchID", 0, QApplication::UnicodeUTF8));
+        lblBatch_2->setText(QApplication::translate("MainWindow", "batch", 0, QApplication::UnicodeUTF8));
+        radioButton->setText(QApplication::translate("MainWindow", "Gate 1", 0, QApplication::UnicodeUTF8));
+        checkBox->setText(QApplication::translate("MainWindow", "Gate 2", 0, QApplication::UnicodeUTF8));
         tabWidget->setTabText(tabWidget->indexOf(tab_2), QApplication::translate("MainWindow", "Grader", 0, QApplication::UnicodeUTF8));
         btnCalibrateZERO->setText(QApplication::translate("MainWindow", "Calibrate ZERO", 0, QApplication::UnicodeUTF8));
         btnCalibrateWEIGHT->setText(QApplication::translate("MainWindow", "Calibrate WEIGHT", 0, QApplication::UnicodeUTF8));

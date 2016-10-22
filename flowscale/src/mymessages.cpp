@@ -5,7 +5,7 @@
 MyMessages::MyMessages(QObject *parent) :
     QThread(parent)
 {
-    dio = new MyDio(this);
+
 
 }
 
@@ -13,7 +13,7 @@ MyMessages::MyMessages(QObject *parent) :
 MyMessages::~MyMessages()
 {
     //
-    delete dio;
+
 }
 
 
@@ -21,13 +21,14 @@ MyMessages::~MyMessages()
 void MyMessages::sendMessage(QString message, const char *destination) {
 
     char buffer[1024] = "";
-    size_t length = sizeof(message.toAscii().data());
+    size_t length = sizeof(message.toUtf8().data());
 
-    memcpy(buffer, message.toAscii().data(), length);
+    memcpy(buffer, message.toUtf8().data(), length);
 
     mosqpp::lib_init();
     BrokerPub *mqttb = new BrokerPub("flow");
     rc = mqttb->connect("10.130.1.218");
+
 
     if (MOSQ_ERR_SUCCESS == rc){
 
