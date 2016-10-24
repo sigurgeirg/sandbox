@@ -54,7 +54,7 @@ public:
     int numberOfBeltRoundsZero;
 
 
-    struct productData {
+    struct flowScaleData {
         std::string description[numberOfElementsInList];
         std::string recipeId[numberOfElementsInList];
         std::string productId[numberOfElementsInList];
@@ -66,7 +66,8 @@ public:
         int productWeight[numberOfElementsInList];
         int productConfidence[numberOfElementsInList];
         int destinationGate[numberOfElementsInList];
-    } proData;
+        int pulseResolution[numberOfElementsInList];
+    } scaleData;
 
 private:
     int *statusRegisterBinaryTempValue;
@@ -90,7 +91,7 @@ private:
     //int calibrationWeight;  // Variable that keeps calibration weight value in terms of [g]
     int weightGROSSorNET[1];// Indicates whether selected weight is GROSS or NET weight.
 
-
+    bool productEnteringGrader;
     bool processingProduct;
     bool requestBeltRoundPulse;
     bool beltRoundPulse;
@@ -114,7 +115,7 @@ private:
     int zeroArray[samplesPerBeltRound];
     int updateZeroArray[samplesPerBeltRound];
     int zeroColumn[numberOfBeltRounds];
-    int productTempId[numberOfElementsInList];
+    int productTickPosition[numberOfElementsInList];
     int pulseCounterInEachRow[numberOfBeltRounds];  //henda þessu þegar þetta hefur verið notað og sannprófað
 
     int conveyorOff;
@@ -174,7 +175,7 @@ private:
 
 
 signals:
-    void receivedWeight(int);
+    void continuousModbusWeight(int);
     void sendFilteredWeight(int);
     void sendSerialNumber(int);
     void sendDescription(QString);
@@ -185,17 +186,20 @@ signals:
     void sendConfidence(QString);
     void sendLength(QString);
     void sendDestinationGate(QString);
-    void plotData(int);
-    void plotWeight(int);
+    void sendPulseResolution(QString);
+    void productIdValue(int);
+    void productWeight(int);
     void requestNewRecipe(QString);
     void conveyorRunState(QString);
     void sendMQTT(QString, const char*);
+    void productLeavingFlowScale(bool);
+
 
 public slots:
     void conveyorBeltSignal();
     void enteringProductSensorSignal();
     void leavingProductSensorSignal();
-    void modelZeroWeight(int);
+    void weightProcessing(int);
     void xmin(QString);
     void xmax(QString);
     void ymin(QString);

@@ -1,4 +1,4 @@
-#include "../inc/mainwindow.h"
+﻿#include "../inc/mainwindow.h"
 #include "ui_mainwindow.h"
 #include "ui_keypad.h"
 
@@ -14,8 +14,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->FlowScaleImage->setFixedSize(480,240);
     ui->FlowScaleImage->setPixmap(conveyorObject);
 
-    scale = new MyScale(this);
     dio = new MyDio(this);
+    scale = new MyScale(this);
+    grader = new Grader(this);
     mosq = new MyMessages(this);
 
     lineEdit = new QLineEdit();
@@ -32,63 +33,60 @@ MainWindow::MainWindow(QWidget *parent) :
     lastRecipeFile = "";
 
 
-    // ZERO Filtering:
+        // Simulation, still undone, maybe no use for this:
+        //connect(this, SIGNAL(reply(unsigned char, bool)),             dio, SLOT(updateInputSim(unsigned char, bool)));
 
-        // FIXME:This next line should be deleted when this part has been implemented inside of the scale class.
-        //connect(scale, SIGNAL(receivedWeight(int)),           scale, SLOT(modelZeroWeight(int)));
+        // Read from physical inputs and write to physical outputs:
+        connect(dio,   SIGNAL(inputValue(unsigned long)),       this, SLOT(displayInputValue(unsigned long)));
+
+        connect(grader,SIGNAL(activateGate(QString)),           dio,    SLOT());
+
+        // Input sensor signals:
         connect(dio,   SIGNAL(conveyorSignal()),                scale,  SLOT(conveyorBeltSignal()));
         connect(dio,   SIGNAL(enteringProductSensorSignal()),   scale,  SLOT(enteringProductSensorSignal()));
         connect(dio,   SIGNAL(leavingProductSensorSignal()),    scale,  SLOT(leavingProductSensorSignal()));
 
+        // Data from flowscale to Display:
+        connect(scale, SIGNAL(conveyorRunState(QString)),       this,   SLOT(conveyorRunStateIndicator(QString)));
         connect(scale, SIGNAL(sendDescription(QString)),        this,   SLOT(displayDescription(QString)));
-        connect(scale, SIGNAL(sendFilteredWeight(int)),         this,   SLOT(displayFilteredWeight(int)));
-        connect(scale, SIGNAL(sendSerialNumber(int)),           this,   SLOT(displaySerialNumber(int)));
         connect(scale, SIGNAL(sendBatchId(QString)),            this,   SLOT(displayBatchId(QString)));
         connect(scale, SIGNAL(sendRecipeId(QString)),           this,   SLOT(displayRecipeId(QString)));
         connect(scale, SIGNAL(sendProductId(QString)),          this,   SLOT(displayProductId(QString)));
         connect(scale, SIGNAL(sendProductType(QString)),        this,   SLOT(displayProductType(QString)));
+        connect(scale, SIGNAL(sendSerialNumber(int)),           this,   SLOT(displaySerialNumber(int)));
+        connect(scale, SIGNAL(sendFilteredWeight(int)),         this,   SLOT(displayFilteredWeight(int)));
         connect(scale, SIGNAL(sendConfidence(QString)),         this,   SLOT(displayConfidence(QString)));
         connect(scale, SIGNAL(sendLength(QString)),             this,   SLOT(displayLength(QString)));
         connect(scale, SIGNAL(sendDestinationGate(QString)),    this,   SLOT(displayDestinationGate(QString)));
-        connect(scale, SIGNAL(conveyorRunState(QString)),       this,   SLOT(conveyorRunStateIndicator(QString)));
 
+        // Data from Flowscale to Grader (meanwhile MQTT does not work 100%):
+        connect(scale, SIGNAL(sendBatchId(QString)),            grader,   SLOT(graderBatchId(QString)));
+        connect(scale, SIGNAL(sendRecipeId(QString)),           grader,   SLOT(graderRecipeId(QString)));
+        connect(scale, SIGNAL(sendProductId(QString)),          grader,   SLOT(graderProductId(QString)));
+        connect(scale, SIGNAL(sendProductType(QString)),        grader,   SLOT(graderProductType(QString)));
+        connect(scale, SIGNAL(sendSerialNumber(int)),           grader,   SLOT(graderSerialNumber(int)));
+        connect(scale, SIGNAL(sendFilteredWeight(int)),         grader,   SLOT(graderFilteredWeight(int)));
+        connect(scale, SIGNAL(sendConfidence(QString)),         grader,   SLOT(graderConfidence(QString)));
+        connect(scale, SIGNAL(sendLength(QString)),             grader,   SLOT(graderLength(QString)));
+        connect(scale, SIGNAL(sendDestinationGate(QString)),    grader,   SLOT(graderDestinationGate(QString)));
+        connect(scale, SIGNAL(sendPulseResolution(QString)),    grader,   SLOT(graderPulseResolution(QString)));
+
+        connect(scale, SIGNAL(productLeavingFlowScale(bool)),   grader,   SLOT(productEnteringGrader(bool)));
+
+
+        // Current product values sent to Display:
+        connect(scale, SIGNAL(continuousModbusWeight(int)),     this,   SLOT(displayReceivedWeight(int)));
+        connect(scale, SIGNAL(continuousModbusWeight(int)),     this,   SLOT(recordWeight(int)));
+        connect(scale, SIGNAL(productIdValue(int)),             this,   SLOT(productIdToDisplay(int)));
+        connect(scale, SIGNAL(productWeight(int)),              this,   SLOT(productWeightToDisplay(int)));
+
+        // Graph, adjust limits on display to scale graph:
         connect(this, SIGNAL(xmin(QString)),                    scale,  SLOT(xmin(QString)));
         connect(this, SIGNAL(xmax(QString)),                    scale,  SLOT(xmax(QString)));
         connect(this, SIGNAL(ymin(QString)),                    scale,  SLOT(ymin(QString)));
         connect(this, SIGNAL(ymax(QString)),                    scale,  SLOT(ymax(QString)));
 
-        //connect(this, SIGNAL(setCurrentRecipe(QString)),        scale,  SLOT(updateRecipe(QString)));
-
-        //This is the output array from zerofilter, and it will be sent to destination when ready.
-        //connect(zero, SIGNAL(filteredZeroArray(int)),         this, SLOT(givethisnewnameandcreatefunction(int)));
-
-    // Show live weight on display (FIXME see below):
-        connect(scale, SIGNAL(receivedWeight(int)),            this, SLOT(displayReceivedWeight(int)));
-
-    // Collect live weight to a csv-file:
-        connect(scale, SIGNAL(receivedWeight(int)),             this, SLOT(recordWeight(int)));
-
-
-        connect(scale, SIGNAL(plotData(int)),                   this,  SLOT(plotProductGraph(int)));
-        connect(scale, SIGNAL(plotWeight(int)),                 this,  SLOT(plotProductWeight(int)));
-
-    // Return avg weight to next component:
-        //connect(this, SIGNAL(avgWeight(int)),                   mosq, SLOT(processReceivedWeight(int)));
-        connect(scale, SIGNAL(sendMQTT(QString,const char*)), mosq, SLOT(sendMessage(QString,const char*)));
-
-    // Read from physical inputs and write to physical outputs:
-        connect(dio,   SIGNAL(inputValue(unsigned long)),   this, SLOT(displayInputValue(unsigned long)));
-
-    // Read from physcial input from inductive metal sensor, increments for each beltround:
-        //connect(dio,   SIGNAL(conveyorSignal()),  scale, SLOT(conveyorBeltCounter()));
-
-    // Tick is calculated from number of ticks per beltround therefore no need for physical signal:
-        //connect(dio,   SIGNAL(tachoSignal(unsigned long)),  this, SLOT(displayTachoCount(unsigned long)));
-
-    // Simulation, still undone, maybe no use for this:
-        //connect(this, SIGNAL(reply(unsigned char, bool)),             dio, SLOT(updateInputSim(unsigned char, bool)));
-
-    ui->frameState->setStyleSheet("background-color: red");
+        ui->frameState->setStyleSheet("background-color: red");
 }
 
 MainWindow::~MainWindow()
@@ -243,7 +241,7 @@ void MainWindow::recordWeight(int weightValueFromScale)
     weightValueFromScale = weightValueFromScale;
 }
 
-void MainWindow::plotProductWeight(int meanWeight)
+void MainWindow::productWeightToDisplay(int meanWeight)
 {
     currentMeanWeight = meanWeight;
     ui->lblFilteredWeight->setText(QString::number(currentMeanWeight));
@@ -251,7 +249,7 @@ void MainWindow::plotProductWeight(int meanWeight)
 
 
 
-void MainWindow::plotProductGraph(int workingID)
+void MainWindow::productIdToDisplay(int workingID)
 {
     currentWorkingID = workingID;
 
@@ -265,18 +263,6 @@ void MainWindow::plotProductGraph(int workingID)
 void MainWindow::displayReceivedWeight(int weightValueFromScale)
 {
     ui->lblRawWeight->setText(QString::number(weightValueFromScale));
-}
-
-void MainWindow::displayFilteredWeight(int filteredWeight)
-{
-    ui->lblProductWeight->setText(QString::number(filteredWeight));
-    ui->lblFilteredWeight->setText(QString::number(filteredWeight));
-}
-
-void MainWindow::displaySerialNumber(int serialNumber)
-{
-    ui->lblSerialNumber->setText(QString::number(serialNumber));
-    ui->lblElementId->setText(QString::number(serialNumber));
 }
 
 void MainWindow::displayDescription(QString description)
@@ -302,6 +288,18 @@ void MainWindow::displayProductId(QString productId)
 void MainWindow::displayProductType(QString productType)
 {
     Q_UNUSED( productType );
+}
+
+void MainWindow::displaySerialNumber(int serialNumber)
+{
+    ui->lblSerialNumber->setText(QString::number(serialNumber));
+    ui->lblElementId->setText(QString::number(serialNumber));
+}
+
+void MainWindow::displayFilteredWeight(int filteredWeight)
+{
+    ui->lblProductWeight->setText(QString::number(filteredWeight));
+    ui->lblFilteredWeight->setText(QString::number(filteredWeight));
 }
 
 void MainWindow::displayConfidence(QString confidence)
@@ -397,6 +395,7 @@ void MainWindow::on_btnNetWeightConnect_clicked()
     scale->connectToSlaveDevice();
     scale->start();
     dio->start();
+    grader->start();
 }
 
 void MainWindow::on_btnDisconnect_clicked()
@@ -404,6 +403,7 @@ void MainWindow::on_btnDisconnect_clicked()
     scale->disconnectFromSlaveDevice();
     scale->exit();
     dio->exit();
+    grader->exit();
 }
 
 void MainWindow::on_chkWriteToLoadcell_toggled(bool checked)

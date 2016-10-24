@@ -90,6 +90,13 @@ void MyDio::updateOutputs() {
     io.DOWr();
 }
 
+
+void MyDio::setOutput(QString setOutput) {
+
+    activeOutput = setOutput.toInt();
+}
+
+
 void MyDio::newInput(unsigned char address) {
 
     newValue[address] = (unsigned char)io.DIGet(address);
@@ -183,7 +190,11 @@ void MyDio::run() {
 //		gettimeofday(&tim, NULL);
 //		lastTime = tim.tv_usec;
 
-        io.DOSet(1, 1);
+        for (int i = 0; i < 16; i++) {
+            io.DOSet(i, 0);
+        }
+
+        io.DOSet(activeOutput, 1);
 
         // ////////////////////////
         // FIXME: If simulation

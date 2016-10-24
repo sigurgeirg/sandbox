@@ -43,6 +43,7 @@ private:
     bool productEnteringSensor;
     bool productLeavingSensor;
 
+    int activeOutput;
     unsigned long tickBeltProfile;
     unsigned long beltRounds;
     unsigned char address;
@@ -62,6 +63,7 @@ signals:
 
 
 public slots:
+    void setOutput(QString);
     // /////////////////////////
     // Simulation
 //    void updateInputSim(unsigned char, bool);

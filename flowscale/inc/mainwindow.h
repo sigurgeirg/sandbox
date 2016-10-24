@@ -3,6 +3,7 @@
 
 #include "constants.h"
 #include "mydio.h"
+#include "grader.h"
 #include "myscale.h"
 #include "mymessages.h"
 #include <QMainWindow>
@@ -40,8 +41,9 @@ public:
     ~MainWindow();
     void setCurrentRecipe(QString);
 
-    MyScale *scale;
     MyDio *dio;
+    MyScale *scale;
+    Grader *grader;
     MyMessages *mosq;
     Dio io;
     QLineEdit *lineEdit;
@@ -134,19 +136,21 @@ public slots:
     void conveyorRunStateIndicator(QString);
     void recordWeight(int);
     void displayReceivedWeight(int);
-    void displayFilteredWeight(int);
+
     void displayDescription(QString);
-    void displaySerialNumber(int);
     void displayBatchId(QString);
     void displayRecipeId(QString);
     void displayProductId(QString);
     void displayProductType(QString);
+    void displaySerialNumber(int);
+    void displayFilteredWeight(int);
     void displayConfidence(QString);
     void displayLength(QString);
     void displayDestinationGate(QString);
+
     void displayInputValue(unsigned long);
-    void plotProductWeight(int);
-    void plotProductGraph(int);
+    void productWeightToDisplay(int);
+    void productIdToDisplay(int);
     void keyValue(QString);
     void graphBoundaries(QString);
 

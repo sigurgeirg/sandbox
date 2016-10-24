@@ -22,7 +22,7 @@ static const uint qt_meta_data_MyDio[] = {
        6,       // revision
        0,       // classname
        0,    0, // classinfo
-       5,   14, // methods
+       6,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -36,6 +36,9 @@ static const uint qt_meta_data_MyDio[] = {
       61,    6,    6,    6, 0x05,
       91,    6,    6,    6, 0x05,
 
+ // slots: signature, parameters, type, tag, flags
+     120,    6,    6,    6, 0x0a,
+
        0        // eod
 };
 
@@ -43,6 +46,7 @@ static const char qt_meta_stringdata_MyDio[] = {
     "MyDio\0\0inputValue(ulong)\0conveyorSignal()\0"
     "tachoSignal(ulong)\0enteringProductSensorSignal()\0"
     "leavingProductSensorSignal()\0"
+    "setOutput(QString)\0"
 };
 
 void MyDio::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
@@ -56,6 +60,7 @@ void MyDio::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void 
         case 2: _t->tachoSignal((*reinterpret_cast< ulong(*)>(_a[1]))); break;
         case 3: _t->enteringProductSensorSignal(); break;
         case 4: _t->leavingProductSensorSignal(); break;
+        case 5: _t->setOutput((*reinterpret_cast< QString(*)>(_a[1]))); break;
         default: ;
         }
     }
@@ -93,9 +98,9 @@ int MyDio::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 5)
+        if (_id < 6)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 5;
+        _id -= 6;
     }
     return _id;
 }
