@@ -39,7 +39,7 @@ MainWindow::MainWindow(QWidget *parent) :
         // Read from physical inputs and write to physical outputs:
         connect(dio,   SIGNAL(inputValue(unsigned long)),       this, SLOT(displayInputValue(unsigned long)));
 
-        connect(grader,SIGNAL(activateGate(QString)),           dio,    SLOT());
+        connect(grader,SIGNAL(activateGate(QString)),           dio,    SLOT(setOutput(QString)));
 
         // Input sensor signals:
         connect(dio,   SIGNAL(conveyorSignal()),                scale,  SLOT(conveyorBeltSignal()));
@@ -92,8 +92,9 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete ui;
-    delete scale;
     delete dio;
+    delete scale;
+    delete grader;
     delete mosq;
 }
 
@@ -598,3 +599,4 @@ void MainWindow::on_cbSettingsMenu_activated(const QString &arg1)
 //    lastSettingsFile = SettingsFile;
 
 }
+

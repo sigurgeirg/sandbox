@@ -2,6 +2,7 @@
 #define GRADER_H
 
 #include <QThread>
+#include <QDebug>
 #include "constants.h"
 
 
@@ -32,7 +33,7 @@ public:
 
 
 private:
-    bool processingProduct;
+    bool firstRun;
     int tempID;
     int productCounter;
     int productEntry;
@@ -40,11 +41,11 @@ private:
 
     // Grader settings variables:
     int numberOfGatesOnGrader;
-    int distanceToGraderGate[6];        // [mm]
-    int distanceOpenGate[6];            // [mm]
-    int distanceToEndOfGraderGate[6];   // [mm]
-    int pulseDistanceToGate[6];         // [ticks]
-    int pulseDistanceToEndOfGate[6];    // [ticks]
+    int distanceToGraderGate[10];        // [mm]
+    int distanceOpenGate[10];            // [mm]
+    int distanceToEndOfGraderGate[10];   // [mm]
+    int pulseDistanceToGate[10];         // [ticks]
+    int pulseDistanceToEndOfGate[10];    // [ticks]
 
     int evenDistribution;
     int fillUpInSequence;
@@ -54,21 +55,21 @@ private:
     int bufferByCount;
     int bufferByWeightOrByCount;
 
-    int gateBufferWeight[6]; // [kg]
+    int gateBufferWeight[10]; // [kg]
 
-    int gateBufferAmount[6]; // [pcs]
+    int gateBufferAmount[10]; // [pcs]
 
 
     QString gradBatchID;
     QString gradRecipeID;
     QString gradProductID;
     QString gradProductType;
-    int gradSerialNumber;
-    int gradFilteredWeight;
+    int     gradSerialNumber;
+    int     gradFilteredWeight;
     QString gradLength;
     QString gradConfidence;
     QString gradDestinationGate;
-    int gradPulseResolution;
+    int     gradPulseResolution;
 
 
     int productTickPosition[numberOfElementsInList];

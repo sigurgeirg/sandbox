@@ -5,12 +5,15 @@ Grader::Grader(QObject *parent) :
     QThread(parent)
 {
 
-    processingProduct = false;
     productCounter = 0;
     tempID = -1;
 
+    firstRun = true;
+
     // Grader settings variables:
     numberOfGatesOnGrader = 6;
+
+    productEntry = 1; // Remember grader settings recipe file
 
     distanceToGraderGate[0] = 200;  // [mm]
     distanceToGraderGate[1] = 200;
@@ -148,7 +151,6 @@ void Grader::graderPulseResolution(QString pulseResolution)
 
 void Grader::productEnteringGrader(bool)
 {
-    processingProduct = true;
     productCounter++;
     tempID++;
     if (tempID >= numberOfElementsInList) {
@@ -169,7 +171,7 @@ void Grader::productEnteringGrader(bool)
     graderData.productConfidence[tempID] = gradConfidence;
     graderData.destinationGate[tempID] = gradDestinationGate;
 
-    productEntry = 1; // Remember grader settings recipe file
+
     productEntryPulse = (int)((double)(productEntry)/gradPulseResolution + 0.5);
 
     for (int i = 0; i < 6; i++) {
@@ -183,6 +185,7 @@ void Grader::productEnteringGrader(bool)
 
 void Grader::gradingProducts(void)
 {
+
     // Track elements from Grader entry point (>=0) and to Grader product Exit Gate on program-scantime resolution +1
 
     for (int _elementId = 0; _elementId < numberOfElementsInList; _elementId++) {
@@ -192,9 +195,13 @@ void Grader::gradingProducts(void)
             if (between(pulseDistanceToGate[_elementId], productTickPosition[_elementId], pulseDistanceToEndOfGate[_elementId]))
             {
                 emit activateGate(graderData.destinationGate[_elementId]);
+                qDebug() << "What About This ???";
             }
 
-
+            if (productTickPosition[_elementId] >= pulseDistanceToEndOfGate[_elementId])
+            {
+                productTickPosition[_elementId] = -1;
+            }
             // Ef current product -> Eitthvað annað -> Reason -> Destination End
 
 
@@ -205,6 +212,17 @@ void Grader::gradingProducts(void)
 
 void Grader::run()
 {
-    gradingProducts();
+    if (firstRun == true) {
 
+        for (int _count = 0; _count < numberOfElementsInList; _count++) {
+            productTickPosition[_count] = -1;
+        }
+        firstRun = false;
+    }
+
+
+    while(true) {
+
+        gradingProducts();
+    }
 }

@@ -196,6 +196,12 @@ void MyDio::run() {
 
         io.DOSet(activeOutput, 1);
 
+        if (activeOutput == 1)
+        {
+            qDebug() << "WhatIFWhatIFWhatIF";
+        }
+
+
         // ////////////////////////
         // FIXME: If simulation
         // io.DISetSim(1, 1);

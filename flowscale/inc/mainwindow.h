@@ -131,6 +131,7 @@ private slots:
 
     void on_cbSettingsMenu_activated(const QString &arg1);
 
+
 public slots:
     void conveyorBeltSignal();
     void conveyorRunStateIndicator(QString);
