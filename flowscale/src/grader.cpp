@@ -5,6 +5,7 @@ Grader::Grader(QObject *parent) :
     QThread(parent)
 {
 
+    productEntry = 1; // Remember grader settings recipe file
     productCounter = 0;
     tempID = -1;
 
@@ -13,8 +14,6 @@ Grader::Grader(QObject *parent) :
     // Grader settings variables:
     numberOfGatesOnGrader = 6;
 
-    productEntry = 1; // Remember grader settings recipe file
-
     distanceToGraderGate[0] = 200;  // [mm]
     distanceToGraderGate[1] = 200;
     distanceToGraderGate[2] = 1200;
@@ -22,12 +21,12 @@ Grader::Grader(QObject *parent) :
     distanceToGraderGate[4] = 2200;
     distanceToGraderGate[5] = 2200;
 
-    distanceOpenGate[0] = 50;
-    distanceOpenGate[1] = 50;
-    distanceOpenGate[2] = 50;
-    distanceOpenGate[3] = 50;
-    distanceOpenGate[4] = 50;
-    distanceOpenGate[5] = 50;
+    distanceOpenGate[0] = 500;  // [mm]
+    distanceOpenGate[1] = 500;
+    distanceOpenGate[2] = 500;
+    distanceOpenGate[3] = 500;
+    distanceOpenGate[4] = 500;
+    distanceOpenGate[5] = 500;
 
     evenDistribution = 1;
     fillUpInSequence = 2;

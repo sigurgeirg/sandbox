@@ -63,7 +63,7 @@ signals:
 
 
 public slots:
-    void setOutput(QString);
+    void setOutput(int);
     // /////////////////////////
     // Simulation
 //    void updateInputSim(unsigned char, bool);

@@ -16,7 +16,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     dio = new MyDio(this);
     scale = new MyScale(this);
-    grader = new Grader(this);
+    //grader = new Grader(this);
     mosq = new MyMessages(this);
 
     lineEdit = new QLineEdit();
@@ -39,7 +39,7 @@ MainWindow::MainWindow(QWidget *parent) :
         // Read from physical inputs and write to physical outputs:
         connect(dio,   SIGNAL(inputValue(unsigned long)),       this, SLOT(displayInputValue(unsigned long)));
 
-        connect(grader,SIGNAL(activateGate(QString)),           dio,    SLOT(setOutput(QString)));
+        //connect(scale,SIGNAL(activateGate(int)),           dio,    SLOT(setOutput(int)));
 
         // Input sensor signals:
         connect(dio,   SIGNAL(conveyorSignal()),                scale,  SLOT(conveyorBeltSignal()));
@@ -59,19 +59,19 @@ MainWindow::MainWindow(QWidget *parent) :
         connect(scale, SIGNAL(sendLength(QString)),             this,   SLOT(displayLength(QString)));
         connect(scale, SIGNAL(sendDestinationGate(QString)),    this,   SLOT(displayDestinationGate(QString)));
 
-        // Data from Flowscale to Grader (meanwhile MQTT does not work 100%):
-        connect(scale, SIGNAL(sendBatchId(QString)),            grader,   SLOT(graderBatchId(QString)));
-        connect(scale, SIGNAL(sendRecipeId(QString)),           grader,   SLOT(graderRecipeId(QString)));
-        connect(scale, SIGNAL(sendProductId(QString)),          grader,   SLOT(graderProductId(QString)));
-        connect(scale, SIGNAL(sendProductType(QString)),        grader,   SLOT(graderProductType(QString)));
-        connect(scale, SIGNAL(sendSerialNumber(int)),           grader,   SLOT(graderSerialNumber(int)));
-        connect(scale, SIGNAL(sendFilteredWeight(int)),         grader,   SLOT(graderFilteredWeight(int)));
-        connect(scale, SIGNAL(sendConfidence(QString)),         grader,   SLOT(graderConfidence(QString)));
-        connect(scale, SIGNAL(sendLength(QString)),             grader,   SLOT(graderLength(QString)));
-        connect(scale, SIGNAL(sendDestinationGate(QString)),    grader,   SLOT(graderDestinationGate(QString)));
-        connect(scale, SIGNAL(sendPulseResolution(QString)),    grader,   SLOT(graderPulseResolution(QString)));
+//        // Data from Flowscale to Grader (meanwhile MQTT does not work 100%):
+//        connect(scale, SIGNAL(sendBatchId(QString)),            grader,   SLOT(graderBatchId(QString)));
+//        connect(scale, SIGNAL(sendRecipeId(QString)),           grader,   SLOT(graderRecipeId(QString)));
+//        connect(scale, SIGNAL(sendProductId(QString)),          grader,   SLOT(graderProductId(QString)));
+//        connect(scale, SIGNAL(sendProductType(QString)),        grader,   SLOT(graderProductType(QString)));
+//        connect(scale, SIGNAL(sendSerialNumber(int)),           grader,   SLOT(graderSerialNumber(int)));
+//        connect(scale, SIGNAL(sendFilteredWeight(int)),         grader,   SLOT(graderFilteredWeight(int)));
+//        connect(scale, SIGNAL(sendConfidence(QString)),         grader,   SLOT(graderConfidence(QString)));
+//        connect(scale, SIGNAL(sendLength(QString)),             grader,   SLOT(graderLength(QString)));
+//        connect(scale, SIGNAL(sendDestinationGate(QString)),    grader,   SLOT(graderDestinationGate(QString)));
+//        connect(scale, SIGNAL(sendPulseResolution(QString)),    grader,   SLOT(graderPulseResolution(QString)));
 
-        connect(scale, SIGNAL(productLeavingFlowScale(bool)),   grader,   SLOT(productEnteringGrader(bool)));
+//        connect(scale, SIGNAL(productLeavingFlowScale(bool)),   grader,   SLOT(productEnteringGrader(bool)));
 
 
         // Current product values sent to Display:
@@ -94,7 +94,7 @@ MainWindow::~MainWindow()
     delete ui;
     delete dio;
     delete scale;
-    delete grader;
+    //delete grader;
     delete mosq;
 }
 
@@ -396,7 +396,7 @@ void MainWindow::on_btnNetWeightConnect_clicked()
     scale->connectToSlaveDevice();
     scale->start();
     dio->start();
-    grader->start();
+    //grader->start();
 }
 
 void MainWindow::on_btnDisconnect_clicked()
@@ -404,7 +404,7 @@ void MainWindow::on_btnDisconnect_clicked()
     scale->disconnectFromSlaveDevice();
     scale->exit();
     dio->exit();
-    grader->exit();
+    //grader->exit();
 }
 
 void MainWindow::on_chkWriteToLoadcell_toggled(bool checked)

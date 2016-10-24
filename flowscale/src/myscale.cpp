@@ -80,6 +80,45 @@ MyScale::MyScale(QObject *parent) :
 
     zeroTracking = zt_InitializeZeroVectors;
 
+    // Grader settings variables:
+    numberOfGatesOnGrader = 6;
+
+    distanceToGraderGate[0] = 200;  // [mm]
+    distanceToGraderGate[1] = 200;
+    distanceToGraderGate[2] = 1200;
+    distanceToGraderGate[3] = 1200;
+    distanceToGraderGate[4] = 2200;
+    distanceToGraderGate[5] = 2200;
+
+    distanceOpenGate[0] = 500;  // [mm]
+    distanceOpenGate[1] = 500;
+    distanceOpenGate[2] = 500;
+    distanceOpenGate[3] = 500;
+    distanceOpenGate[4] = 500;
+    distanceOpenGate[5] = 500;
+
+    evenDistribution = 1;
+    fillUpInSequence = 2;
+    sortingMethod    = evenDistribution;
+
+    bufferByWeight = 1;
+    bufferByCount  = 2;
+    bufferByWeightOrByCount = bufferByWeight;
+
+    gateBufferWeight[0] = 20; // [kg]
+    gateBufferWeight[1] = 20;
+    gateBufferWeight[2] = 20;
+    gateBufferWeight[3] = 20;
+    gateBufferWeight[4] = 20;
+    gateBufferWeight[5] = 20;
+
+    gateBufferAmount[0] = 40; // [pcs]
+    gateBufferAmount[1] = 40;
+    gateBufferAmount[2] = 40;
+    gateBufferAmount[3] = 40;
+    gateBufferAmount[4] = 40;
+    gateBufferAmount[5] = 40;
+
     emit conveyorRunState("conveyorOff");
 }
 
@@ -382,6 +421,7 @@ void MyScale::enteringProductSensorSignal()
     scaleData.productConfidence[tempID] = 0;
     scaleData.destinationGate[tempID] = 0;
     // //////////////////////////////////////////////////////////
+
 }
 
 
@@ -544,7 +584,14 @@ void MyScale::weightProcessing(int weightValueFromScale) {
         productEntryPulse = (int)((double)(productEntry)/pulseResolution + 0.5);
         weightStartPulse = (int)((double)(productWeighingStartDistance)/pulseResolution + 0.5);
         weightEndPulse = (int)((double)(productWeighingStopDistance)/pulseResolution + 0.5);
-        productReleasePulse = (int)((double)(productRelease)/pulseResolution + 0.5);
+        weighingDeliveryPoint = (int)((double)(productRelease)/pulseResolution + 0.5);
+
+        for (int i = 0; i < 6; i++) {
+            pulseDistanceToGate[i] = (int)((double)(distanceToGraderGate[i])/pulseResolution + 0.5);
+
+            distanceToEndOfGraderGate[i] = distanceToGraderGate[i] + distanceOpenGate[i];
+            pulseDistanceToEndOfGate[i] = (int)((double)(distanceToEndOfGraderGate[i])/pulseResolution + 0.5);
+        }
 
         zeroTracking = zt_ReturnResultsToFile;
     }
@@ -596,7 +643,7 @@ void MyScale::weightProcessing(int weightValueFromScale) {
 
 
 
-    if (zeroTracking == zt_ProductFilter){
+    if (zeroTracking == zt_ProductFilter) {
 
 
         if (processingProduct == false) {
@@ -645,7 +692,7 @@ void MyScale::weightProcessing(int weightValueFromScale) {
 //                }
 
                 // Track weight from productEntry sensor to the productDelivery point.
-                if (between(productEntryPulse, productTickPosition[_elementId], productReleasePulse)) {
+                if (between(productEntryPulse, productTickPosition[_elementId], weighingDeliveryPoint)) {
 
                     productIDweights[_elementId][productTickPosition[_elementId]] = weightValueFromScale-zeroArray[sampleCounter];
                 }
@@ -718,9 +765,8 @@ void MyScale::weightProcessing(int weightValueFromScale) {
 
                 }
 
-
                 // Product is leaving the main platform, at delivery point, then we can consider to update the ZERO weight again.
-                if (productTickPosition[_elementId] ==  productReleasePulse) {
+                if (productTickPosition[_elementId] ==  weighingDeliveryPoint) {
 
                     emit productIdValue(_elementId);
 
@@ -728,15 +774,13 @@ void MyScale::weightProcessing(int weightValueFromScale) {
                     productEnteringGrader = false;
                 }
 
-
-
                 // At delivery point release product information to next module
                 // FIXME: assign product ID and save product information
                 //            // Later:
                 //            // put info onto each product, such as IDnr, BathcNr,
                 //            // weight, stddev or variance, length, destination gate, ..
 
-                if (productTickPosition[_elementId] > productReleasePulse) {
+                if (productTickPosition[_elementId] > weighingDeliveryPoint) {
 
                     filezero.open("zeroweight.csv", std::ofstream::out | std::ofstream::app); // trunc changed to app, trunc clears the file while app appends it
 
@@ -751,16 +795,25 @@ void MyScale::weightProcessing(int weightValueFromScale) {
                     }
                     filezero.close();
 
-                    productTickPosition[_elementId] = -1;
                     scaleData.productConfidence[_elementId] = -1;
                 }
 
 
+                if (between((weighingDeliveryPoint + pulseDistanceToGate[_elementId]), productTickPosition[_elementId], (weighingDeliveryPoint + pulseDistanceToEndOfGate[_elementId])))
+                {
+                    emit activateGate(scaleData.destinationGate[_elementId]);
+                    qDebug() << "What About This ???";
+                }
+
+                if (productTickPosition[_elementId] >= weighingDeliveryPoint + pulseDistanceToEndOfGate[_elementId])
+                {
+                    productTickPosition[_elementId] = -1;
+                }
             }
         }
+        sampleCounter++;
     }
 
-    sampleCounter++;
 }
 
 void MyScale::xmin(QString str) {

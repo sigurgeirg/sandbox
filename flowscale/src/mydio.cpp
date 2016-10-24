@@ -91,9 +91,9 @@ void MyDio::updateOutputs() {
 }
 
 
-void MyDio::setOutput(QString setOutput) {
+void MyDio::setOutput(int setOutput) {
 
-    activeOutput = setOutput.toInt();
+    activeOutput = setOutput;
 }
 
 

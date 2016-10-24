@@ -169,10 +169,29 @@ private:
     int productEntryPulse;
     int weightStartPulse;
     int weightEndPulse;
-    int productReleasePulse;
+    int weighingDeliveryPoint;
     int medianZeroSample;
     int meanWeightSample;
 
+    // Grader settings variables:
+    int numberOfGatesOnGrader;
+    int distanceToGraderGate[10];        // [mm]
+    int distanceOpenGate[10];            // [mm]
+    int distanceToEndOfGraderGate[10];   // [mm]
+    int pulseDistanceToGate[10];         // [ticks]
+    int pulseDistanceToEndOfGate[10];    // [ticks]
+    int distanceToEndOfGrader;           // [mm]
+
+    int gateBufferWeight[10]; // [kg]
+    int gateBufferAmount[10]; // [pcs]
+
+    int evenDistribution;
+    int fillUpInSequence;
+    int sortingMethod;
+
+    int bufferByWeight;
+    int bufferByCount;
+    int bufferByWeightOrByCount;
 
 signals:
     void continuousModbusWeight(int);
@@ -193,6 +212,7 @@ signals:
     void conveyorRunState(QString);
     void sendMQTT(QString, const char*);
     void productLeavingFlowScale(bool);
+    void activateGate(int);
 
 
 public slots:

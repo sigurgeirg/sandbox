@@ -47,6 +47,9 @@ private:
     int pulseDistanceToGate[10];         // [ticks]
     int pulseDistanceToEndOfGate[10];    // [ticks]
 
+    int gateBufferWeight[10]; // [kg]
+    int gateBufferAmount[10]; // [pcs]
+
     int evenDistribution;
     int fillUpInSequence;
     int sortingMethod;
@@ -55,9 +58,6 @@ private:
     int bufferByCount;
     int bufferByWeightOrByCount;
 
-    int gateBufferWeight[10]; // [kg]
-
-    int gateBufferAmount[10]; // [pcs]
 
 
     QString gradBatchID;

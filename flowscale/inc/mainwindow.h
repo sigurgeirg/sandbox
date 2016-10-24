@@ -3,7 +3,7 @@
 
 #include "constants.h"
 #include "mydio.h"
-#include "grader.h"
+//#include "grader.h"
 #include "myscale.h"
 #include "mymessages.h"
 #include <QMainWindow>
@@ -43,7 +43,6 @@ public:
 
     MyDio *dio;
     MyScale *scale;
-    Grader *grader;
     MyMessages *mosq;
     Dio io;
     QLineEdit *lineEdit;
