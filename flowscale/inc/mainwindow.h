@@ -3,7 +3,6 @@
 
 #include "constants.h"
 #include "mydio.h"
-//#include "grader.h"
 #include "myscale.h"
 #include "mymessages.h"
 #include <QMainWindow>
@@ -150,7 +149,7 @@ public slots:
 
     void displayInputValue(unsigned long);
     void productWeightToDisplay(int);
-    void productIdToDisplay(int);
+    void plotProductGraph(int);
     void keyValue(QString);
     void graphBoundaries(QString);
 

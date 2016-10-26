@@ -36,7 +36,6 @@ public:
     static unsigned char tickOrTime[numberOfUsedDigitalInputs];
 
 private:
-
     bool trigger;
     bool tacho;
     bool conveyor;
@@ -44,6 +43,8 @@ private:
     bool productLeavingSensor;
 
     int activeOutput;
+    int activeValue;
+
     unsigned long tickBeltProfile;
     unsigned long beltRounds;
     unsigned char address;
@@ -63,7 +64,7 @@ signals:
 
 
 public slots:
-    void setOutput(int);
+    void setOutput(int, int);
     // /////////////////////////
     // Simulation
 //    void updateInputSim(unsigned char, bool);

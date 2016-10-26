@@ -1,4 +1,4 @@
-﻿#include "../inc/mainwindow.h"
+#include "../inc/mainwindow.h"
 #include "ui_mainwindow.h"
 #include "ui_keypad.h"
 
@@ -16,7 +16,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     dio = new MyDio(this);
     scale = new MyScale(this);
-    //grader = new Grader(this);
     mosq = new MyMessages(this);
 
     lineEdit = new QLineEdit();
@@ -36,15 +35,14 @@ MainWindow::MainWindow(QWidget *parent) :
         // Simulation, still undone, maybe no use for this:
         //connect(this, SIGNAL(reply(unsigned char, bool)),             dio, SLOT(updateInputSim(unsigned char, bool)));
 
-        // Read from physical inputs and write to physical outputs:
-        connect(dio,   SIGNAL(inputValue(unsigned long)),       this, SLOT(displayInputValue(unsigned long)));
-
-        //connect(scale,SIGNAL(activateGate(int)),           dio,    SLOT(setOutput(int)));
+        // Set output signals, such as grading gates:
+        connect(scale, SIGNAL(activateGate(int, int)),          dio,    SLOT(setOutput(int, int)));
 
         // Input sensor signals:
         connect(dio,   SIGNAL(conveyorSignal()),                scale,  SLOT(conveyorBeltSignal()));
         connect(dio,   SIGNAL(enteringProductSensorSignal()),   scale,  SLOT(enteringProductSensorSignal()));
         connect(dio,   SIGNAL(leavingProductSensorSignal()),    scale,  SLOT(leavingProductSensorSignal()));
+        connect(dio,   SIGNAL(inputValue(unsigned long)),       this,   SLOT(displayInputValue(unsigned long)));
 
         // Data from flowscale to Display:
         connect(scale, SIGNAL(conveyorRunState(QString)),       this,   SLOT(conveyorRunStateIndicator(QString)));
@@ -59,26 +57,14 @@ MainWindow::MainWindow(QWidget *parent) :
         connect(scale, SIGNAL(sendLength(QString)),             this,   SLOT(displayLength(QString)));
         connect(scale, SIGNAL(sendDestinationGate(QString)),    this,   SLOT(displayDestinationGate(QString)));
 
-//        // Data from Flowscale to Grader (meanwhile MQTT does not work 100%):
-//        connect(scale, SIGNAL(sendBatchId(QString)),            grader,   SLOT(graderBatchId(QString)));
-//        connect(scale, SIGNAL(sendRecipeId(QString)),           grader,   SLOT(graderRecipeId(QString)));
-//        connect(scale, SIGNAL(sendProductId(QString)),          grader,   SLOT(graderProductId(QString)));
-//        connect(scale, SIGNAL(sendProductType(QString)),        grader,   SLOT(graderProductType(QString)));
-//        connect(scale, SIGNAL(sendSerialNumber(int)),           grader,   SLOT(graderSerialNumber(int)));
-//        connect(scale, SIGNAL(sendFilteredWeight(int)),         grader,   SLOT(graderFilteredWeight(int)));
-//        connect(scale, SIGNAL(sendConfidence(QString)),         grader,   SLOT(graderConfidence(QString)));
-//        connect(scale, SIGNAL(sendLength(QString)),             grader,   SLOT(graderLength(QString)));
-//        connect(scale, SIGNAL(sendDestinationGate(QString)),    grader,   SLOT(graderDestinationGate(QString)));
-//        connect(scale, SIGNAL(sendPulseResolution(QString)),    grader,   SLOT(graderPulseResolution(QString)));
-
-//        connect(scale, SIGNAL(productLeavingFlowScale(bool)),   grader,   SLOT(productEnteringGrader(bool)));
-
+        // Product Data Over Mosquitto transmission:
+        //connect(scale, SIGNAL(sendMQTT(QString,const char*)),   mosq, SLOT(sendMessage(QString,const char*)));
 
         // Current product values sent to Display:
-        connect(scale, SIGNAL(continuousModbusWeight(int)),     this,   SLOT(displayReceivedWeight(int)));
-        connect(scale, SIGNAL(continuousModbusWeight(int)),     this,   SLOT(recordWeight(int)));
-        connect(scale, SIGNAL(productIdValue(int)),             this,   SLOT(productIdToDisplay(int)));
-        connect(scale, SIGNAL(productWeight(int)),              this,   SLOT(productWeightToDisplay(int)));
+        connect(scale, SIGNAL(continuousModbusWeight(int)),     this,  SLOT(displayReceivedWeight(int)));
+        connect(scale, SIGNAL(continuousModbusWeight(int)),     this,  SLOT(recordWeight(int)));
+        connect(scale, SIGNAL(plotData(int)),                   this,  SLOT(plotProductGraph(int)));
+        connect(scale, SIGNAL(productWeight(int)),              this,  SLOT(productWeightToDisplay(int)));
 
         // Graph, adjust limits on display to scale graph:
         connect(this, SIGNAL(xmin(QString)),                    scale,  SLOT(xmin(QString)));
@@ -92,9 +78,8 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete ui;
-    delete dio;
     delete scale;
-    //delete grader;
+    delete dio;
     delete mosq;
 }
 
@@ -250,7 +235,7 @@ void MainWindow::productWeightToDisplay(int meanWeight)
 
 
 
-void MainWindow::productIdToDisplay(int workingID)
+void MainWindow::plotProductGraph(int workingID)
 {
     currentWorkingID = workingID;
 
@@ -396,7 +381,6 @@ void MainWindow::on_btnNetWeightConnect_clicked()
     scale->connectToSlaveDevice();
     scale->start();
     dio->start();
-    //grader->start();
 }
 
 void MainWindow::on_btnDisconnect_clicked()
@@ -404,7 +388,6 @@ void MainWindow::on_btnDisconnect_clicked()
     scale->disconnectFromSlaveDevice();
     scale->exit();
     dio->exit();
-    //grader->exit();
 }
 
 void MainWindow::on_chkWriteToLoadcell_toggled(bool checked)

@@ -76,8 +76,8 @@ static const uint qt_meta_data_MainWindow[] = {
     1064,   11,   11,   11, 0x0a,
     1089,   11,   11,   11, 0x0a,
     1117,   11,   11,   11, 0x0a,
-    1141,   11,   11,   11, 0x0a,
-    1159,   11,   11,   11, 0x0a,
+    1139,   11,   11,   11, 0x0a,
+    1157,   11,   11,   11, 0x0a,
 
        0        // eod
 };
@@ -118,7 +118,7 @@ static const char qt_meta_stringdata_MainWindow[] = {
     "displayDestinationGate(QString)\0"
     "displayInputValue(ulong)\0"
     "productWeightToDisplay(int)\0"
-    "productIdToDisplay(int)\0keyValue(QString)\0"
+    "plotProductGraph(int)\0keyValue(QString)\0"
     "graphBoundaries(QString)\0"
 };
 
@@ -171,7 +171,7 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         case 40: _t->displayDestinationGate((*reinterpret_cast< QString(*)>(_a[1]))); break;
         case 41: _t->displayInputValue((*reinterpret_cast< ulong(*)>(_a[1]))); break;
         case 42: _t->productWeightToDisplay((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 43: _t->productIdToDisplay((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 43: _t->plotProductGraph((*reinterpret_cast< int(*)>(_a[1]))); break;
         case 44: _t->keyValue((*reinterpret_cast< QString(*)>(_a[1]))); break;
         case 45: _t->graphBoundaries((*reinterpret_cast< QString(*)>(_a[1]))); break;
         default: ;

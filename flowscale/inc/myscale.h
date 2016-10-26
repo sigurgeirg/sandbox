@@ -43,6 +43,7 @@ public:
     void grossWeight();
     void netWeight();
     void setupPlot(QCustomPlot* customPlot, int workingID);
+    void weightProcessing(int);
     void run();
     int *statusRegisterBinary(uint16_t number[]);
     std::ofstream filezero;
@@ -54,7 +55,7 @@ public:
     int numberOfBeltRoundsZero;
 
 
-    struct flowScaleData {
+    struct productData {
         std::string description[numberOfElementsInList];
         std::string recipeId[numberOfElementsInList];
         std::string productId[numberOfElementsInList];
@@ -66,8 +67,7 @@ public:
         int productWeight[numberOfElementsInList];
         int productConfidence[numberOfElementsInList];
         int destinationGate[numberOfElementsInList];
-        int pulseResolution[numberOfElementsInList];
-    } scaleData;
+    } proData;
 
 private:
     int *statusRegisterBinaryTempValue;
@@ -91,7 +91,7 @@ private:
     //int calibrationWeight;  // Variable that keeps calibration weight value in terms of [g]
     int weightGROSSorNET[1];// Indicates whether selected weight is GROSS or NET weight.
 
-    bool productEnteringGrader;
+
     bool processingProduct;
     bool requestBeltRoundPulse;
     bool beltRoundPulse;
@@ -169,7 +169,7 @@ private:
     int productEntryPulse;
     int weightStartPulse;
     int weightEndPulse;
-    int weighingDeliveryPoint;
+    int productReleasePulse;
     int medianZeroSample;
     int meanWeightSample;
 
@@ -193,6 +193,7 @@ private:
     int bufferByCount;
     int bufferByWeightOrByCount;
 
+
 signals:
     void continuousModbusWeight(int);
     void sendFilteredWeight(int);
@@ -205,21 +206,17 @@ signals:
     void sendConfidence(QString);
     void sendLength(QString);
     void sendDestinationGate(QString);
-    void sendPulseResolution(QString);
-    void productIdValue(int);
+    void plotData(int);
     void productWeight(int);
     void requestNewRecipe(QString);
     void conveyorRunState(QString);
     void sendMQTT(QString, const char*);
-    void productLeavingFlowScale(bool);
-    void activateGate(int);
-
+    void activateGate(int, int);
 
 public slots:
     void conveyorBeltSignal();
     void enteringProductSensorSignal();
     void leavingProductSensorSignal();
-    void weightProcessing(int);
     void xmin(QString);
     void xmax(QString);
     void ymin(QString);

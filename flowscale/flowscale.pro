@@ -23,8 +23,7 @@ HEADERS +=  inc/constants.h \
             inc/clientsub.h \
             ../QCustomPlot/qcustomplot.h \
             inc/settings.h \
-            inc/recipe.h \
-            inc/grader.h
+            inc/recipe.h
 
 
 SOURCES +=  src/main.cpp \
@@ -37,8 +36,7 @@ SOURCES +=  src/main.cpp \
             src/clientsub.cpp \
             ../QCustomPlot/qcustomplot.cpp \
             src/settings.cpp \
-            src/recipe.cpp \
-            src/grader.cpp
+            src/recipe.cpp
 
 FORMS +=    forms/mainwindow.ui \
             forms/keypad.ui

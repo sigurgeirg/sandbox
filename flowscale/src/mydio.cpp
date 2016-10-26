@@ -91,9 +91,12 @@ void MyDio::updateOutputs() {
 }
 
 
-void MyDio::setOutput(int setOutput) {
+void MyDio::setOutput(int output, int value) {
 
-    activeOutput = setOutput;
+    activeOutput = output;
+    activeValue  = value;
+
+    qDebug() << "Output: " << activeOutput << " == " << activeValue;
 }
 
 
@@ -194,12 +197,7 @@ void MyDio::run() {
             io.DOSet(i, 0);
         }
 
-        io.DOSet(activeOutput, 1);
-
-        if (activeOutput == 1)
-        {
-            qDebug() << "WhatIFWhatIFWhatIF";
-        }
+        io.DOSet((unsigned char)activeOutput, (bool)activeValue);
 
 
         // ////////////////////////

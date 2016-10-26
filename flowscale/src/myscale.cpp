@@ -25,7 +25,6 @@ MyScale::MyScale(QObject *parent) :
     statusRegisterBinaryReturnValue = new int[16];
 
 
-    productEnteringGrader = false;
     processingProduct = false;
     requestBeltRoundPulse = false;
     beltRoundPulse = false;
@@ -41,7 +40,7 @@ MyScale::MyScale(QObject *parent) :
     pulseResolution = 0.0;
     lengthOfEachBeltPeriod = 0.0;
 
-    // System settings variales
+    // System settings variables
     lengthOfEachBeltChain           = QString::fromStdString(settings->lengthOfEachBeltChain.c_str()).toFloat();
     numberOfBeltChains              = QString::fromStdString(settings->numberOfBeltChains.c_str()).toFloat();
     productEntry                    = QString::fromStdString(settings->productEntry.c_str()).toInt();
@@ -90,7 +89,9 @@ MyScale::MyScale(QObject *parent) :
     distanceToGraderGate[4] = 2200;
     distanceToGraderGate[5] = 2200;
 
-    distanceOpenGate[0] = 500;  // [mm]
+    distanceToEndOfGrader   = 3000; // [mm]
+
+    distanceOpenGate[0] = 500;      // [mm]
     distanceOpenGate[1] = 500;
     distanceOpenGate[2] = 500;
     distanceOpenGate[3] = 500;
@@ -408,26 +409,25 @@ void MyScale::enteringProductSensorSignal()
     // //////////////////////////////////////////////////////////
     // FIXME: Data that follows product from scale to grader - find better location later
     // //////////////////////////////////////////////////////////
-    scaleData.description[tempID] = productDescription;
-    scaleData.recipeId[tempID] = recipeID;
-    scaleData.batchId[tempID] = batchID;
-    scaleData.productId[tempID] = productID;
-    scaleData.productType[tempID] = productType;
+    proData.description[tempID] = productDescription;
+    proData.recipeId[tempID] = recipeID;
+    proData.batchId[tempID] = batchID;
+    proData.productId[tempID] = productID;
+    proData.productType[tempID] = productType;
 
-    scaleData.serialId[tempID] = productCounter;
-    scaleData.productLengthPulseCounter[tempID] = 0;
-    scaleData.productLength[tempID] = 0;
-    scaleData.productWeight[tempID] = 0;
-    scaleData.productConfidence[tempID] = 0;
-    scaleData.destinationGate[tempID] = 0;
+    proData.serialId[tempID] = productCounter;
+    proData.productLengthPulseCounter[tempID] = 0;
+    proData.productLength[tempID] = 0;
+    proData.productWeight[tempID] = 0;
+    proData.productConfidence[tempID] = 0;
+    proData.destinationGate[tempID] = 0;
     // //////////////////////////////////////////////////////////
-
 }
 
 
 void MyScale::leavingProductSensorSignal() {
 
-    scaleData.productLength[tempID] = scaleData.productLengthPulseCounter[tempID] * pulseResolution;
+    proData.productLength[tempID] = proData.productLengthPulseCounter[tempID] * pulseResolution;
 }
 
 
@@ -584,7 +584,7 @@ void MyScale::weightProcessing(int weightValueFromScale) {
         productEntryPulse = (int)((double)(productEntry)/pulseResolution + 0.5);
         weightStartPulse = (int)((double)(productWeighingStartDistance)/pulseResolution + 0.5);
         weightEndPulse = (int)((double)(productWeighingStopDistance)/pulseResolution + 0.5);
-        weighingDeliveryPoint = (int)((double)(productRelease)/pulseResolution + 0.5);
+        productReleasePulse = (int)((double)(productRelease)/pulseResolution + 0.5);
 
         for (int i = 0; i < 6; i++) {
             pulseDistanceToGate[i] = (int)((double)(distanceToGraderGate[i])/pulseResolution + 0.5);
@@ -645,7 +645,6 @@ void MyScale::weightProcessing(int weightValueFromScale) {
 
     if (zeroTracking == zt_ProductFilter) {
 
-
         if (processingProduct == false) {
 
             if (requestZeroUpdate == true) {
@@ -675,12 +674,12 @@ void MyScale::weightProcessing(int weightValueFromScale) {
 
                 if (productTickPosition[_elementId] == productEntryPulse) {
 
-                    scaleData.productLengthPulseCounter[_elementId] = productEntry;
+                    proData.productLengthPulseCounter[_elementId] = productEntry;
                 }
 
                 if (between(productEntryPulse, productTickPosition[_elementId], weightEndPulse)) {
 
-                    scaleData.productLengthPulseCounter[_elementId]++;
+                    proData.productLengthPulseCounter[_elementId]++;
                 }
 
 
@@ -692,7 +691,7 @@ void MyScale::weightProcessing(int weightValueFromScale) {
 //                }
 
                 // Track weight from productEntry sensor to the productDelivery point.
-                if (between(productEntryPulse, productTickPosition[_elementId], weighingDeliveryPoint)) {
+                if (between(productEntryPulse, productTickPosition[_elementId], productReleasePulse)) {
 
                     productIDweights[_elementId][productTickPosition[_elementId]] = weightValueFromScale-zeroArray[sampleCounter];
                 }
@@ -714,73 +713,54 @@ void MyScale::weightProcessing(int weightValueFromScale) {
 
                         if (abs(meanWeightSample - productIDweights[_elementId][_sample]) < 5) {
 
-                            scaleData.productConfidence[_elementId]++;
+                            proData.productConfidence[_elementId]++;
                         }
                     }
 
 
-                    scaleData.productWeight[_elementId] = meanWeightSample;
+                    proData.productWeight[_elementId] = meanWeightSample;
 
-                    scaleData.destinationGate[_elementId] = returnToGate(scaleData.productWeight[_elementId]);
+                    proData.destinationGate[_elementId] = returnToGate(proData.productWeight[_elementId]);
 
                     qDebug() //<< "_elementId: " << _elementId
-                            << " - Serial: " << QString::number(scaleData.serialId[_elementId])
-                            << " - Batch: " << QString::fromStdString(scaleData.batchId[_elementId]).toInt()
-                            << " - RecipeId: " << QString::fromStdString(scaleData.recipeId[_elementId].c_str())
-                            << " - ProductId: " << QString::fromStdString(scaleData.productId[_elementId].c_str())
-                            << " - ProductType: " << QString::fromStdString(scaleData.productType[_elementId].c_str())
-                            << " - Weight: " << scaleData.productWeight[_elementId]
-                            << " - Confidence: " << scaleData.productConfidence[_elementId]
-                            << " - Length: " << scaleData.productLength[_elementId]
-                            << " - Destination: " << scaleData.destinationGate[_elementId];
+                            << " - Serial: " << QString::number(proData.serialId[_elementId])
+                            << " - Batch: " << QString::fromStdString(proData.batchId[_elementId]).toInt()
+                            << " - RecipeId: " << QString::fromStdString(proData.recipeId[_elementId].c_str())
+                            << " - ProductId: " << QString::fromStdString(proData.productId[_elementId].c_str())
+                            << " - ProductType: " << QString::fromStdString(proData.productType[_elementId].c_str())
+                            << " - Weight: " << proData.productWeight[_elementId]
+                            << " - Confidence: " << proData.productConfidence[_elementId]
+                            << " - Length: " << proData.productLength[_elementId]
+                            << " - Destination: " << proData.destinationGate[_elementId];
 
 
-                    emit sendMQTT(QString::fromStdString(scaleData.batchId[_elementId].c_str()), "scale/batchID");
-                    emit sendMQTT(QString::fromStdString(scaleData.recipeId[_elementId].c_str()), "scale/recipeID");
-                    emit sendMQTT(QString::fromStdString(scaleData.productId[_elementId].c_str()), "scale/productID");
-                    emit sendMQTT(QString::fromStdString(scaleData.productType[_elementId].c_str()), "scale/productType");
-                    emit sendMQTT(QString::number(scaleData.serialId[_elementId]), "scale/serialID");
-                    emit sendMQTT(QString::number(scaleData.productWeight[_elementId]), "scale/productWeight");
-                    emit sendMQTT(QString::number(scaleData.productConfidence[_elementId]), "scale/productConfidence");
-                    emit sendMQTT(QString::number(scaleData.productLength[_elementId]), "scale/productLength");
-                    emit sendMQTT(QString::number(scaleData.destinationGate[_elementId]), "scale/destinationGate");
-                    emit sendMQTT(QString::number(scaleData.pulseResolution[_elementId]), "scale/pulseResolution");
+                    emit sendMQTT(QString::fromStdString(proData.batchId[_elementId].c_str()), "scale/batchID");
+                    emit sendMQTT(QString::fromStdString(proData.recipeId[_elementId].c_str()), "scale/recipeID");
+                    emit sendMQTT(QString::fromStdString(proData.productId[_elementId].c_str()), "scale/productID");
+                    emit sendMQTT(QString::fromStdString(proData.productType[_elementId].c_str()), "scale/productType");
+                    emit sendMQTT(QString::number(proData.serialId[_elementId]), "scale/serialID");
+                    emit sendMQTT(QString::number(proData.productWeight[_elementId]), "scale/productWeight");
+                    emit sendMQTT(QString::number(proData.productConfidence[_elementId]), "scale/productConfidence");
+                    emit sendMQTT(QString::number(proData.productLength[_elementId]), "scale/productLength");
+                    emit sendMQTT(QString::number(proData.destinationGate[_elementId]), "scale/destinationGate");
 
-                    emit sendDescription(QString::fromStdString(scaleData.description[_elementId].c_str()));
-                    emit sendBatchId(QString::fromStdString(scaleData.batchId[_elementId].c_str()));
-                    emit sendRecipeId(QString::fromStdString(scaleData.recipeId[_elementId].c_str()));
-                    emit sendProductId(QString::fromStdString(scaleData.productId[_elementId].c_str()));
-                    emit sendProductType(QString::fromStdString(scaleData.productType[_elementId].c_str()));
-                    emit sendSerialNumber(scaleData.serialId[_elementId]);
-                    emit sendFilteredWeight(scaleData.productWeight[_elementId]);
-                    emit sendConfidence(QString::number(scaleData.productConfidence[_elementId]));
-                    emit sendLength(QString::number(scaleData.productLength[_elementId]));
-                    emit sendDestinationGate(QString::number(scaleData.destinationGate[_elementId]));
-                    emit sendPulseResolution(QString::number(scaleData.pulseResolution[_elementId]));
+                    emit sendDescription(QString::fromStdString(proData.description[_elementId].c_str()));
+                    emit sendBatchId(QString::fromStdString(proData.batchId[_elementId].c_str()));
+                    emit sendRecipeId(QString::fromStdString(proData.recipeId[_elementId].c_str()));
+                    emit sendProductId(QString::fromStdString(proData.productId[_elementId].c_str()));
+                    emit sendProductType(QString::fromStdString(proData.productType[_elementId].c_str()));
+                    emit sendSerialNumber(proData.serialId[_elementId]);
+                    emit sendFilteredWeight(proData.productWeight[_elementId]);
+                    emit sendConfidence(QString::number(proData.productConfidence[_elementId]));
+                    emit sendLength(QString::number(proData.productLength[_elementId]));
+                    emit sendDestinationGate(QString::number(proData.destinationGate[_elementId]));
 
-                    productEnteringGrader = true;
-                    emit productLeavingFlowScale(productEnteringGrader);
-
-                    scaleData.productLengthPulseCounter[_elementId] = 0;
-
+                    proData.productLengthPulseCounter[_elementId] = 0;
                 }
+
 
                 // Product is leaving the main platform, at delivery point, then we can consider to update the ZERO weight again.
-                if (productTickPosition[_elementId] ==  weighingDeliveryPoint) {
-
-                    emit productIdValue(_elementId);
-
-                    processingProduct = false;
-                    productEnteringGrader = false;
-                }
-
-                // At delivery point release product information to next module
-                // FIXME: assign product ID and save product information
-                //            // Later:
-                //            // put info onto each product, such as IDnr, BathcNr,
-                //            // weight, stddev or variance, length, destination gate, ..
-
-                if (productTickPosition[_elementId] > weighingDeliveryPoint) {
+                if (productTickPosition[_elementId] ==  productReleasePulse) {
 
                     filezero.open("zeroweight.csv", std::ofstream::out | std::ofstream::app); // trunc changed to app, trunc clears the file while app appends it
 
@@ -795,25 +775,28 @@ void MyScale::weightProcessing(int weightValueFromScale) {
                     }
                     filezero.close();
 
-                    scaleData.productConfidence[_elementId] = -1;
+                    processingProduct = false;
+
+                    emit plotData(_elementId);
                 }
 
-
-                if (between((weighingDeliveryPoint + pulseDistanceToGate[_elementId]), productTickPosition[_elementId], (weighingDeliveryPoint + pulseDistanceToEndOfGate[_elementId])))
+                if (productTickPosition[_elementId] == (productReleasePulse + pulseDistanceToGate[_elementId]))
                 {
-                    emit activateGate(scaleData.destinationGate[_elementId]);
-                    qDebug() << "What About This ???";
+                    emit activateGate(proData.destinationGate[_elementId], 1);
                 }
 
-                if (productTickPosition[_elementId] >= weighingDeliveryPoint + pulseDistanceToEndOfGate[_elementId])
+                if (productTickPosition[_elementId] == (productReleasePulse + pulseDistanceToEndOfGate[_elementId]))
                 {
                     productTickPosition[_elementId] = -1;
+                    proData.productConfidence[_elementId] = -1;
+
+                    emit activateGate(proData.destinationGate[_elementId], 0);
                 }
             }
         }
-        sampleCounter++;
     }
 
+    sampleCounter++;
 }
 
 void MyScale::xmin(QString str) {
@@ -859,7 +842,7 @@ void MyScale::setupPlot(QCustomPlot *customPlot, int workingID) {
     {
       x[i] = i;
       y0[i] = productIDweights[workingID][i];
-      y1[i] = scaleData.productWeight[workingID];
+      y1[i] = proData.productWeight[workingID];
     }   
 
     // create graph
@@ -882,7 +865,7 @@ void MyScale::setupPlot(QCustomPlot *customPlot, int workingID) {
     endWeighingMark->start->setCoords(weightEndPulse, plotYvalueMIN);
     endWeighingMark->end->setCoords(weightEndPulse, plotYvalueMAX);
 
-    emit productWeight( scaleData.productWeight[workingID] );
+    emit productWeight( proData.productWeight[workingID] );
 
     customPlot->replot();
 }
