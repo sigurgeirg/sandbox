@@ -58,6 +58,7 @@ MyScale::MyScale(QObject *parent) :
 
     productCounter = 0;
     filterCounter = 0;
+    updateZeroEveryNumberOfRounds = 23;
     numberOfBeltRoundsZero = -4;
     countFewBeltRounds = 0;
     pulseCounterInAllRows = 0;
@@ -366,7 +367,7 @@ void MyScale::conveyorBeltSignal()
     if (zeroTracking == zt_ProductFilter) {
 
         if (requestZeroUpdate == false) {
-            if (countFewBeltRounds > 3) {
+            if (countFewBeltRounds > updateZeroEveryNumberOfRounds) {
 
                 requestZeroUpdate = true;
                 // Here we can emit information to display that running ZERO tracking update has been requested

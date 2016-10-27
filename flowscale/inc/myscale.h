@@ -125,6 +125,7 @@ private:
 
     int productCounter;
     int filterCounter;
+    int updateZeroEveryNumberOfRounds;
     int countFewBeltRounds;
     int productEntry;
     int productWeighingStartDistance;
