@@ -33,7 +33,6 @@ public:
     static unsigned char falling[numberOfUsedDigitalInputs];
     static unsigned char rising[numberOfUsedDigitalInputs];
     static unsigned char inverted[numberOfUsedDigitalInputs];
-    static unsigned char tickOrTime[numberOfUsedDigitalInputs];
 
 private:
     bool trigger;
@@ -48,6 +47,9 @@ private:
     unsigned long tickBeltProfile;
     unsigned long beltRounds;
     unsigned char address;
+    int holdBeltPulseForCount;
+    int holdRisingForCount;
+    int holdFallingForCount;
     // /////////////////////////
     // Simulation
     // unsigned char _inputAddress;

@@ -4,13 +4,12 @@
 unsigned long MyDio::lastValue[] 		= {0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0};
 unsigned long MyDio::newValue[]  		= {1,1,1,1, 1,1,1,1, 1,1,1,1, 1,1,1,1};
 unsigned long MyDio::value[] 	 		= {1,1,1,1, 1,1,1,1, 1,1,1,1, 1,1,1,1};
-unsigned char MyDio::delay[] 			= {0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0};
+unsigned char MyDio::delay[]            = {0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0};
 unsigned char MyDio::delayLeftUp[] 		= {0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0};
 unsigned char MyDio::delayLeftDown[] 	= {0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0};
 unsigned char MyDio::falling[] 			= {0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0};
 unsigned char MyDio::rising[] 			= {0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0};
 unsigned char MyDio::inverted[] 		= {1,1,1,1, 1,1,1,1, 1,1,1,1, 1,1,1,1};
-unsigned char MyDio::tickOrTime[] 		= {0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0};
 
 
 
@@ -52,6 +51,9 @@ MyDio::MyDio(QObject *parent) :
 
     address	= 0;
     tickBeltProfile = 0;
+    holdBeltPulseForCount = 0;
+    holdRisingForCount = 0;
+    holdFallingForCount = 0;
 
 }
 
@@ -96,7 +98,7 @@ void MyDio::setOutput(int output, int value) {
     activeOutput = output;
     activeValue  = value;
 
-    qDebug() << "Output: " << activeOutput << " == " << activeValue;
+//    qDebug() << "Output: " << activeOutput << " == " << activeValue;
 }
 
 
@@ -104,65 +106,48 @@ void MyDio::newInput(unsigned char address) {
 
     newValue[address] = (unsigned char)io.DIGet(address);
 
-    if ( !delay[address]      )	{ delay[address] = 0; }
-    if ( !tickOrTime[address] )	{ tickOrTime[address] = 0; }
+    if ( !delay[address] ) {
 
-    if ( inverted[address] and inverted[address] == 1 ){
-        newValue[address] =((newValue[address] == 0) ? 1 : 0); }
+        delay[address] = 0;
+    }
+
+    if ( inverted[address] and inverted[address] == 1 ) {
+
+        newValue[address] =((newValue[address] == 0) ? 1 : 0);
+    }
 
     if ( newValue[address] != lastValue[address] ) {
+
         if ( newValue[address] == 1 ) {
-            if ( tickOrTime[address] > 0 ) {
-                delayLeftUp[address] = tickOrTime[address] + delay[address];
-            } else {
-                delayLeftUp[address] = std::clock() + delay[address];
-            }
+            delayLeftUp[address] = std::clock() + delay[address];
         } else {
-            if ( tickOrTime[address] > 0 ) {
-                delayLeftDown[address] = tickOrTime[address] + delay[address];
-            } else {
-                delayLeftDown[address] = std::clock() + delay[address];
-            }
+            delayLeftDown[address] = std::clock() + delay[address];
         }
     }
 
-    if ( tickOrTime[address] > 0 ) {
-        if ( delayLeftUp[address] > 0 &&  tickOrTime[address] > delayLeftUp[address] ){
-            delayLeftUp[address] = 0;
-            rising[address] = 1;
-            value[address] = 1;
-        } else {
-            rising[address] = 0;
-        }
+    if ( delayLeftUp[address] > 0 && std::clock() > delayLeftUp[address] ) {
+
+        delayLeftUp[address] = 0;
+        rising[address] = 1;
+        value[address] = 1;
+
     } else {
-        if ( delayLeftUp[address] > 0 && std::clock() > delayLeftUp[address] ) {
-            delayLeftUp[address] = 0;
-            rising[address] = 1;
-            value[address] = 1;
-        } else {
-            rising[address] = 0;
-        }
+
+        rising[address] = 0;
     }
 
-    if ( tickOrTime[address] > 0 ) {
-        if ( delayLeftDown[address] > 0 &&  tickOrTime[address] > delayLeftDown[address] ){
-            delayLeftDown[address] = 0;
-            falling[address] = 1;
-            value[address] = 0;
-        } else {
-            falling[address] = 0;
-        }
+    if ( delayLeftDown[address] > 0 && std::clock() > delayLeftDown[address] ) {
+
+        delayLeftDown[address] = 0;
+        falling[address] = 1;
+        value[address] = 0;
+
     } else {
-        if ( delayLeftDown[address] > 0 && std::clock() > delayLeftDown[address] ) {
-            delayLeftDown[address] = 0;
-            falling[address] = 1;
-            value[address] = 0;
-        } else {
-            falling[address] = 0;
-        }
+
+        falling[address] = 0;
     }
+
     lastValue[address] = newValue[address];
-
 }
 
 void MyDio::run() {
@@ -193,25 +178,14 @@ void MyDio::run() {
 //		gettimeofday(&tim, NULL);
 //		lastTime = tim.tv_usec;
 
-        for (int i = 0; i < 16; i++) {
-            io.DOSet(i, 0);
-        }
-
-        io.DOSet((unsigned char)activeOutput, (bool)activeValue);
-
-
         // ////////////////////////
         // FIXME: If simulation
         // io.DISetSim(1, 1);
         // /////////////////////////
 
         updateInputs();
-        updateOutputs();
 
         for (int i = 0; i < numberOfUsedDigitalInputs; i++) {
-            // rising and falling are reset after one scan-cycle for other processes to be able to monitor these.
-            rising[i] = 0;
-            falling[i] = 0;
 
             newInput(i);
             value[i] = (unsigned char)io.DIGet(i);
@@ -222,6 +196,12 @@ void MyDio::run() {
             qDebug() << "BeltPeriod Pulse";
             tickBeltProfile = 0;
             conveyor = true;
+            holdBeltPulseForCount++;
+
+            if (holdBeltPulseForCount >= 10){
+                rising[0] = 0;
+                holdBeltPulseForCount = 0;
+            }
         }
 
         // FIXME: This input is not used currently, we use tick on program scantime, insted of tacho or encoder signal...
@@ -230,23 +210,37 @@ void MyDio::run() {
             // qDebug() << "Input 2:" << 2 << " is rising!";
             tickBeltProfile++;
             tacho = true;
+            rising[1] = 0;
         }
 
         // Here we assume that input[2] is the product sensor and this is the rising event
         if (rising[2] == 1) {
             qDebug() << "Product Entering";
             productEnteringSensor = true;
+            holdRisingForCount++;
+
+            if (holdRisingForCount >= 10){
+                rising[2] = 0;
+                holdRisingForCount = 0;
+            }
         }
 
         // Here we assume that input[2] is the product sensor and this is the rising event
         if (falling[2] == 1) {
-            // qDebug() << "Input 3:" << 3 << " is falling!";
+            qDebug() << "Input 3:" << 3 << " is falling!";
             productLeavingSensor = true;
+            holdFallingForCount++;
+
+            if (holdFallingForCount >= 10){
+                falling[2] = 0;
+                holdFallingForCount = 0;
+            }
         }
 
         // Here we assume that input[3] is available input signal
         if (rising[3] == 1) {
             // qDebug() << "Input 4:" << 4 << " is rising!";
+            rising[3] = 0;
         }
 
         if (conveyor == true) {
@@ -268,6 +262,15 @@ void MyDio::run() {
             emit leavingProductSensorSignal();
             productLeavingSensor = false;
         }
+
+
+        for (int i = 0; i < 16; i++) {
+            io.DOSet(i, 0);
+        }
+
+        io.DOSet((unsigned char)activeOutput, (bool)activeValue);
+
+        updateOutputs();
 
 
 //		gettimeofday(&tim, NULL);

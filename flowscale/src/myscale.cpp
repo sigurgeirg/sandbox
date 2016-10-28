@@ -6,6 +6,8 @@ MyScale::MyScale(QObject *parent) :
 {
     settings = new Settings(this);
     recipe = new Recipe(this);
+    dio = new MyDio(this);
+    dio->start();
 
     modbusConnected = false;
     mbCommand[0] = 0;
@@ -24,7 +26,7 @@ MyScale::MyScale(QObject *parent) :
     statusRegisterBinaryTempValue = new int[16];
     statusRegisterBinaryReturnValue = new int[16];
 
-
+    inProductSensor = false;
     processingProduct = false;
     requestBeltRoundPulse = false;
     beltRoundPulse = false;
@@ -82,6 +84,10 @@ MyScale::MyScale(QObject *parent) :
 
     // Grader settings variables:
     numberOfGatesOnGrader = 6;
+    for (int i = 0; i < numberOfGatesOnGrader; i++)
+    {
+        gateAvailable[i] = true;
+    }
 
     distanceToGraderGate[0] = 200;  // [mm]
     distanceToGraderGate[1] = 200;
@@ -122,6 +128,16 @@ MyScale::MyScale(QObject *parent) :
     gateBufferAmount[5] = 40;
 
     emit conveyorRunState("conveyorOff");
+
+
+    // Set output signals, such as grading gates:
+    connect(this, SIGNAL(activateGate(int, int)),          dio,    SLOT(setOutput(int, int)));
+
+    // Input sensor signals:
+    connect(dio,   SIGNAL(conveyorSignal()),                this,  SLOT(conveyorBeltSignal()));
+    connect(dio,   SIGNAL(enteringProductSensorSignal()),   this,  SLOT(enteringProductSensorSignal()));
+    connect(dio,   SIGNAL(leavingProductSensorSignal()),    this,  SLOT(leavingProductSensorSignal()));
+    //connect(dio,   SIGNAL(inputValue(unsigned long)),       this,   SLOT(displayInputValue(unsigned long)));
 }
 
 
@@ -130,6 +146,7 @@ MyScale::~MyScale()
     delete statusRegisterBinaryTempValue;
     delete statusRegisterBinaryReturnValue;
     delete settings;
+    delete dio;
 }
 
 
@@ -249,10 +266,12 @@ void MyScale::connectToSlaveDevice() {
                 qDebug() << "Unable to create the libmodbus context";
                 modbus_free(ctx);
             }
-            else qDebug() << "Creation successful";
+            else {
+                //qDebug() << "Creation successful";
+            }
 
             if (setslave == 0) {
-                qDebug() << "Able to set slave successfully, value : " << setslave;
+                //qDebug() << "Able to set slave successfully, value : " << setslave;
             }
             else {
                 qDebug() << "Unable to set slave, value: " << setslave;
@@ -264,9 +283,9 @@ void MyScale::connectToSlaveDevice() {
                 modbus_free(ctx);
             }
             else {
-                qDebug() << "Connection successful " << modbus_connect(ctx);
+                //qDebug() << "Connection successful " << modbus_connect(ctx);
                 modbusConnected = true;
-                qDebug() << "ModBus is Connected";
+                //qDebug() << "ModBus is Connected";
                 start();
             }
     } catch(...) {
@@ -285,7 +304,7 @@ void MyScale::disconnectFromSlaveDevice() {
             }
 
             modbus_close(ctx);
-            qDebug() << "ModBus is Disconnected";
+            //qDebug() << "ModBus is Disconnected";
             //modbus_free(ctx); //This function-call causes segfault if activated here.
 
             zeroTracking = zt_InitializeZeroVectors;
@@ -382,6 +401,7 @@ void MyScale::conveyorBeltSignal()
 
 void MyScale::enteringProductSensorSignal()
 {
+    inProductSensor = true;
     processingProduct = true;
     productCounter++;
     tempID++;
@@ -391,7 +411,7 @@ void MyScale::enteringProductSensorSignal()
 
     productTickPosition[tempID] = 0;
 
-
+    qDebug() << "@enteringProductSensorSignal(): " << tempID;
 
 
     // Recipe variables
@@ -429,6 +449,10 @@ void MyScale::enteringProductSensorSignal()
 void MyScale::leavingProductSensorSignal() {
 
     proData.productLength[tempID] = proData.productLengthPulseCounter[tempID] * pulseResolution;
+    inProductSensor = false;
+    productOnScaleArea[tempID] = true;
+
+    qDebug() << "@leavingProductSensorSignal location";
 }
 
 
@@ -528,6 +552,8 @@ void MyScale::weightProcessing(int weightValueFromScale) {
     // /////////////////////////////////////////////////////////////////////
     if (zeroTracking == zt_UpdateZeroWeightSamples) {
 
+        qDebug() << "@countFewBeltRounds == " << countFewBeltRounds;
+
         for (int i = 0; i <= pulsesPerBeltRound; i ++) {
             zeroUnfilteredArray[nextZeroUpdatePosition][i] = updateZeroArray[i];
         }
@@ -586,12 +612,11 @@ void MyScale::weightProcessing(int weightValueFromScale) {
         weightStartPulse = (int)((double)(productWeighingStartDistance)/pulseResolution + 0.5);
         weightEndPulse = (int)((double)(productWeighingStopDistance)/pulseResolution + 0.5);
         productReleasePulse = (int)((double)(productRelease)/pulseResolution + 0.5);
+        maxProductLengthPulse = (int)((double)(maxProductLength)/pulseResolution + 0.5);
 
         for (int i = 0; i < 6; i++) {
-            pulseDistanceToGate[i] = (int)((double)(distanceToGraderGate[i])/pulseResolution + 0.5);
-
-            distanceToEndOfGraderGate[i] = distanceToGraderGate[i] + distanceOpenGate[i];
-            pulseDistanceToEndOfGate[i] = (int)((double)(distanceToEndOfGraderGate[i])/pulseResolution + 0.5);
+            pulseDistanceToGate[i] = (int)((double)(productRelease + distanceToGraderGate[i])/pulseResolution + 0.5);
+            pulseDistanceToEndOfGate[i] = (int)((double)(productRelease + distanceToGraderGate[i] + distanceOpenGate[i])/pulseResolution + 0.5);
         }
 
         zeroTracking = zt_ReturnResultsToFile;
@@ -673,34 +698,28 @@ void MyScale::weightProcessing(int weightValueFromScale) {
             if (productTickPosition[_elementId] >= 0) {
                 productTickPosition[_elementId]++;
 
-                if (productTickPosition[_elementId] == productEntryPulse) {
+                if ((productTickPosition[_elementId] >= 0) && inProductSensor == true) {
 
-                    proData.productLengthPulseCounter[_elementId] = productEntry;
-                }
-
-                if (between(productEntryPulse, productTickPosition[_elementId], weightEndPulse)) {
+                    qDebug() << "@product: " << _elementId << " - productTickPosition: " << productTickPosition[_elementId];
 
                     proData.productLengthPulseCounter[_elementId]++;
+
+                    if (proData.productLengthPulseCounter[_elementId] >= maxProductLengthPulse)
+                    {
+                        leavingProductSensorSignal();
+                    }
                 }
 
 
-
-//                // Track active weight on scale AREA and give each position weight
-//                if (between(weightStartPulse, productTempId[_elementId], weightEndPulse)) {
-
-//                    productIDweights[_elementId][productTempId[_elementId]] = weightValueFromScale-zeroArray[sampleCounter];
-//                }
-
                 // Track weight from productEntry sensor to the productDelivery point.
-                if (between(productEntryPulse, productTickPosition[_elementId], productReleasePulse)) {
+                if (between(0, productTickPosition[_elementId], productReleasePulse)) {
 
                     productIDweights[_elementId][productTickPosition[_elementId]] = weightValueFromScale-zeroArray[sampleCounter];
                 }
 
 
-
                 // At weiging endpoint on scale platform calculate mean value and emit modeled weight
-                if (productTickPosition[_elementId] == weightEndPulse) {
+                if ((productTickPosition[_elementId] >= weightEndPulse) && (productOnScaleArea[_elementId] == true)) {
                     meanWeightSample = 0;
 
                     for (int _sample = weightStartPulse; _sample < weightEndPulse; _sample++) {
@@ -723,12 +742,12 @@ void MyScale::weightProcessing(int weightValueFromScale) {
 
                     proData.destinationGate[_elementId] = returnToGate(proData.productWeight[_elementId]);
 
-                    qDebug() //<< "_elementId: " << _elementId
+                    qDebug()
                             << " - Serial: " << QString::number(proData.serialId[_elementId])
-                            << " - Batch: " << QString::fromStdString(proData.batchId[_elementId]).toInt()
-                            << " - RecipeId: " << QString::fromStdString(proData.recipeId[_elementId].c_str())
-                            << " - ProductId: " << QString::fromStdString(proData.productId[_elementId].c_str())
-                            << " - ProductType: " << QString::fromStdString(proData.productType[_elementId].c_str())
+//                            << " - Batch: " << QString::fromStdString(proData.batchId[_elementId]).toInt()
+//                            << " - RecipeId: " << QString::fromStdString(proData.recipeId[_elementId].c_str())
+//                            << " - ProductId: " << QString::fromStdString(proData.productId[_elementId].c_str())
+//                            << " - ProductType: " << QString::fromStdString(proData.productType[_elementId].c_str())
                             << " - Weight: " << proData.productWeight[_elementId]
                             << " - Confidence: " << proData.productConfidence[_elementId]
                             << " - Length: " << proData.productLength[_elementId]
@@ -757,11 +776,13 @@ void MyScale::weightProcessing(int weightValueFromScale) {
                     emit sendDestinationGate(QString::number(proData.destinationGate[_elementId]));
 
                     proData.productLengthPulseCounter[_elementId] = 0;
+                    productOnScaleArea[_elementId] = false;
+                    productEnteringGradingArea[_elementId] = true;
                 }
 
 
                 // Product is leaving the main platform, at delivery point, then we can consider to update the ZERO weight again.
-                if (productTickPosition[_elementId] ==  productReleasePulse) {
+                if ((productTickPosition[_elementId] >=  productReleasePulse) && (productEnteringGradingArea[_elementId] == true)) {
 
                     filezero.open("zeroweight.csv", std::ofstream::out | std::ofstream::app); // trunc changed to app, trunc clears the file while app appends it
 
@@ -777,21 +798,28 @@ void MyScale::weightProcessing(int weightValueFromScale) {
                     filezero.close();
 
                     processingProduct = false;
+                    productEnteringGradingArea[_elementId] = false;
 
                     emit plotData(_elementId);
                 }
 
-                if (productTickPosition[_elementId] == (productReleasePulse + pulseDistanceToGate[_elementId]))
+                if ((productTickPosition[_elementId] >= pulseDistanceToGate[_elementId]) && gateAvailable[proData.destinationGate[_elementId]] == true)
                 {
+                    gateAvailable[proData.destinationGate[_elementId]] = false;
                     emit activateGate(proData.destinationGate[_elementId], 1);
                 }
 
-                if (productTickPosition[_elementId] == (productReleasePulse + pulseDistanceToEndOfGate[_elementId]))
+                if (productTickPosition[_elementId] >= (pulseDistanceToEndOfGate[_elementId]) && gateAvailable[proData.destinationGate[_elementId]] == false)
                 {
                     productTickPosition[_elementId] = -1;
-                    proData.productConfidence[_elementId] = -1;
 
+                    gateAvailable[proData.destinationGate[_elementId]] = true;
                     emit activateGate(proData.destinationGate[_elementId], 0);
+                }
+
+                if (productTickPosition[_elementId] >= distanceToEndOfGrader)
+                {
+                    productTickPosition[_elementId] = -1;
                 }
             }
         }
@@ -802,22 +830,22 @@ void MyScale::weightProcessing(int weightValueFromScale) {
 
 void MyScale::xmin(QString str) {
     plotXvalueMIN = str.toInt();
-    qDebug() << "plotXvalueMIN: " << plotXvalueMIN;
+    //qDebug() << "plotXvalueMIN: " << plotXvalueMIN;
 }
 
 void MyScale::xmax(QString str) {
     plotXvalueMAX = str.toInt();
-    qDebug() << "plotXvalueMAX: " << plotXvalueMAX;
+    //qDebug() << "plotXvalueMAX: " << plotXvalueMAX;
 }
 
 void MyScale::ymin(QString str) {
     plotYvalueMIN = str.toInt();
-    qDebug() << "plotYvalueMIN: " << plotYvalueMIN;
+    //qDebug() << "plotYvalueMIN: " << plotYvalueMIN;
 }
 
 void MyScale::ymax(QString str) {
     plotYvalueMAX = str.toInt();
-    qDebug() << "plotYvalueMAX: " << plotYvalueMAX;
+    //qDebug() << "plotYvalueMAX: " << plotYvalueMAX;
 }
 
 void MyScale::setupPlot(QCustomPlot *customPlot, int workingID) {
@@ -899,6 +927,8 @@ void MyScale::run() {
         }
         for (int _count = 0; _count < numberOfElementsInList; _count++) {
             productTickPosition[_count] = -1;
+            productOnScaleArea[_count] = false;
+            productEnteringGradingArea[_count] = false;
         }
         pulseCounterInAllRows = 0.0;
 

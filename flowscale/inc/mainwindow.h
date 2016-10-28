@@ -2,7 +2,6 @@
 #define MAINWINDOW_H
 
 #include "constants.h"
-#include "mydio.h"
 #include "myscale.h"
 #include "mymessages.h"
 #include <QMainWindow>
@@ -40,10 +39,8 @@ public:
     ~MainWindow();
     void setCurrentRecipe(QString);
 
-    MyDio *dio;
     MyScale *scale;
     MyMessages *mosq;
-    Dio io;
     QLineEdit *lineEdit;
     QTextEdit *textEdit;
     int boundary;

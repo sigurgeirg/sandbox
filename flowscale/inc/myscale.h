@@ -4,6 +4,7 @@
 #include "constants.h"
 #include "settings.h"
 #include "recipe.h"
+#include "mydio.h"
 #include <QThread>
 #include <QDebug>
 #include <modbus/modbus.h>
@@ -29,6 +30,8 @@ public:
 
     Settings *settings;
     Recipe *recipe;
+    MyDio *dio;
+    Dio io;
 
     void updateRecipe(QString);
     bool between(int less, int value, int greater);
@@ -91,8 +94,11 @@ private:
     //int calibrationWeight;  // Variable that keeps calibration weight value in terms of [g]
     int weightGROSSorNET[1];// Indicates whether selected weight is GROSS or NET weight.
 
-
+    bool inProductSensor;
     bool processingProduct;
+    bool productOnScaleArea[numberOfElementsInList];
+    bool productEnteringGradingArea[numberOfElementsInList];
+
     bool requestBeltRoundPulse;
     bool beltRoundPulse;
     bool requestZeroUpdate;
@@ -111,7 +117,6 @@ private:
     double dMedian;
 
     double dSorted[numberOfBeltRounds];
-    bool elementOnScaleArea[numberOfElementsInList];
     int zeroArray[samplesPerBeltRound];
     int updateZeroArray[samplesPerBeltRound];
     int zeroColumn[numberOfBeltRounds];
@@ -171,11 +176,13 @@ private:
     int weightStartPulse;
     int weightEndPulse;
     int productReleasePulse;
+    int maxProductLengthPulse;
     int medianZeroSample;
     int meanWeightSample;
 
     // Grader settings variables:
-    int numberOfGatesOnGrader;
+    int numberOfGatesOnGrader;          // numberOfGatesOnGrader
+    bool gateAvailable[6];
     int distanceToGraderGate[10];        // [mm]
     int distanceOpenGate[10];            // [mm]
     int distanceToEndOfGraderGate[10];   // [mm]

@@ -14,7 +14,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->FlowScaleImage->setFixedSize(480,240);
     ui->FlowScaleImage->setPixmap(conveyorObject);
 
-    dio = new MyDio(this);
     scale = new MyScale(this);
     mosq = new MyMessages(this);
 
@@ -34,15 +33,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
         // Simulation, still undone, maybe no use for this:
         //connect(this, SIGNAL(reply(unsigned char, bool)),             dio, SLOT(updateInputSim(unsigned char, bool)));
-
-        // Set output signals, such as grading gates:
-        connect(scale, SIGNAL(activateGate(int, int)),          dio,    SLOT(setOutput(int, int)));
-
-        // Input sensor signals:
-        connect(dio,   SIGNAL(conveyorSignal()),                scale,  SLOT(conveyorBeltSignal()));
-        connect(dio,   SIGNAL(enteringProductSensorSignal()),   scale,  SLOT(enteringProductSensorSignal()));
-        connect(dio,   SIGNAL(leavingProductSensorSignal()),    scale,  SLOT(leavingProductSensorSignal()));
-        connect(dio,   SIGNAL(inputValue(unsigned long)),       this,   SLOT(displayInputValue(unsigned long)));
 
         // Data from flowscale to Display:
         connect(scale, SIGNAL(conveyorRunState(QString)),       this,   SLOT(conveyorRunStateIndicator(QString)));
@@ -79,7 +69,6 @@ MainWindow::~MainWindow()
 {
     delete ui;
     delete scale;
-    delete dio;
     delete mosq;
 }
 
@@ -327,10 +316,10 @@ void MainWindow::displayDestinationGate(QString destinationGate)
 void MainWindow::displayInputValue(unsigned long)
 {
     //Fixme: Real IO module
-    ui->lblDIN_01->setText(QString::number(dio->value[0]));
-    ui->lblDIN_02->setText(QString::number(dio->value[1]));
-    ui->lblDIN_03->setText(QString::number(dio->value[2]));
-    ui->lblDIN_04->setText(QString::number(dio->value[3]));
+//    ui->lblDIN_01->setText(QString::number(dio->value[0]));
+//    ui->lblDIN_02->setText(QString::number(dio->value[1]));
+//    ui->lblDIN_03->setText(QString::number(dio->value[2]));
+//    ui->lblDIN_04->setText(QString::number(dio->value[3]));
 
     // /////////////////////////
     // Simulation
@@ -340,10 +329,10 @@ void MainWindow::displayInputValue(unsigned long)
 //    ui->lblDIN_04->setText(QString::number(io.DIGet(3)));
     // /////////////////////////
 
-    ui->lblDOUT_01->setText(QString::number(io.DOGet(0)));
-    ui->lblDOUT_02->setText(QString::number(io.DOGet(1)));
-    ui->lblDOUT_03->setText(QString::number(io.DOGet(2)));
-    ui->lblDOUT_04->setText(QString::number(io.DOGet(3)));
+//    ui->lblDOUT_01->setText(QString::number(io.DOGet(0)));
+//    ui->lblDOUT_02->setText(QString::number(io.DOGet(1)));
+//    ui->lblDOUT_03->setText(QString::number(io.DOGet(2)));
+//    ui->lblDOUT_04->setText(QString::number(io.DOGet(3)));
 
 }
 
@@ -351,7 +340,6 @@ void MainWindow::on_btnConnect_clicked()
 {
     scale->connectToSlaveDevice();
     scale->start();
-    dio->start();
 }
 
 void MainWindow::on_btnNetWeightConnect_clicked()
@@ -363,14 +351,12 @@ void MainWindow::on_btnNetWeightConnect_clicked()
     // Connect over modbus and start processes:
     scale->connectToSlaveDevice();
     scale->start();
-    dio->start();
 
     usleep(20*1000);
 
     // Disconnect from modbus and stop processes:
     scale->disconnectFromSlaveDevice();
     scale->exit();
-    dio->exit();
 
     usleep(20*1000);
 
@@ -380,14 +366,12 @@ void MainWindow::on_btnNetWeightConnect_clicked()
     // Connect over modbus and start processes again:
     scale->connectToSlaveDevice();
     scale->start();
-    dio->start();
 }
 
 void MainWindow::on_btnDisconnect_clicked()
 {
     scale->disconnectFromSlaveDevice();
     scale->exit();
-    dio->exit();
 }
 
 void MainWindow::on_chkWriteToLoadcell_toggled(bool checked)

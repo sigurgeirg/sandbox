@@ -8,7 +8,7 @@
     static const int numberOfBeltRounds = 10;
     static const int samplesPerBeltRound = 2000;
     static const int weightSamplesInWindowOfInterest = 200;
-    static const int numberOfElementsInList = 20;
+    static const int numberOfElementsInList = 16;
 
 
 //    static const int productEntry = 1; //start of conveyor
