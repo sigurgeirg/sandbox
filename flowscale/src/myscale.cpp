@@ -60,7 +60,7 @@ MyScale::MyScale(QObject *parent) :
 
     productCounter = 0;
     filterCounter = 0;
-    updateZeroEveryNumberOfRounds = 23;
+    updateZeroEveryNumberOfRounds = 1000;
     numberOfBeltRoundsZero = -4;
     countFewBeltRounds = 0;
     pulseCounterInAllRows = 0;
@@ -386,7 +386,7 @@ void MyScale::conveyorBeltSignal()
     if (zeroTracking == zt_ProductFilter) {
 
         if (requestZeroUpdate == false) {
-            if (countFewBeltRounds > updateZeroEveryNumberOfRounds) {
+            if (countFewBeltRounds >= updateZeroEveryNumberOfRounds) {
 
                 requestZeroUpdate = true;
                 // Here we can emit information to display that running ZERO tracking update has been requested
@@ -449,10 +449,18 @@ void MyScale::enteringProductSensorSignal()
 void MyScale::leavingProductSensorSignal() {
 
     proData.productLength[tempID] = proData.productLengthPulseCounter[tempID] * pulseResolution;
-    inProductSensor = false;
-    productOnScaleArea[tempID] = true;
 
-    qDebug() << "@leavingProductSensorSignal location";
+    // If piece long enough, process normally
+    if (proData.productLengthPulseCounter[tempID] > 5) {
+
+        inProductSensor = false;
+        productOnScaleArea[tempID] = true;
+
+        qDebug() << "@leavingProductSensorSignal():" << tempID;
+
+    } else {
+        // Else if piece is too short, wait until it's long enough and call this function again ...
+    }
 }
 
 
@@ -552,7 +560,7 @@ void MyScale::weightProcessing(int weightValueFromScale) {
     // /////////////////////////////////////////////////////////////////////
     if (zeroTracking == zt_UpdateZeroWeightSamples) {
 
-        qDebug() << "@countFewBeltRounds == " << countFewBeltRounds;
+        qDebug() << "@countFewBeltRounds >= " << countFewBeltRounds;
 
         for (int i = 0; i <= pulsesPerBeltRound; i ++) {
             zeroUnfilteredArray[nextZeroUpdatePosition][i] = updateZeroArray[i];
@@ -618,6 +626,8 @@ void MyScale::weightProcessing(int weightValueFromScale) {
             pulseDistanceToGate[i] = (int)((double)(productRelease + distanceToGraderGate[i])/pulseResolution + 0.5);
             pulseDistanceToEndOfGate[i] = (int)((double)(productRelease + distanceToGraderGate[i] + distanceOpenGate[i])/pulseResolution + 0.5);
         }
+        pulseDistanceToEndOfConveyorBelt = (int)((double)(productRelease + distanceToEndOfGrader)/pulseResolution + 0.5);
+
 
         zeroTracking = zt_ReturnResultsToFile;
     }
@@ -698,7 +708,7 @@ void MyScale::weightProcessing(int weightValueFromScale) {
             if (productTickPosition[_elementId] >= 0) {
                 productTickPosition[_elementId]++;
 
-                if ((productTickPosition[_elementId] >= 0) && inProductSensor == true) {
+                if (((productTickPosition[_elementId] >= 0) == true) && ((inProductSensor == true) == true)) {
 
                     qDebug() << "@product: " << _elementId << " - productTickPosition: " << productTickPosition[_elementId];
 
@@ -712,14 +722,14 @@ void MyScale::weightProcessing(int weightValueFromScale) {
 
 
                 // Track weight from productEntry sensor to the productDelivery point.
-                if (between(0, productTickPosition[_elementId], productReleasePulse)) {
+                if (between(0, productTickPosition[_elementId], weightEndPulse)) {
 
                     productIDweights[_elementId][productTickPosition[_elementId]] = weightValueFromScale-zeroArray[sampleCounter];
                 }
 
 
                 // At weiging endpoint on scale platform calculate mean value and emit modeled weight
-                if ((productTickPosition[_elementId] >= weightEndPulse) && (productOnScaleArea[_elementId] == true)) {
+                if (((productTickPosition[_elementId] >= weightEndPulse) == true) && ((productOnScaleArea[_elementId] == true) == true)) {
                     meanWeightSample = 0;
 
                     for (int _sample = weightStartPulse; _sample < weightEndPulse; _sample++) {
@@ -782,7 +792,7 @@ void MyScale::weightProcessing(int weightValueFromScale) {
 
 
                 // Product is leaving the main platform, at delivery point, then we can consider to update the ZERO weight again.
-                if ((productTickPosition[_elementId] >=  productReleasePulse) && (productEnteringGradingArea[_elementId] == true)) {
+                if (((productTickPosition[_elementId] >=  productReleasePulse) == true) && ((productEnteringGradingArea[_elementId] == true) == true)) {
 
                     filezero.open("zeroweight.csv", std::ofstream::out | std::ofstream::app); // trunc changed to app, trunc clears the file while app appends it
 
@@ -803,22 +813,23 @@ void MyScale::weightProcessing(int weightValueFromScale) {
                     emit plotData(_elementId);
                 }
 
-                if ((productTickPosition[_elementId] >= pulseDistanceToGate[_elementId]) && gateAvailable[proData.destinationGate[_elementId]] == true)
+                if (((productTickPosition[_elementId] >= pulseDistanceToGate[_elementId]) == true)) // && ((gateAvailable[proData.destinationGate[_elementId]] == true) == true))
                 {
                     gateAvailable[proData.destinationGate[_elementId]] = false;
                     emit activateGate(proData.destinationGate[_elementId], 1);
                 }
 
-                if (productTickPosition[_elementId] >= (pulseDistanceToEndOfGate[_elementId]) && gateAvailable[proData.destinationGate[_elementId]] == false)
+                if (((productTickPosition[_elementId] >= pulseDistanceToEndOfGate[_elementId]) == true)) // && ((gateAvailable[proData.destinationGate[_elementId]] == false) == true))
                 {
-                    productTickPosition[_elementId] = -1;
+                    //qDebug() << "@product: " << _elementId << " - productTickPosition: " << productTickPosition[_elementId] << "LEAVING@GATE !!!";
 
                     gateAvailable[proData.destinationGate[_elementId]] = true;
                     emit activateGate(proData.destinationGate[_elementId], 0);
                 }
 
-                if (productTickPosition[_elementId] >= distanceToEndOfGrader)
+                if (productTickPosition[_elementId] >= pulseDistanceToEndOfConveyorBelt)
                 {
+                    qDebug() << "@product: " << _elementId << " - productTickPosition: " << productTickPosition[_elementId] << "LEAVING@END !!!";
                     productTickPosition[_elementId] = -1;
                 }
             }

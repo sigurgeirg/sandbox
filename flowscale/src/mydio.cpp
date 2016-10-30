@@ -1,15 +1,15 @@
 #include "../inc/mydio.h"
 
 
-unsigned long MyDio::lastValue[] 		= {0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0};
+unsigned long MyDio::lastValue[] 		= {1,1,1,1, 1,1,1,1, 1,1,1,1, 1,1,1,1};
 unsigned long MyDio::newValue[]  		= {1,1,1,1, 1,1,1,1, 1,1,1,1, 1,1,1,1};
-unsigned long MyDio::value[] 	 		= {1,1,1,1, 1,1,1,1, 1,1,1,1, 1,1,1,1};
+unsigned long MyDio::value[] 	 		= {0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0};
 unsigned char MyDio::delay[]            = {0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0};
 unsigned char MyDio::delayLeftUp[] 		= {0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0};
 unsigned char MyDio::delayLeftDown[] 	= {0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0};
 unsigned char MyDio::falling[] 			= {0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0};
 unsigned char MyDio::rising[] 			= {0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0};
-unsigned char MyDio::inverted[] 		= {1,1,1,1, 1,1,1,1, 1,1,1,1, 1,1,1,1};
+unsigned char MyDio::inverted[] 		= {0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0};
 
 
 
@@ -104,6 +104,10 @@ void MyDio::setOutput(int output, int value) {
 
 void MyDio::newInput(unsigned char address) {
 
+    rising[address] = 0;
+    falling[address] = 0;
+
+
     newValue[address] = (unsigned char)io.DIGet(address);
 
     if ( !delay[address] ) {
@@ -119,9 +123,9 @@ void MyDio::newInput(unsigned char address) {
     if ( newValue[address] != lastValue[address] ) {
 
         if ( newValue[address] == 1 ) {
-            delayLeftUp[address] = std::clock() + delay[address];
-        } else {
             delayLeftDown[address] = std::clock() + delay[address];
+        } else {
+            delayLeftUp[address] = std::clock() + delay[address];
         }
     }
 
@@ -133,7 +137,7 @@ void MyDio::newInput(unsigned char address) {
 
     } else {
 
-        rising[address] = 0;
+        //rising[address] = 0;
     }
 
     if ( delayLeftDown[address] > 0 && std::clock() > delayLeftDown[address] ) {
@@ -144,7 +148,7 @@ void MyDio::newInput(unsigned char address) {
 
     } else {
 
-        falling[address] = 0;
+        //falling[address] = 0;
     }
 
     lastValue[address] = newValue[address];
@@ -198,7 +202,7 @@ void MyDio::run() {
             conveyor = true;
             holdBeltPulseForCount++;
 
-            if (holdBeltPulseForCount >= 10){
+            if (holdBeltPulseForCount >= 2){
                 rising[0] = 0;
                 holdBeltPulseForCount = 0;
             }
@@ -215,11 +219,11 @@ void MyDio::run() {
 
         // Here we assume that input[2] is the product sensor and this is the rising event
         if (rising[2] == 1) {
-            qDebug() << "Product Entering";
+            qDebug() << "Entering Product Sensor";
             productEnteringSensor = true;
             holdRisingForCount++;
 
-            if (holdRisingForCount >= 10){
+            if (holdRisingForCount >= 2){
                 rising[2] = 0;
                 holdRisingForCount = 0;
             }
@@ -227,11 +231,11 @@ void MyDio::run() {
 
         // Here we assume that input[2] is the product sensor and this is the rising event
         if (falling[2] == 1) {
-            qDebug() << "Input 3:" << 3 << " is falling!";
+            qDebug() << "Leaving Product Sensor";
             productLeavingSensor = true;
             holdFallingForCount++;
 
-            if (holdFallingForCount >= 10){
+            if (holdFallingForCount >= 2){
                 falling[2] = 0;
                 holdFallingForCount = 0;
             }

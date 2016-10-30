@@ -189,6 +189,7 @@ private:
     int pulseDistanceToGate[10];         // [ticks]
     int pulseDistanceToEndOfGate[10];    // [ticks]
     int distanceToEndOfGrader;           // [mm]
+    int pulseDistanceToEndOfConveyorBelt;// [ticks]
 
     int gateBufferWeight[10]; // [kg]
     int gateBufferAmount[10]; // [pcs]
