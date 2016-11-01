@@ -32,6 +32,11 @@ MyScale::MyScale(QObject *parent) :
     beltRoundPulse = false;
     requestZeroUpdate = false;
 
+    updateZero_1 = false;
+    updateZero_2 = false;
+    updateZero_3 = false;
+    updateZero_4 = false;
+
     sampleCounter = 0;
     lastSampleCounter = 0;
     updateSampleCounter = 0;
@@ -60,7 +65,7 @@ MyScale::MyScale(QObject *parent) :
 
     productCounter = 0;
     filterCounter = 0;
-    updateZeroEveryNumberOfRounds = 1000;
+    updateZeroEveryNumberOfRounds = 100;
     numberOfBeltRoundsZero = -4;
     countFewBeltRounds = 0;
     pulseCounterInAllRows = 0;
@@ -86,7 +91,9 @@ MyScale::MyScale(QObject *parent) :
     numberOfGatesOnGrader = 6;
     for (int i = 0; i < numberOfGatesOnGrader; i++)
     {
-        gateAvailable[i] = true;
+        productEnteringGateArea[i] = false;
+        openGate[i] = false;
+        closeGate[i] = false;
     }
 
     distanceToGraderGate[0] = 200;  // [mm]
@@ -560,22 +567,33 @@ void MyScale::weightProcessing(int weightValueFromScale) {
     // /////////////////////////////////////////////////////////////////////
     if (zeroTracking == zt_UpdateZeroWeightSamples) {
 
-        qDebug() << "@countFewBeltRounds >= " << countFewBeltRounds;
+        if (processingProduct == false) {
 
-        for (int i = 0; i <= pulsesPerBeltRound; i ++) {
-            zeroUnfilteredArray[nextZeroUpdatePosition][i] = updateZeroArray[i];
-        }
+            for (int i = 0; i <= pulsesPerBeltRound; i ++) {
+                zeroUnfilteredArray[nextZeroUpdatePosition][i] = updateZeroArray[i];
+            }
 
-        if (nextZeroUpdatePosition >= numberOfBeltRounds) {
-            nextZeroUpdatePosition = 0;
+            if (nextZeroUpdatePosition >= numberOfBeltRounds) {
+                nextZeroUpdatePosition = 0;
+            } else {
+                nextZeroUpdatePosition++;
+            }
+
+            updateZero_2 = true;
+
+            if (updateZero_2 == true) {
+
+                updateSampleCounter = 0;
+                requestZeroUpdate = false;
+
+                qDebug() << "STATE: Go to Calculate Median of Zero Path";
+                zeroTracking = zt_CalculateMedianOfZeroPath;
+            }
+
         } else {
-            nextZeroUpdatePosition++;
+            qDebug() << "STATE: Go back to Product Filter";
+            zeroTracking = zt_ProductFilter;
         }
-
-        countFewBeltRounds = 0;
-        updateSampleCounter = 0;
-        requestZeroUpdate = false;
-        zeroTracking = zt_CalculateMedianOfZeroPath;
     }
 
 
@@ -586,95 +604,123 @@ void MyScale::weightProcessing(int weightValueFromScale) {
         // Median of ZERO weight values over entire beltlength
         // /////////////////////////////////////////////////////////////////////
 
-        for (int _sampleColumn = 0; _sampleColumn < samplesPerBeltRound; _sampleColumn++) {
+        if (processingProduct == false) {
 
-            for (int _rounds = 0; _rounds < numberOfBeltRounds; _rounds++) {
-                dSorted[_rounds] = (double)zeroUnfilteredArray[_rounds][_sampleColumn];
-            }
+            for (int _sampleColumn = 0; _sampleColumn < samplesPerBeltRound; _sampleColumn++) {
 
-            // Sort numerical values in array by size for further processing
-            for (int _round = (numberOfBeltRounds - 1); _round > 0; --_round) {
-                for (int _sample = 0; _sample < _round; ++_sample) {
-                    if (dSorted[_sample] > dSorted[_sample+1]) {
-                        double dTemp = dSorted[_sample];
-                        dSorted[_sample] = dSorted[_sample+1];
-                        dSorted[_sample+1] = dTemp;
+                for (int _rounds = 0; _rounds < numberOfBeltRounds; _rounds++) {
+                    dSorted[_rounds] = (double)zeroUnfilteredArray[_rounds][_sampleColumn];
+                }
+
+                // Sort numerical values in array by size for further processing
+                for (int _round = (numberOfBeltRounds - 1); _round > 0; --_round) {
+                    for (int _sample = 0; _sample < _round; ++_sample) {
+                        if (dSorted[_sample] > dSorted[_sample+1]) {
+                            double dTemp = dSorted[_sample];
+                            dSorted[_sample] = dSorted[_sample+1];
+                            dSorted[_sample+1] = dTemp;
+                        }
                     }
                 }
+
+                // Median values returned from a sorted array.
+                if ((numberOfBeltRounds % 2) == 0) {
+                    dMedian = (dSorted[numberOfBeltRounds/2] + dSorted[(numberOfBeltRounds/2) - 1])/2.0;
+                } else {
+                    dMedian = dSorted[numberOfBeltRounds/2];
+                }
+
+                dMedian = dMedian + 0.5;                    // rounding by adding half and then cutting out the comma value
+                zeroArray[_sampleColumn] = (int)(dMedian);  // when casting the double to int value
             }
 
-            // Median values returned from a sorted array.
-            if ((numberOfBeltRounds % 2) == 0) {
-                dMedian = (dSorted[numberOfBeltRounds/2] + dSorted[(numberOfBeltRounds/2) - 1])/2.0;
-            } else {
-                dMedian = dSorted[numberOfBeltRounds/2];
+            // /////////////////////////////////////////////////////////////////////
+
+            productEntryPulse = (int)((double)(productEntry)/pulseResolution + 0.5);
+            weightStartPulse = (int)((double)(productWeighingStartDistance)/pulseResolution + 0.5);
+            weightEndPulse = (int)((double)(productWeighingStopDistance)/pulseResolution + 0.5);
+            productReleasePulse = (int)((double)(productRelease)/pulseResolution + 0.5);
+            maxProductLengthPulse = (int)((double)(maxProductLength)/pulseResolution + 0.5);
+
+            for (int i = 0; i < 6; i++) {
+                pulseDistanceToGate[i] = (int)((double)(productRelease + distanceToGraderGate[i])/pulseResolution + 0.5);
+                pulseDistanceToEndOfGate[i] = (int)((double)(productRelease + distanceToGraderGate[i] + distanceOpenGate[i])/pulseResolution + 0.5);
+            }
+            pulseDistanceToEndOfConveyorBelt = (int)((double)(productRelease + distanceToEndOfGrader)/pulseResolution + 0.5);
+
+            updateZero_3 = true;
+
+            if (updateZero_3 == true) {
+
+                qDebug() << "@countFewBeltRounds >= " << countFewBeltRounds;
+                countFewBeltRounds = 0;
+
+                qDebug() << "STATE: Go To Return Results To File";
+                zeroTracking = zt_ReturnResultsToFile;
             }
 
-            dMedian = dMedian + 0.5;                    // rounding by adding half and then cutting out the comma value
-            zeroArray[_sampleColumn] = (int)(dMedian);  // when casting the double to int value
+        } else {
+            qDebug() << "STATE: Go back to Product Filter";
+            zeroTracking = zt_ProductFilter;
         }
-
-        // /////////////////////////////////////////////////////////////////////
-
-        productEntryPulse = (int)((double)(productEntry)/pulseResolution + 0.5);
-        weightStartPulse = (int)((double)(productWeighingStartDistance)/pulseResolution + 0.5);
-        weightEndPulse = (int)((double)(productWeighingStopDistance)/pulseResolution + 0.5);
-        productReleasePulse = (int)((double)(productRelease)/pulseResolution + 0.5);
-        maxProductLengthPulse = (int)((double)(maxProductLength)/pulseResolution + 0.5);
-
-        for (int i = 0; i < 6; i++) {
-            pulseDistanceToGate[i] = (int)((double)(productRelease + distanceToGraderGate[i])/pulseResolution + 0.5);
-            pulseDistanceToEndOfGate[i] = (int)((double)(productRelease + distanceToGraderGate[i] + distanceOpenGate[i])/pulseResolution + 0.5);
-        }
-        pulseDistanceToEndOfConveyorBelt = (int)((double)(productRelease + distanceToEndOfGrader)/pulseResolution + 0.5);
-
-
-        zeroTracking = zt_ReturnResultsToFile;
     }
 
 
     if (zeroTracking == zt_ReturnResultsToFile) {
 
-        //filezero.open("zeroweight.csv", std::ofstream::out | std::ofstream::trunc); // trunc changed to app, trunc clears the file while app appends it
-        filezero.open("zeroweight.csv", std::ofstream::out | std::ofstream::app); // trunc changed to app, trunc clears the file while app appends it
+        if (processingProduct == false) {
 
-        if (filezero.is_open()) {
+            //filezero.open("zeroweight.csv", std::ofstream::out | std::ofstream::trunc); // trunc changed to app, trunc clears the file while app appends it
+            filezero.open("zeroweight.csv", std::ofstream::out | std::ofstream::app); // trunc changed to app, trunc clears the file while app appends it
 
-            for (int _rounds = 0; _rounds < numberOfBeltRounds; _rounds++) {
+            if (filezero.is_open()) {
 
-                filezero << "Zero sample " << _rounds << ": " << ",";
+                for (int _rounds = 0; _rounds < numberOfBeltRounds; _rounds++) {
 
-                for (int _samples = 0; _samples < samplesPerBeltRound; _samples++) {
-                    filezero << zeroUnfilteredArray[_rounds][_samples] << ",";
+                    filezero << "Zero sample " << _rounds << ": " << ",";
+
+                    for (int _samples = 0; _samples < samplesPerBeltRound; _samples++) {
+                        filezero << zeroUnfilteredArray[_rounds][_samples] << ",";
+                    }
+                    filezero << std::endl;
                 }
+
                 filezero << std::endl;
+                filezero << std::endl;
+
+                filezero << "Mean Zero sample: " << ",";
+                for (int _samples = 0; _samples < samplesPerBeltRound; _samples++) {
+                    filezero << zeroArray[_samples] <<  ",";
+                }
+
+                filezero << std::endl;
+                filezero << "Total pulses: " << pulseCounterInAllRows << "" << std::endl;
+                filezero << std::endl;
+                filezero << "Pulses per beltround: " << pulsesPerBeltRound << "" << std::endl;
+                filezero << std::endl;
+                filezero << "Resolution of each pulse: " << pulseResolution << " mm " << std::endl;
+                filezero << std::endl;
+                for (int i = 0; i < numberOfBeltRounds; i++) {
+                    filezero << "PulseCounterInZeroRow number " << i << ": " << pulseCounterInEachRow[i] << "" << std::endl;
+                }
+
             }
+            filezero.close();
 
-            filezero << std::endl;
-            filezero << std::endl;
+            qDebug() << "STATE: Go to Product Filter";
+            updateZero_1 = false;
+            updateZero_2 = false;
+            updateZero_3 = false;
+            zeroTracking = zt_ProductFilter;
 
-            filezero << "Mean Zero sample: " << ",";
-            for (int _samples = 0; _samples < samplesPerBeltRound; _samples++) {
-                filezero << zeroArray[_samples] <<  ",";
-            }
+            int temp = 0;
+            emit sendFilteredWeight(temp);
 
-            filezero << std::endl;
-            filezero << "Total pulses: " << pulseCounterInAllRows << "" << std::endl;
-            filezero << std::endl;
-            filezero << "Pulses per beltround: " << pulsesPerBeltRound << "" << std::endl;
-            filezero << std::endl;
-            filezero << "Resolution of each pulse: " << pulseResolution << " mm " << std::endl;
-            filezero << std::endl;
-            for (int i = 0; i < numberOfBeltRounds; i++) {
-                filezero << "PulseCounterInZeroRow number " << i << ": " << pulseCounterInEachRow[i] << "" << std::endl;
-            }
-
+        } else {
+            qDebug() << "STATE: Go back to Product Filter";
+            zeroTracking = zt_ProductFilter;
         }
-        filezero.close();
 
-        int temp = 0;
-        emit sendFilteredWeight(temp);
-        zeroTracking = zt_ProductFilter;
     }
 
 
@@ -691,11 +737,23 @@ void MyScale::weightProcessing(int weightValueFromScale) {
 
                 if (updateSampleCounter >= (pulsesPerBeltRound*1.05)) {
 
-                    zeroTracking = zt_UpdateZeroWeightSamples;
-                    qDebug() << "Update ZeroWeight Samples";
-                    // Here we can emit information to display that running ZERO tracking update has been performed
+                    updateZero_1 = true;
                 }
             }
+
+            if (updateZero_1 == true) {
+                qDebug() << "STATE: Update Zero Weight Samples";
+                zeroTracking = zt_UpdateZeroWeightSamples;
+
+            } else if (updateZero_2 == true) {
+                qDebug() << "STATE: Calculate Median Of Zero Path";
+                zeroTracking = zt_CalculateMedianOfZeroPath;
+
+            } else if (updateZero_3 == true) {
+                qDebug() << "STATE: Return Results To File";
+                zeroTracking = zt_ReturnResultsToFile;
+            }
+
         } else {
             updateSampleCounter = 0;
         }
@@ -708,15 +766,18 @@ void MyScale::weightProcessing(int weightValueFromScale) {
             if (productTickPosition[_elementId] >= 0) {
                 productTickPosition[_elementId]++;
 
-                if (((productTickPosition[_elementId] >= 0) == true) && ((inProductSensor == true) == true)) {
+                if (productTickPosition[_elementId] >= 0) {
 
-                    qDebug() << "@product: " << _elementId << " - productTickPosition: " << productTickPosition[_elementId];
+                    if (inProductSensor == true) {
 
-                    proData.productLengthPulseCounter[_elementId]++;
+                        qDebug() << "@product: " << _elementId << " - productTickPosition: " << productTickPosition[_elementId];
 
-                    if (proData.productLengthPulseCounter[_elementId] >= maxProductLengthPulse)
-                    {
-                        leavingProductSensorSignal();
+                        proData.productLengthPulseCounter[_elementId]++;
+
+                        if (proData.productLengthPulseCounter[_elementId] >= maxProductLengthPulse)
+                        {
+                            leavingProductSensorSignal();
+                        }
                     }
                 }
 
@@ -729,102 +790,135 @@ void MyScale::weightProcessing(int weightValueFromScale) {
 
 
                 // At weiging endpoint on scale platform calculate mean value and emit modeled weight
-                if (((productTickPosition[_elementId] >= weightEndPulse) == true) && ((productOnScaleArea[_elementId] == true) == true)) {
-                    meanWeightSample = 0;
+                if ((productTickPosition[_elementId] >= weightEndPulse) == true) {
 
-                    for (int _sample = weightStartPulse; _sample < weightEndPulse; _sample++) {
-                        meanWeightSample += productIDweights[_elementId][_sample];
-                    }
+                    if (productOnScaleArea[_elementId] == true) {
 
-                    meanWeightSample = meanWeightSample / (weightEndPulse-weightStartPulse);
+                        meanWeightSample = 0;
 
-                    // Here calculate some kind of confidence .. how many datapoints of approx. 40 are within 5[gr] relative to meanWeight
-                    for (int _sample = weightStartPulse; _sample < weightEndPulse; _sample++) {
-
-                        if (abs(meanWeightSample - productIDweights[_elementId][_sample]) < 5) {
-
-                            proData.productConfidence[_elementId]++;
+                        for (int _sample = weightStartPulse; _sample < weightEndPulse; _sample++) {
+                            meanWeightSample += productIDweights[_elementId][_sample];
                         }
+
+                        meanWeightSample = meanWeightSample / (weightEndPulse-weightStartPulse);
+
+                        // Here calculate some kind of confidence .. how many datapoints of approx. 40 are within 5[gr] relative to meanWeight
+                        for (int _sample = weightStartPulse; _sample < weightEndPulse; _sample++) {
+
+                            if (abs(meanWeightSample - productIDweights[_elementId][_sample]) < 5) {
+
+                                proData.productConfidence[_elementId]++;
+                            }
+                        }
+
+
+                        proData.productWeight[_elementId] = meanWeightSample;
+
+                        proData.destinationGate[_elementId] = returnToGate(proData.productWeight[_elementId]);
+
+                        qDebug()
+                                << " - Serial: " << QString::number(proData.serialId[_elementId])
+    //                            << " - Batch: " << QString::fromStdString(proData.batchId[_elementId]).toInt()
+    //                            << " - RecipeId: " << QString::fromStdString(proData.recipeId[_elementId].c_str())
+    //                            << " - ProductId: " << QString::fromStdString(proData.productId[_elementId].c_str())
+    //                            << " - ProductType: " << QString::fromStdString(proData.productType[_elementId].c_str())
+                                << " - Weight: " << proData.productWeight[_elementId]
+                                << " - Confidence: " << proData.productConfidence[_elementId]
+                                << " - Length: " << proData.productLength[_elementId]
+                                << " - Destination: " << proData.destinationGate[_elementId];
+
+
+                        emit sendDescription(QString::fromStdString(proData.description[_elementId].c_str()));
+                        emit sendBatchId(QString::fromStdString(proData.batchId[_elementId].c_str()));
+                        emit sendRecipeId(QString::fromStdString(proData.recipeId[_elementId].c_str()));
+                        emit sendProductId(QString::fromStdString(proData.productId[_elementId].c_str()));
+                        emit sendProductType(QString::fromStdString(proData.productType[_elementId].c_str()));
+                        emit sendSerialNumber(proData.serialId[_elementId]);
+                        emit sendFilteredWeight(proData.productWeight[_elementId]);
+                        emit sendConfidence(QString::number(proData.productConfidence[_elementId]));
+                        emit sendLength(QString::number(proData.productLength[_elementId]));
+                        emit sendDestinationGate(QString::number(proData.destinationGate[_elementId]));
+
+
+    //                    emit sendMQTT(QString::fromStdString(proData.batchId[_elementId].c_str()), "scale/batchID");
+    //                    emit sendMQTT(QString::fromStdString(proData.recipeId[_elementId].c_str()), "scale/recipeID");
+    //                    emit sendMQTT(QString::fromStdString(proData.productId[_elementId].c_str()), "scale/productID");
+    //                    emit sendMQTT(QString::fromStdString(proData.productType[_elementId].c_str()), "scale/productType");
+    //                    emit sendMQTT(QString::number(proData.serialId[_elementId]), "scale/serialID");
+    //                    emit sendMQTT(QString::number(proData.productWeight[_elementId]), "scale/productWeight");
+    //                    emit sendMQTT(QString::number(proData.productConfidence[_elementId]), "scale/productConfidence");
+    //                    emit sendMQTT(QString::number(proData.productLength[_elementId]), "scale/productLength");
+    //                    emit sendMQTT(QString::number(proData.destinationGate[_elementId]), "scale/destinationGate");
+
+
+                        proData.productLengthPulseCounter[_elementId] = 0;
+                        productOnScaleArea[_elementId] = false;
+                        productEnteringGradingArea[_elementId] = true;
                     }
-
-
-                    proData.productWeight[_elementId] = meanWeightSample;
-
-                    proData.destinationGate[_elementId] = returnToGate(proData.productWeight[_elementId]);
-
-                    qDebug()
-                            << " - Serial: " << QString::number(proData.serialId[_elementId])
-//                            << " - Batch: " << QString::fromStdString(proData.batchId[_elementId]).toInt()
-//                            << " - RecipeId: " << QString::fromStdString(proData.recipeId[_elementId].c_str())
-//                            << " - ProductId: " << QString::fromStdString(proData.productId[_elementId].c_str())
-//                            << " - ProductType: " << QString::fromStdString(proData.productType[_elementId].c_str())
-                            << " - Weight: " << proData.productWeight[_elementId]
-                            << " - Confidence: " << proData.productConfidence[_elementId]
-                            << " - Length: " << proData.productLength[_elementId]
-                            << " - Destination: " << proData.destinationGate[_elementId];
-
-
-                    emit sendMQTT(QString::fromStdString(proData.batchId[_elementId].c_str()), "scale/batchID");
-                    emit sendMQTT(QString::fromStdString(proData.recipeId[_elementId].c_str()), "scale/recipeID");
-                    emit sendMQTT(QString::fromStdString(proData.productId[_elementId].c_str()), "scale/productID");
-                    emit sendMQTT(QString::fromStdString(proData.productType[_elementId].c_str()), "scale/productType");
-                    emit sendMQTT(QString::number(proData.serialId[_elementId]), "scale/serialID");
-                    emit sendMQTT(QString::number(proData.productWeight[_elementId]), "scale/productWeight");
-                    emit sendMQTT(QString::number(proData.productConfidence[_elementId]), "scale/productConfidence");
-                    emit sendMQTT(QString::number(proData.productLength[_elementId]), "scale/productLength");
-                    emit sendMQTT(QString::number(proData.destinationGate[_elementId]), "scale/destinationGate");
-
-                    emit sendDescription(QString::fromStdString(proData.description[_elementId].c_str()));
-                    emit sendBatchId(QString::fromStdString(proData.batchId[_elementId].c_str()));
-                    emit sendRecipeId(QString::fromStdString(proData.recipeId[_elementId].c_str()));
-                    emit sendProductId(QString::fromStdString(proData.productId[_elementId].c_str()));
-                    emit sendProductType(QString::fromStdString(proData.productType[_elementId].c_str()));
-                    emit sendSerialNumber(proData.serialId[_elementId]);
-                    emit sendFilteredWeight(proData.productWeight[_elementId]);
-                    emit sendConfidence(QString::number(proData.productConfidence[_elementId]));
-                    emit sendLength(QString::number(proData.productLength[_elementId]));
-                    emit sendDestinationGate(QString::number(proData.destinationGate[_elementId]));
-
-                    proData.productLengthPulseCounter[_elementId] = 0;
-                    productOnScaleArea[_elementId] = false;
-                    productEnteringGradingArea[_elementId] = true;
                 }
 
 
                 // Product is leaving the main platform, at delivery point, then we can consider to update the ZERO weight again.
-                if (((productTickPosition[_elementId] >=  productReleasePulse) == true) && ((productEnteringGradingArea[_elementId] == true) == true)) {
+                if (productTickPosition[_elementId] >=  productReleasePulse) {
 
-                    filezero.open("zeroweight.csv", std::ofstream::out | std::ofstream::app); // trunc changed to app, trunc clears the file while app appends it
+                    if (productEnteringGradingArea[_elementId] == true) {
 
-                    if (filezero.is_open()) {
+                        filezero.open("zeroweight.csv", std::ofstream::out | std::ofstream::app); // trunc changed to app, trunc clears the file while app appends it
 
-                        filezero << "Mean weight sample is :" << meanWeightSample <<",";
+                        if (filezero.is_open()) {
 
-                        for (int _sample = weightStartPulse; _sample < weightEndPulse; _sample++) {
-                            filezero << productIDweights[_elementId][_sample] << ",";
+                            filezero << "Mean weight sample is :" << meanWeightSample <<",";
+
+                            for (int _sample = weightStartPulse; _sample < weightEndPulse; _sample++) {
+                                filezero << productIDweights[_elementId][_sample] << ",";
+                            }
+                            filezero << std::endl;
                         }
-                        filezero << std::endl;
+                        filezero.close();
+
+                        processingProduct = false;
+                        productEnteringGradingArea[_elementId] = false;
+                        productEnteringGateArea[proData.destinationGate[_elementId]] = true;
+                        openGate[proData.destinationGate[_elementId]] = true;
+
+
+                        emit plotData(_elementId);
                     }
-                    filezero.close();
-
-                    processingProduct = false;
-                    productEnteringGradingArea[_elementId] = false;
-
-                    emit plotData(_elementId);
                 }
 
-                if (((productTickPosition[_elementId] >= pulseDistanceToGate[_elementId]) == true)) // && ((gateAvailable[proData.destinationGate[_elementId]] == true) == true))
-                {
-                    gateAvailable[proData.destinationGate[_elementId]] = false;
-                    emit activateGate(proData.destinationGate[_elementId], 1);
+                if (productTickPosition[_elementId] >= pulseDistanceToGate[proData.destinationGate[_elementId]]) {
+
+                    if (productEnteringGateArea[proData.destinationGate[_elementId]] == true) {
+
+                        //FIXME: This only gives single pulse not constant signal
+                        if (openGate[proData.destinationGate[_elementId]] == true) {
+
+                            qDebug() << "@product: " << _elementId << " - productTickPosition: " << productTickPosition[_elementId] << "ENTERING@GATE !!!";
+                            openGate[proData.destinationGate[_elementId]] = false;
+                            closeGate[proData.destinationGate[_elementId]] = true;
+
+                            emit activateGate(proData.destinationGate[_elementId], 1);
+                        }
+                    }
                 }
 
-                if (((productTickPosition[_elementId] >= pulseDistanceToEndOfGate[_elementId]) == true)) // && ((gateAvailable[proData.destinationGate[_elementId]] == false) == true))
-                {
-                    //qDebug() << "@product: " << _elementId << " - productTickPosition: " << productTickPosition[_elementId] << "LEAVING@GATE !!!";
+                if (productTickPosition[_elementId] >= pulseDistanceToEndOfGate[proData.destinationGate[_elementId]]) {
 
-                    gateAvailable[proData.destinationGate[_elementId]] = true;
-                    emit activateGate(proData.destinationGate[_elementId], 0);
+                    if (productEnteringGateArea[proData.destinationGate[_elementId]] == true) {
+
+                        //FIXME: This only gives single pulse not constant signal
+                        if (closeGate[proData.destinationGate[_elementId]] == true) {
+
+                            qDebug() << "@product: " << _elementId << " - productTickPosition: " << productTickPosition[_elementId] << "LEAVING@GATE !!!";
+
+                            productEnteringGateArea[proData.destinationGate[_elementId]] = false;
+                            closeGate[proData.destinationGate[_elementId]] = false;
+
+                            emit activateGate(proData.destinationGate[_elementId], 0);
+
+                            productTickPosition[_elementId] = -1;
+                        }
+                    }
                 }
 
                 if (productTickPosition[_elementId] >= pulseDistanceToEndOfConveyorBelt)

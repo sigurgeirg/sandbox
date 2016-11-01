@@ -103,6 +103,11 @@ private:
     bool beltRoundPulse;
     bool requestZeroUpdate;
 
+    bool updateZero_1;
+    bool updateZero_2;
+    bool updateZero_3;
+    bool updateZero_4;
+
     long sampleCounter;
     long lastSampleCounter;
     long updateSampleCounter;
@@ -182,7 +187,9 @@ private:
 
     // Grader settings variables:
     int numberOfGatesOnGrader;          // numberOfGatesOnGrader
-    bool gateAvailable[6];
+    bool productEnteringGateArea[6];
+    bool openGate[6];
+    bool closeGate[6];
     int distanceToGraderGate[10];        // [mm]
     int distanceOpenGate[10];            // [mm]
     int distanceToEndOfGraderGate[10];   // [mm]

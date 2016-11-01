@@ -221,6 +221,7 @@ void MyDio::run() {
         if (rising[2] == 1) {
             qDebug() << "Entering Product Sensor";
             productEnteringSensor = true;
+
             holdRisingForCount++;
 
             if (holdRisingForCount >= 2){
