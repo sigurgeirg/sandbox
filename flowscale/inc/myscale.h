@@ -70,6 +70,10 @@ public:
         int productWeight[numberOfElementsInList];
         int productConfidence[numberOfElementsInList];
         int destinationGate[numberOfElementsInList];
+        bool inProductSensor[numberOfElementsInList];
+        bool productEnteringGateArea[numberOfElementsInList];
+        bool openGate[numberOfElementsInList];
+        bool closeGate[numberOfElementsInList];
     } proData;
 
 private:
@@ -94,7 +98,6 @@ private:
     //int calibrationWeight;  // Variable that keeps calibration weight value in terms of [g]
     int weightGROSSorNET[1];// Indicates whether selected weight is GROSS or NET weight.
 
-    bool inProductSensor;
     bool processingProduct;
     bool productOnScaleArea[numberOfElementsInList];
     bool productEnteringGradingArea[numberOfElementsInList];
@@ -186,10 +189,6 @@ private:
     int meanWeightSample;
 
     // Grader settings variables:
-    int numberOfGatesOnGrader;          // numberOfGatesOnGrader
-    bool productEnteringGateArea[6];
-    bool openGate[6];
-    bool closeGate[6];
     int distanceToGraderGate[10];        // [mm]
     int distanceOpenGate[10];            // [mm]
     int distanceToEndOfGraderGate[10];   // [mm]

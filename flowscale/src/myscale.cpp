@@ -26,7 +26,6 @@ MyScale::MyScale(QObject *parent) :
     statusRegisterBinaryTempValue = new int[16];
     statusRegisterBinaryReturnValue = new int[16];
 
-    inProductSensor = false;
     processingProduct = false;
     requestBeltRoundPulse = false;
     beltRoundPulse = false;
@@ -88,14 +87,6 @@ MyScale::MyScale(QObject *parent) :
     zeroTracking = zt_InitializeZeroVectors;
 
     // Grader settings variables:
-    numberOfGatesOnGrader = 6;
-    for (int i = 0; i < numberOfGatesOnGrader; i++)
-    {
-        productEnteringGateArea[i] = false;
-        openGate[i] = false;
-        closeGate[i] = false;
-    }
-
     distanceToGraderGate[0] = 200;  // [mm]
     distanceToGraderGate[1] = 200;
     distanceToGraderGate[2] = 1200;
@@ -408,7 +399,6 @@ void MyScale::conveyorBeltSignal()
 
 void MyScale::enteringProductSensorSignal()
 {
-    inProductSensor = true;
     processingProduct = true;
     productCounter++;
     tempID++;
@@ -449,6 +439,10 @@ void MyScale::enteringProductSensorSignal()
     proData.productWeight[tempID] = 0;
     proData.productConfidence[tempID] = 0;
     proData.destinationGate[tempID] = 0;
+    proData.inProductSensor[tempID] = true;
+    proData.productEnteringGateArea[tempID] = false;
+    proData.openGate[tempID] = false;
+    proData.closeGate[tempID] = false;
     // //////////////////////////////////////////////////////////
 }
 
@@ -460,7 +454,7 @@ void MyScale::leavingProductSensorSignal() {
     // If piece long enough, process normally
     if (proData.productLengthPulseCounter[tempID] > 5) {
 
-        inProductSensor = false;
+        proData.inProductSensor[tempID] = false;
         productOnScaleArea[tempID] = true;
 
         qDebug() << "@leavingProductSensorSignal():" << tempID;
@@ -768,7 +762,7 @@ void MyScale::weightProcessing(int weightValueFromScale) {
 
                 if (productTickPosition[_elementId] >= 0) {
 
-                    if (inProductSensor == true) {
+                    if (proData.inProductSensor[_elementId] == true) {
 
                         qDebug() << "@product: " << _elementId << " - productTickPosition: " << productTickPosition[_elementId];
 
@@ -790,7 +784,7 @@ void MyScale::weightProcessing(int weightValueFromScale) {
 
 
                 // At weiging endpoint on scale platform calculate mean value and emit modeled weight
-                if ((productTickPosition[_elementId] >= weightEndPulse) == true) {
+                if (productTickPosition[_elementId] >= weightEndPulse) {
 
                     if (productOnScaleArea[_elementId] == true) {
 
@@ -852,9 +846,11 @@ void MyScale::weightProcessing(int weightValueFromScale) {
 
 
                         proData.productLengthPulseCounter[_elementId] = 0;
-                        productOnScaleArea[_elementId] = false;
                         productEnteringGradingArea[_elementId] = true;
+                        productOnScaleArea[_elementId] = false;
+
                     }
+                    processingProduct = false;
                 }
 
 
@@ -863,58 +859,61 @@ void MyScale::weightProcessing(int weightValueFromScale) {
 
                     if (productEnteringGradingArea[_elementId] == true) {
 
-                        filezero.open("zeroweight.csv", std::ofstream::out | std::ofstream::app); // trunc changed to app, trunc clears the file while app appends it
+//                        // FIXME: Problably no need to do this in production, suggest to leave this out
+//                        // FIXME: except when we are debugging...
+//                        if (filezero.is_open()) {
 
-                        if (filezero.is_open()) {
+//                            filezero << "Mean weight sample is :" << meanWeightSample <<",";
 
-                            filezero << "Mean weight sample is :" << meanWeightSample <<",";
+//                            for (int _sample = weightStartPulse; _sample < weightEndPulse; _sample++) {
+//                                filezero << productIDweights[_elementId][_sample] << ",";
+//                            }
+//                            filezero << std::endl;
+//                        }
+//                        filezero.close();
 
-                            for (int _sample = weightStartPulse; _sample < weightEndPulse; _sample++) {
-                                filezero << productIDweights[_elementId][_sample] << ",";
-                            }
-                            filezero << std::endl;
-                        }
-                        filezero.close();
-
-                        processingProduct = false;
                         productEnteringGradingArea[_elementId] = false;
-                        productEnteringGateArea[proData.destinationGate[_elementId]] = true;
-                        openGate[proData.destinationGate[_elementId]] = true;
 
+//                        processingProduct = false;
 
                         emit plotData(_elementId);
+
+                        // FIXME: Þessi yrðing er rökleysa og skilar bara einhverju aktívu stykki...
+                        proData.productEnteringGateArea[_elementId] = true;
+                        proData.openGate[_elementId] = true;
                     }
                 }
 
                 if (productTickPosition[_elementId] >= pulseDistanceToGate[proData.destinationGate[_elementId]]) {
 
-                    if (productEnteringGateArea[proData.destinationGate[_elementId]] == true) {
+                    if (proData.productEnteringGateArea[_elementId] == true) {
 
                         //FIXME: This only gives single pulse not constant signal
-                        if (openGate[proData.destinationGate[_elementId]] == true) {
+                        if (proData.openGate[_elementId] == true) {
 
                             qDebug() << "@product: " << _elementId << " - productTickPosition: " << productTickPosition[_elementId] << "ENTERING@GATE !!!";
-                            openGate[proData.destinationGate[_elementId]] = false;
-                            closeGate[proData.destinationGate[_elementId]] = true;
 
                             emit activateGate(proData.destinationGate[_elementId], 1);
+
+                            proData.openGate[_elementId] = false;
+                            proData.closeGate[_elementId] = true;
                         }
                     }
                 }
 
                 if (productTickPosition[_elementId] >= pulseDistanceToEndOfGate[proData.destinationGate[_elementId]]) {
 
-                    if (productEnteringGateArea[proData.destinationGate[_elementId]] == true) {
+                    if (proData.productEnteringGateArea[_elementId] == true) {
 
                         //FIXME: This only gives single pulse not constant signal
-                        if (closeGate[proData.destinationGate[_elementId]] == true) {
+                        if (proData.closeGate[_elementId] == true) {
 
                             qDebug() << "@product: " << _elementId << " - productTickPosition: " << productTickPosition[_elementId] << "LEAVING@GATE !!!";
 
-                            productEnteringGateArea[proData.destinationGate[_elementId]] = false;
-                            closeGate[proData.destinationGate[_elementId]] = false;
-
                             emit activateGate(proData.destinationGate[_elementId], 0);
+
+                            proData.productEnteringGateArea[_elementId] = false;
+                            proData.closeGate[_elementId] = false;
 
                             productTickPosition[_elementId] = -1;
                         }
