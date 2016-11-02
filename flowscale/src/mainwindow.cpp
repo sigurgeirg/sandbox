@@ -47,6 +47,9 @@ MainWindow::MainWindow(QWidget *parent) :
         connect(scale, SIGNAL(sendLength(QString)),             this,   SLOT(displayLength(QString)));
         connect(scale, SIGNAL(sendDestinationGate(QString)),    this,   SLOT(displayDestinationGate(QString)));
 
+        // Set output signals, such as grading gates:
+        connect(scale, SIGNAL(activateGate(int, int)),          this,    SLOT(setOutput(int, int)));
+
         // Product Data Over Mosquitto transmission:
         //connect(scale, SIGNAL(sendMQTT(QString,const char*)),   mosq, SLOT(sendMessage(QString,const char*)));
 
@@ -407,6 +410,17 @@ void MainWindow::on_btnGrossWeight_clicked()
 void MainWindow::on_btnNetWeight_clicked()
 {
     scale->netWeight();
+}
+
+void MainWindow::setOutput(int gate, int value)
+{
+    if (value == 1) {
+        ui->radioButton->setChecked(true);
+    } else if (value == 0) {
+        ui->radioButton->setChecked(false);
+    }
+
+
 }
 
 // FIXME: Nota serialnumber frekar en currentWorkingID

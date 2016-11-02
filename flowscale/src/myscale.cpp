@@ -17,7 +17,7 @@ MyScale::MyScale(QObject *parent) :
     netDisplay = 7;
     semiAutomaticZero = 8;
     grossDisplay = 9;
-    zeroSettingForCalibration = 100;
+    zeroSettingForCalibration = 50;
     sampleWeightStorage = 101;
 
     readFromRegister = statusRegister;
@@ -64,7 +64,7 @@ MyScale::MyScale(QObject *parent) :
 
     productCounter = 0;
     filterCounter = 0;
-    updateZeroEveryNumberOfRounds = 100;
+    updateZeroEveryNumberOfRounds = 20;
     numberOfBeltRoundsZero = -4;
     countFewBeltRounds = 0;
     pulseCounterInAllRows = 0;
@@ -585,7 +585,7 @@ void MyScale::weightProcessing(int weightValueFromScale) {
             }
 
         } else {
-            qDebug() << "STATE: Go back to Product Filter";
+            qDebug() << "STATE: Return to Product Filter";
             zeroTracking = zt_ProductFilter;
         }
     }
@@ -649,12 +649,12 @@ void MyScale::weightProcessing(int weightValueFromScale) {
                 qDebug() << "@countFewBeltRounds >= " << countFewBeltRounds;
                 countFewBeltRounds = 0;
 
-                qDebug() << "STATE: Go To Return Results To File";
+                qDebug() << "STATE: Go to Return Results To File";
                 zeroTracking = zt_ReturnResultsToFile;
             }
 
         } else {
-            qDebug() << "STATE: Go back to Product Filter";
+            qDebug() << "STATE: Return to Product Filter";
             zeroTracking = zt_ProductFilter;
         }
     }
@@ -711,7 +711,7 @@ void MyScale::weightProcessing(int weightValueFromScale) {
             emit sendFilteredWeight(temp);
 
         } else {
-            qDebug() << "STATE: Go back to Product Filter";
+            qDebug() << "STATE: Return to Product Filter";
             zeroTracking = zt_ProductFilter;
         }
 
@@ -721,6 +721,7 @@ void MyScale::weightProcessing(int weightValueFromScale) {
 
     if (zeroTracking == zt_ProductFilter) {
 
+        // ////////////////////////////////////
         if (processingProduct == false) {
 
             if (requestZeroUpdate == true) {
