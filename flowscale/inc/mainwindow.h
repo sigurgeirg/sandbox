@@ -103,7 +103,7 @@ private slots:
     void on_xmax_clicked();
     void on_ymin_clicked();
     void on_ymax_clicked();
-    void setOutput(int, int);
+    void setOutput(int, bool);
 
     // /////////////////////////
     // Simulation

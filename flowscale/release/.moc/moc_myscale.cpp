@@ -49,13 +49,13 @@ static const uint qt_meta_data_MyScale[] = {
      389,  357,    8,    8, 0x05,
 
  // slots: signature, parameters, type, tag, flags
-     411,    8,    8,    8, 0x0a,
-     432,    8,    8,    8, 0x0a,
-     462,    8,    8,    8, 0x0a,
-     491,    8,    8,    8, 0x0a,
-     505,    8,    8,    8, 0x0a,
-     519,    8,    8,    8, 0x0a,
-     533,    8,    8,    8, 0x0a,
+     412,    8,    8,    8, 0x0a,
+     433,    8,    8,    8, 0x0a,
+     463,    8,    8,    8, 0x0a,
+     492,    8,    8,    8, 0x0a,
+     506,    8,    8,    8, 0x0a,
+     520,    8,    8,    8, 0x0a,
+     534,    8,    8,    8, 0x0a,
 
        0        // eod
 };
@@ -71,7 +71,7 @@ static const char qt_meta_stringdata_MyScale[] = {
     "productWeight(int)\0requestNewRecipe(QString)\0"
     "conveyorRunState(QString)\0,\0"
     "sendMQTT(QString,const char*)\0"
-    "activateGate(int,int)\0conveyorBeltSignal()\0"
+    "activateGate(int,bool)\0conveyorBeltSignal()\0"
     "enteringProductSensorSignal()\0"
     "leavingProductSensorSignal()\0xmin(QString)\0"
     "xmax(QString)\0ymin(QString)\0ymax(QString)\0"
@@ -99,7 +99,7 @@ void MyScale::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, voi
         case 13: _t->requestNewRecipe((*reinterpret_cast< QString(*)>(_a[1]))); break;
         case 14: _t->conveyorRunState((*reinterpret_cast< QString(*)>(_a[1]))); break;
         case 15: _t->sendMQTT((*reinterpret_cast< QString(*)>(_a[1])),(*reinterpret_cast< const char*(*)>(_a[2]))); break;
-        case 16: _t->activateGate((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< int(*)>(_a[2]))); break;
+        case 16: _t->activateGate((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< bool(*)>(_a[2]))); break;
         case 17: _t->conveyorBeltSignal(); break;
         case 18: _t->enteringProductSensorSignal(); break;
         case 19: _t->leavingProductSensorSignal(); break;
@@ -264,7 +264,7 @@ void MyScale::sendMQTT(QString _t1, const char * _t2)
 }
 
 // SIGNAL 16
-void MyScale::activateGate(int _t1, int _t2)
+void MyScale::activateGate(int _t1, bool _t2)
 {
     void *_a[] = { 0, const_cast<void*>(reinterpret_cast<const void*>(&_t1)), const_cast<void*>(reinterpret_cast<const void*>(&_t2)) };
     QMetaObject::activate(this, &staticMetaObject, 16, _a);

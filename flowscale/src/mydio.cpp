@@ -93,10 +93,10 @@ void MyDio::updateOutputs() {
 }
 
 
-void MyDio::setOutput(int output, int value) {
+void MyDio::setOutput(int output, bool value) {
 
-    activeOutput = output;
-    activeValue  = value;
+//    activeOutput = output;
+//    activeValue  = value;
 
 //    qDebug() << "Output: " << activeOutput << " == " << activeValue;
 }

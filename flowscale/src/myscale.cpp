@@ -125,11 +125,25 @@ MyScale::MyScale(QObject *parent) :
     gateBufferAmount[4] = 40;
     gateBufferAmount[5] = 40;
 
+    gateBufferProcessedAmount[0] = 0; // [pcs]
+    gateBufferProcessedAmount[1] = 0;
+    gateBufferProcessedAmount[2] = 0;
+    gateBufferProcessedAmount[3] = 0;
+    gateBufferProcessedAmount[4] = 0;
+    gateBufferProcessedAmount[5] = 0;
+
+    gateBufferProcessedWeight[0] = 0; // [kg]
+    gateBufferProcessedWeight[1] = 0;
+    gateBufferProcessedWeight[2] = 0;
+    gateBufferProcessedWeight[3] = 0;
+    gateBufferProcessedWeight[4] = 0;
+    gateBufferProcessedWeight[5] = 0;
+
     emit conveyorRunState("conveyorOff");
 
 
     // Set output signals, such as grading gates:
-    connect(this, SIGNAL(activateGate(int, int)),          dio,    SLOT(setOutput(int, int)));
+    connect(this, SIGNAL(activateGate(int, bool)),          dio,    SLOT(setOutput(int, bool)));
 
     // Input sensor signals:
     connect(dio,   SIGNAL(conveyorSignal()),                this,  SLOT(conveyorBeltSignal()));
@@ -149,6 +163,10 @@ MyScale::~MyScale()
 
 
 void MyScale::updateRecipe(QString selectedRecipe) {
+
+    // FIXME: Write recipeData To File
+
+
 
     recipe->updateRecipe(selectedRecipe);
 
@@ -175,6 +193,12 @@ void MyScale::updateRecipe(QString selectedRecipe) {
     emit sendProductId(QString::fromStdString(productID.c_str()));
     emit sendProductType(QString::fromStdString(productType.c_str()));
     emit sendDescription(QString::fromStdString(productDescription.c_str()));
+
+    // FIXME: Clear recipe variables
+    for (int i = 0; i < 6; i++) {
+        gateBufferProcessedWeight[i] = 0;
+        gateBufferProcessedAmount[i] = 0;
+    }
 }
 
 
@@ -850,6 +874,15 @@ void MyScale::weightProcessing(int weightValueFromScale) {
                         productEnteringGradingArea[_elementId] = true;
                         productOnScaleArea[_elementId] = false;
 
+                        //
+                        gateBufferProcessedAmount[_elementId] = gateBufferProcessedAmount[_elementId] + 1; // [pcs]
+                        gateBufferProcessedWeight[_elementId] = gateBufferProcessedWeight[_elementId] + (proData.productWeight[_elementId]/1000); // [kg]
+
+                        emit gateBufferStatus()
+                        //
+
+
+
                     }
                     processingProduct = false;
                 }
@@ -894,7 +927,7 @@ void MyScale::weightProcessing(int weightValueFromScale) {
 
                             qDebug() << "@product: " << _elementId << " - productTickPosition: " << productTickPosition[_elementId] << "ENTERING@GATE !!!";
 
-                            emit activateGate(proData.destinationGate[_elementId], 1);
+                            emit activateGate(proData.destinationGate[_elementId], true);
 
                             proData.openGate[_elementId] = false;
                             proData.closeGate[_elementId] = true;
@@ -911,7 +944,7 @@ void MyScale::weightProcessing(int weightValueFromScale) {
 
                             qDebug() << "@product: " << _elementId << " - productTickPosition: " << productTickPosition[_elementId] << "LEAVING@GATE !!!";
 
-                            emit activateGate(proData.destinationGate[_elementId], 0);
+                            emit activateGate(proData.destinationGate[_elementId], false);
 
                             proData.productEnteringGateArea[_elementId] = false;
                             proData.closeGate[_elementId] = false;

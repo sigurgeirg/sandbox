@@ -66,7 +66,7 @@ signals:
 
 
 public slots:
-    void setOutput(int, int);
+    void setOutput(int, bool);
     // /////////////////////////
     // Simulation
 //    void updateInputSim(unsigned char, bool);

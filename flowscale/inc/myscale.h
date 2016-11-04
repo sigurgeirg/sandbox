@@ -200,6 +200,9 @@ private:
     int gateBufferWeight[10]; // [kg]
     int gateBufferAmount[10]; // [pcs]
 
+    int gateBufferProcessedWeight[10]; // [kg]
+    int gateBufferProcessedAmount[10]; // [pcs]
+
     int evenDistribution;
     int fillUpInSequence;
     int sortingMethod;
@@ -226,7 +229,7 @@ signals:
     void requestNewRecipe(QString);
     void conveyorRunState(QString);
     void sendMQTT(QString, const char*);
-    void activateGate(int, int);
+    void activateGate(int, bool);
 
 public slots:
     void conveyorBeltSignal();

@@ -48,7 +48,7 @@ MainWindow::MainWindow(QWidget *parent) :
         connect(scale, SIGNAL(sendDestinationGate(QString)),    this,   SLOT(displayDestinationGate(QString)));
 
         // Set output signals, such as grading gates:
-        connect(scale, SIGNAL(activateGate(int, int)),          this,    SLOT(setOutput(int, int)));
+        connect(scale, SIGNAL(activateGate(int, bool)),          this,    SLOT(setOutput(int, bool)));
 
         // Product Data Over Mosquitto transmission:
         //connect(scale, SIGNAL(sendMQTT(QString,const char*)),   mosq, SLOT(sendMessage(QString,const char*)));
@@ -412,15 +412,49 @@ void MainWindow::on_btnNetWeight_clicked()
     scale->netWeight();
 }
 
-void MainWindow::setOutput(int gate, int value)
+void MainWindow::setOutput(int gate, bool value)
 {
-    if (value == 1) {
-        ui->radioButton->setChecked(true);
-    } else if (value == 0) {
-        ui->radioButton->setChecked(false);
+    if (gate == 1) {
+        if (value == true) {
+            ui->cbxGate1->setChecked(true); }
+        if (value == false) {
+            ui->cbxGate1->setChecked(false); }
     }
 
+    if (gate == 2) {
+        if (value == true) {
+            ui->cbxGate2->setChecked(true); }
+        if (value == false) {
+            ui->cbxGate2->setChecked(false); }
+    }
 
+    if (gate == 3) {
+        if (value == true) {
+            ui->cbxGate3->setChecked(true); }
+        if (value == false) {
+            ui->cbxGate3->setChecked(false); }
+    }
+
+    if (gate == 4) {
+        if (value == true) {
+            ui->cbxGate4->setChecked(true); }
+        if (value == false) {
+            ui->cbxGate4->setChecked(false); }
+    }
+
+    if (gate == 5) {
+        if (value == true) {
+            ui->cbxGate5->setChecked(true); }
+        if (value == false) {
+            ui->cbxGate5->setChecked(false); }
+    }
+
+    if (gate == 6) {
+        if (value == true) {
+            ui->cbxGate6->setChecked(true); }
+        if (value == false) {
+            ui->cbxGate6->setChecked(false); }
+    }
 }
 
 // FIXME: Nota serialnumber frekar en currentWorkingID

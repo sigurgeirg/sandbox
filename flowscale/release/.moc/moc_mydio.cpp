@@ -46,7 +46,7 @@ static const char qt_meta_stringdata_MyDio[] = {
     "MyDio\0\0inputValue(ulong)\0conveyorSignal()\0"
     "tachoSignal(ulong)\0enteringProductSensorSignal()\0"
     "leavingProductSensorSignal()\0,\0"
-    "setOutput(int,int)\0"
+    "setOutput(int,bool)\0"
 };
 
 void MyDio::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
@@ -60,7 +60,7 @@ void MyDio::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void 
         case 2: _t->tachoSignal((*reinterpret_cast< ulong(*)>(_a[1]))); break;
         case 3: _t->enteringProductSensorSignal(); break;
         case 4: _t->leavingProductSensorSignal(); break;
-        case 5: _t->setOutput((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< int(*)>(_a[2]))); break;
+        case 5: _t->setOutput((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< bool(*)>(_a[2]))); break;
         default: ;
         }
     }

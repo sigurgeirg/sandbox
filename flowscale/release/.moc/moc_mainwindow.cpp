@@ -53,32 +53,32 @@ static const uint qt_meta_data_MainWindow[] = {
      434,   11,   11,   11, 0x08,
      452,   11,   11,   11, 0x08,
      472,  470,   11,   11, 0x08,
-     491,   11,   11,   11, 0x08,
-     515,   11,   11,   11, 0x08,
-     539,   11,   11,   11, 0x08,
-     572,   11,   11,   11, 0x08,
-     606,   11,   11,   11, 0x08,
-     647,  642,   11,   11, 0x08,
-     682,  642,   11,   11, 0x08,
-     719,   11,   11,   11, 0x0a,
-     740,   11,   11,   11, 0x0a,
-     775,   11,   11,   11, 0x0a,
-     793,   11,   11,   11, 0x0a,
-     820,   11,   11,   11, 0x0a,
-     848,   11,   11,   11, 0x0a,
-     872,   11,   11,   11, 0x0a,
-     897,   11,   11,   11, 0x0a,
-     923,   11,   11,   11, 0x0a,
-     951,   11,   11,   11, 0x0a,
-     976,   11,   11,   11, 0x0a,
-    1003,   11,   11,   11, 0x0a,
-    1030,   11,   11,   11, 0x0a,
-    1053,   11,   11,   11, 0x0a,
-    1085,   11,   11,   11, 0x0a,
-    1110,   11,   11,   11, 0x0a,
-    1138,   11,   11,   11, 0x0a,
-    1160,   11,   11,   11, 0x0a,
-    1178,   11,   11,   11, 0x0a,
+     492,   11,   11,   11, 0x08,
+     516,   11,   11,   11, 0x08,
+     540,   11,   11,   11, 0x08,
+     573,   11,   11,   11, 0x08,
+     607,   11,   11,   11, 0x08,
+     648,  643,   11,   11, 0x08,
+     683,  643,   11,   11, 0x08,
+     720,   11,   11,   11, 0x0a,
+     741,   11,   11,   11, 0x0a,
+     776,   11,   11,   11, 0x0a,
+     794,   11,   11,   11, 0x0a,
+     821,   11,   11,   11, 0x0a,
+     849,   11,   11,   11, 0x0a,
+     873,   11,   11,   11, 0x0a,
+     898,   11,   11,   11, 0x0a,
+     924,   11,   11,   11, 0x0a,
+     952,   11,   11,   11, 0x0a,
+     977,   11,   11,   11, 0x0a,
+    1004,   11,   11,   11, 0x0a,
+    1031,   11,   11,   11, 0x0a,
+    1054,   11,   11,   11, 0x0a,
+    1086,   11,   11,   11, 0x0a,
+    1111,   11,   11,   11, 0x0a,
+    1139,   11,   11,   11, 0x0a,
+    1161,   11,   11,   11, 0x0a,
+    1179,   11,   11,   11, 0x0a,
 
        0        // eod
 };
@@ -98,7 +98,7 @@ static const char qt_meta_stringdata_MainWindow[] = {
     "on_btnEditCalibrationWeight_clicked()\0"
     "on_xmin_clicked()\0on_xmax_clicked()\0"
     "on_ymin_clicked()\0on_ymax_clicked()\0"
-    ",\0setOutput(int,int)\0on_btnReverse_clicked()\0"
+    ",\0setOutput(int,bool)\0on_btnReverse_clicked()\0"
     "on_btnForward_clicked()\0"
     "on_btnNetWeightConnect_clicked()\0"
     "on_btnRefreshRecipeList_clicked()\0"
@@ -150,7 +150,7 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         case 17: _t->on_xmax_clicked(); break;
         case 18: _t->on_ymin_clicked(); break;
         case 19: _t->on_ymax_clicked(); break;
-        case 20: _t->setOutput((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< int(*)>(_a[2]))); break;
+        case 20: _t->setOutput((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< bool(*)>(_a[2]))); break;
         case 21: _t->on_btnReverse_clicked(); break;
         case 22: _t->on_btnForward_clicked(); break;
         case 23: _t->on_btnNetWeightConnect_clicked(); break;
