@@ -200,8 +200,8 @@ private:
     int gateBufferWeight[10]; // [kg]
     int gateBufferAmount[10]; // [pcs]
 
-    int gateBufferProcessedWeight[10]; // [kg]
     int gateBufferProcessedAmount[10]; // [pcs]
+    double gateBufferProcessedWeight[10]; // [kg]
 
     int evenDistribution;
     int fillUpInSequence;

@@ -132,12 +132,12 @@ MyScale::MyScale(QObject *parent) :
     gateBufferProcessedAmount[4] = 0;
     gateBufferProcessedAmount[5] = 0;
 
-    gateBufferProcessedWeight[0] = 0; // [kg]
-    gateBufferProcessedWeight[1] = 0;
-    gateBufferProcessedWeight[2] = 0;
-    gateBufferProcessedWeight[3] = 0;
-    gateBufferProcessedWeight[4] = 0;
-    gateBufferProcessedWeight[5] = 0;
+    gateBufferProcessedWeight[0] = 0.0; // [kg]
+    gateBufferProcessedWeight[1] = 0.0;
+    gateBufferProcessedWeight[2] = 0.0;
+    gateBufferProcessedWeight[3] = 0.0;
+    gateBufferProcessedWeight[4] = 0.0;
+    gateBufferProcessedWeight[5] = 0.0;
 
     emit conveyorRunState("conveyorOff");
 
@@ -165,8 +165,16 @@ MyScale::~MyScale()
 void MyScale::updateRecipe(QString selectedRecipe) {
 
     // FIXME: Write recipeData To File
-
-
+    for (int i = 0; i < 6; i++) {
+        if (gateBufferProcessedWeight[i] > 0.0) {
+            qDebug() << "gateBufferProcessedWeight[" << i << "] : " << QString::number(int(gateBufferProcessedWeight[i] * 1000) / 1000.0, 'f', 3);
+        }
+    }
+    for (int i = 0; i < 6; i++) {
+        if (gateBufferProcessedAmount[i] > 0) {
+            qDebug() << "gateBufferProcessedAmount[" << i << "] : " << gateBufferProcessedAmount[i];
+        }
+    }
 
     recipe->updateRecipe(selectedRecipe);
 
@@ -196,7 +204,7 @@ void MyScale::updateRecipe(QString selectedRecipe) {
 
     // FIXME: Clear recipe variables
     for (int i = 0; i < 6; i++) {
-        gateBufferProcessedWeight[i] = 0;
+        gateBufferProcessedWeight[i] = 0.0;
         gateBufferProcessedAmount[i] = 0;
     }
 }
@@ -875,10 +883,10 @@ void MyScale::weightProcessing(int weightValueFromScale) {
                         productOnScaleArea[_elementId] = false;
 
                         //
-                        gateBufferProcessedAmount[_elementId] = gateBufferProcessedAmount[_elementId] + 1; // [pcs]
-                        gateBufferProcessedWeight[_elementId] = gateBufferProcessedWeight[_elementId] + (proData.productWeight[_elementId]/1000); // [kg]
+                        gateBufferProcessedAmount[proData.destinationGate[_elementId]] = gateBufferProcessedAmount[proData.destinationGate[_elementId]] + 1; // [pcs]
+                        gateBufferProcessedWeight[proData.destinationGate[_elementId]] = gateBufferProcessedWeight[proData.destinationGate[_elementId]] + (proData.productWeight[_elementId] / 1000.0); // [gr]
 
-                        emit gateBufferStatus()
+                        //emit gateBufferStatus();
                         //
 
 
