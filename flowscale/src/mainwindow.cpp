@@ -65,6 +65,10 @@ MainWindow::MainWindow(QWidget *parent) :
         connect(this, SIGNAL(ymin(QString)),                    scale,  SLOT(ymin(QString)));
         connect(this, SIGNAL(ymax(QString)),                    scale,  SLOT(ymax(QString)));
 
+        // Control if gates are enabled or disabled, by display checkboxes or by count/weight.
+        connect(this, SIGNAL(gate1Availability(bool)),          scale,  SLOT(gate1Availability(bool)));
+        connect(scale, SIGNAL(disableGate(int,bool)),           this,   SLOT(disableGate(int,bool)));
+
         ui->frameState->setStyleSheet("background-color: red");
 }
 
@@ -75,29 +79,30 @@ MainWindow::~MainWindow()
     delete mosq;
 }
 
-void MainWindow::on_btnEditCalibrationWeight_clicked()
-{
-    keypad.clearDisplay();
-    keypad.show();
-    connect(&keypad, SIGNAL(value(QString)),            this,SLOT(keyValue(QString)));
-}
+//void MainWindow::on_btnEditCalibrationWeight_clicked()
+//{
+//    keypad.clearDisplay();
+//    keypad.show();
+//    connect(&keypad, SIGNAL(value(QString)),            this,SLOT(keyValue(QString)));
+//}
 
 void MainWindow::keyValue(QString value)
 {
-    QString str;
-    str = ui->edtCalibrationWeight->text();
+    Q_UNUSED( value );
+//    QString str;
+//    str = ui->edtCalibrationWeight->text();
 
-    if (value == "91") {
-        ui->edtCalibrationWeight->backspace();
+//    if (value == "91") {
+//        ui->edtCalibrationWeight->backspace();
 
-    } else if (value == "92") {
-        disconnect(&keypad, SIGNAL(value(QString)),         this,SLOT(keyValue(QString)));
-        keypad.close();
+//    } else if (value == "92") {
+//        disconnect(&keypad, SIGNAL(value(QString)),         this,SLOT(keyValue(QString)));
+//        keypad.close();
 
-    } else {
-        str.append(value);
-        ui->edtCalibrationWeight->setText(str);
-    }
+//    } else {
+//        str.append(value);
+//        ui->edtCalibrationWeight->setText(str);
+//    }
 }
 
 void MainWindow::on_xmin_clicked()
@@ -136,7 +141,7 @@ void MainWindow::graphBoundaries(QString value)
 {
 
     if (value == "91") {
-        ui->edtCalibrationWeight->backspace();
+//        ui->edtCalibrationWeight->backspace();
 
     } else if (value == "92") {
         disconnect(&keypad, SIGNAL(value(QString)),         this,SLOT(graphBoundaries(QString)));
@@ -339,11 +344,11 @@ void MainWindow::displayInputValue(unsigned long)
 
 }
 
-void MainWindow::on_btnConnect_clicked()
-{
-    scale->connectToSlaveDevice();
-    scale->start();
-}
+//void MainWindow::on_btnConnect_clicked()
+//{
+//    scale->connectToSlaveDevice();
+//    scale->start();
+//}
 
 void MainWindow::on_btnNetWeightConnect_clicked()
 {
@@ -389,7 +394,7 @@ void MainWindow::on_btnCalibrateZERO_clicked()
 
 void MainWindow::on_btnCalibrateWEIGHT_clicked()
 {
-    scale->calibrateWEIGHT( ui->edtCalibrationWeight->text().toInt() );
+//    scale->calibrateWEIGHT( ui->edtCalibrationWeight->text().toInt() );
 }
 
 void MainWindow::on_btnAPPLY_clicked()
@@ -397,63 +402,51 @@ void MainWindow::on_btnAPPLY_clicked()
     scale->storeCalibrationWEIGHT();
 }
 
-void MainWindow::on_btnSemiAutoZERO_clicked()
-{
-    scale->semiAutoZERO();
-}
+//void MainWindow::on_btnSemiAutoZERO_clicked()
+//{
+//    scale->semiAutoZERO();
+//}
 
-void MainWindow::on_btnGrossWeight_clicked()
-{
-    scale->grossWeight();
-}
+//void MainWindow::on_btnGrossWeight_clicked()
+//{
+//    scale->grossWeight();
+//}
 
-void MainWindow::on_btnNetWeight_clicked()
-{
-    scale->netWeight();
-}
+//void MainWindow::on_btnNetWeight_clicked()
+//{
+//    scale->netWeight();
+//}
 
 void MainWindow::setOutput(int gate, bool value)
 {
     if (gate == 1) {
-        if (value == true) {
-            ui->cbxGate1->setChecked(true); }
-        if (value == false) {
-            ui->cbxGate1->setChecked(false); }
+        if (value == true)  { ui->cbxGate1->setStyleSheet("color: #15d015"); }
+        else                { ui->cbxGate1->setStyleSheet("color: black");   }
     }
 
     if (gate == 2) {
-        if (value == true) {
-            ui->cbxGate2->setChecked(true); }
-        if (value == false) {
-            ui->cbxGate2->setChecked(false); }
+        if (value == true)  { ui->cbxGate2->setStyleSheet("color: #15d015"); }
+        else                { ui->cbxGate2->setStyleSheet("color: black");   }
     }
 
     if (gate == 3) {
-        if (value == true) {
-            ui->cbxGate3->setChecked(true); }
-        if (value == false) {
-            ui->cbxGate3->setChecked(false); }
+        if (value == true)  { ui->cbxGate3->setStyleSheet("color: #15d015"); }
+        else                { ui->cbxGate3->setStyleSheet("color: black");   }
     }
 
     if (gate == 4) {
-        if (value == true) {
-            ui->cbxGate4->setChecked(true); }
-        if (value == false) {
-            ui->cbxGate4->setChecked(false); }
+        if (value == true)  { ui->cbxGate4->setStyleSheet("color: #15d015"); }
+        else                { ui->cbxGate4->setStyleSheet("color: black");   }
     }
 
     if (gate == 5) {
-        if (value == true) {
-            ui->cbxGate5->setChecked(true); }
-        if (value == false) {
-            ui->cbxGate5->setChecked(false); }
+        if (value == true)  { ui->cbxGate5->setStyleSheet("color: #15d015"); }
+        else                { ui->cbxGate5->setStyleSheet("color: black");   }
     }
 
-    if (gate == 6) {
-        if (value == true) {
-            ui->cbxGate6->setChecked(true); }
-        if (value == false) {
-            ui->cbxGate6->setChecked(false); }
+    if (gate == 6)  {
+        if (value == true)  { ui->cbxGate6->setStyleSheet("color: #15d015"); }
+        else                { ui->cbxGate6->setStyleSheet("color: black");   }
     }
 }
 
@@ -615,3 +608,68 @@ void MainWindow::on_cbSettingsMenu_activated(const QString &arg1)
 
 }
 
+
+void MainWindow::disableGate(int gate, bool value)
+{
+    if (gate == 1) {
+        if (value == true)  { ui->cbxGate1->setChecked(true);  ui->cbxGate1->setStyleSheet("color: red");  }
+        else                { ui->cbxGate1->setChecked(false); ui->cbxGate1->setStyleSheet("color: black");}
+    }
+
+    if (gate == 2) {
+        if (value == true)  { ui->cbxGate2->setChecked(true);  ui->cbxGate2->setStyleSheet("color: red");  }
+        else                { ui->cbxGate2->setChecked(false); ui->cbxGate2->setStyleSheet("color: black");}
+    }
+
+    if (gate == 3) {
+        if (value == true)  { ui->cbxGate3->setChecked(true);  ui->cbxGate3->setStyleSheet("color: red");  }
+        else                { ui->cbxGate3->setChecked(false); ui->cbxGate3->setStyleSheet("color: black");}
+    }
+
+    if (gate == 4) {
+        if (value == true)  { ui->cbxGate4->setChecked(true);  ui->cbxGate4->setStyleSheet("color: red");  }
+        else                { ui->cbxGate4->setChecked(false); ui->cbxGate4->setStyleSheet("color: black");}
+    }
+
+    if (gate == 5) {
+        if (value == true)  { ui->cbxGate5->setChecked(true);  ui->cbxGate5->setStyleSheet("color: red");  }
+        else                { ui->cbxGate5->setChecked(false); ui->cbxGate5->setStyleSheet("color: black");}
+    }
+
+    if (gate == 6) {
+        if (value == true)  { ui->cbxGate6->setChecked(true);  ui->cbxGate6->setStyleSheet("color: red");  }
+        else                { ui->cbxGate6->setChecked(false); ui->cbxGate6->setStyleSheet("color: black");}
+    }
+}
+
+
+
+void MainWindow::on_cbxGate1_clicked(bool checked)
+{
+    emit gate1Availability(checked);
+}
+
+void MainWindow::on_cbxGate2_clicked(bool checked)
+{
+    emit gate2Availability(checked);
+}
+
+void MainWindow::on_cbxGate3_clicked(bool checked)
+{
+    emit gate3Availability(checked);
+}
+
+void MainWindow::on_cbxGate4_clicked(bool checked)
+{
+    emit gate4Availability(checked);
+}
+
+void MainWindow::on_cbxGate5_clicked(bool checked)
+{
+    emit gate5Availability(checked);
+}
+
+void MainWindow::on_cbxGate6_clicked(bool checked)
+{
+    emit gate6Availability(checked);
+}

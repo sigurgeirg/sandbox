@@ -83,22 +83,29 @@ signals:
     void xmax(QString);
     void ymin(QString);
     void ymax(QString);
+
+    void gate1Availability(bool);
+    void gate2Availability(bool);
+    void gate3Availability(bool);
+    void gate4Availability(bool);
+    void gate5Availability(bool);
+    void gate6Availability(bool);
     // /////////////////////////
     // Simulation
     // void reply(unsigned char, bool);
     // /////////////////////////
 
 private slots:
-    void on_btnConnect_clicked();
+    //void on_btnConnect_clicked();
     void on_btnDisconnect_clicked();
     void on_chkWriteToLoadcell_toggled(bool checked);
     void on_btnCalibrateZERO_clicked();
     void on_btnCalibrateWEIGHT_clicked();
     void on_btnAPPLY_clicked();
-    void on_btnSemiAutoZERO_clicked();
-    void on_btnGrossWeight_clicked();
-    void on_btnNetWeight_clicked();
-    void on_btnEditCalibrationWeight_clicked();
+    //void on_btnSemiAutoZERO_clicked();
+    //void on_btnGrossWeight_clicked();
+    //void on_btnNetWeight_clicked();
+    //void on_btnEditCalibrationWeight_clicked();
     void on_xmin_clicked();
     void on_xmax_clicked();
     void on_ymin_clicked();
@@ -117,15 +124,17 @@ private slots:
     void on_btnForward_clicked();
 
     void on_btnNetWeightConnect_clicked();
-
     void on_btnRefreshRecipeList_clicked();
-
     void on_btnRefreshSettingsList_clicked();
-
     void on_cbRecipeMenu_activated(const QString &arg1);
-
     void on_cbSettingsMenu_activated(const QString &arg1);
 
+    void on_cbxGate1_clicked(bool checked);
+    void on_cbxGate2_clicked(bool checked);
+    void on_cbxGate3_clicked(bool checked);
+    void on_cbxGate4_clicked(bool checked);
+    void on_cbxGate5_clicked(bool checked);
+    void on_cbxGate6_clicked(bool checked);
 
 public slots:
     void conveyorBeltSignal();
@@ -149,6 +158,7 @@ public slots:
     void plotProductGraph(int);
     void keyValue(QString);
     void graphBoundaries(QString);
+    void disableGate(int, bool);
 
 
 };

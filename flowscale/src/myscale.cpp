@@ -111,19 +111,27 @@ MyScale::MyScale(QObject *parent) :
     bufferByCount  = 2;
     bufferByWeightOrByCount = bufferByWeight;
 
-    gateBufferWeight[0] = 20; // [kg]
-    gateBufferWeight[1] = 20;
-    gateBufferWeight[2] = 20;
-    gateBufferWeight[3] = 20;
-    gateBufferWeight[4] = 20;
-    gateBufferWeight[5] = 20;
+    gate_available[0] = 1;
+    gate_available[1] = 2;
+    gate_available[2] = 3;
+    gate_available[3] = 4;
+    gate_available[4] = 5;
+    gate_available[5] = 6;
 
-    gateBufferAmount[0] = 40; // [pcs]
-    gateBufferAmount[1] = 40;
-    gateBufferAmount[2] = 40;
-    gateBufferAmount[3] = 40;
-    gateBufferAmount[4] = 40;
-    gateBufferAmount[5] = 40;
+
+    gateBufferWeight[0] = 2; // [kg]
+    gateBufferWeight[1] = 2;
+    gateBufferWeight[2] = 2;
+    gateBufferWeight[3] = 2;
+    gateBufferWeight[4] = 4;
+    gateBufferWeight[5] = 4;
+
+    gateBufferAmount[0] = 4; // [pcs]
+    gateBufferAmount[1] = 4;
+    gateBufferAmount[2] = 4;
+    gateBufferAmount[3] = 4;
+    gateBufferAmount[4] = 4;
+    gateBufferAmount[5] = 4;
 
     gateBufferProcessedAmount[0] = 0; // [pcs]
     gateBufferProcessedAmount[1] = 0;
@@ -219,54 +227,125 @@ bool MyScale::between(int less, int value, int greater) {
     }
 }
 
+void MyScale::gate1Availability(bool checked) {
+
+    if (checked == false)   { gate_available[0] = 1; }
+    else                    { gate_available[0] = 0; }
+}
+
+void MyScale::gate2Availability(bool checked) {
+
+    if (checked == false)   { gate_available[1] = 2; }
+    else                    { gate_available[1] = 0; }
+}
+
+void MyScale::gate3Availability(bool checked) {
+
+    if (checked == false)   { gate_available[2] = 3; }
+    else                    { gate_available[2] = 0; }
+}
+
+void MyScale::gate4Availability(bool checked) {
+
+    if (checked == false)   { gate_available[3] = 4; }
+    else                    { gate_available[3] = 0; }
+}
+
+void MyScale::gate5Availability(bool checked) {
+
+    if (checked == false)   { gate_available[4] = 5; }
+    else                    { gate_available[4] = 0; }
+}
+
+void MyScale::gate6Availability(bool checked) {
+    if (checked == false)   { gate_available[5] = 6; }
+    else                    { gate_available[5] = 0; }
+}
+
 
 int MyScale::returnToGate(int measuredWeight) {
 
-    if        (between(weightRangeLower[0], measuredWeight, weightRangeUpper[0])){
+    if (between(weightRangeLower[0], measuredWeight, weightRangeUpper[0])){
 
-        return destinationGate[0];
-
-    } else if (between(weightRangeLower[1], measuredWeight, weightRangeUpper[1])){
-
-        return destinationGate[1];
-
-    } else if (between(weightRangeLower[2], measuredWeight, weightRangeUpper[2])){
-
-        return destinationGate[2];
-
-    } else if (between(weightRangeLower[3], measuredWeight, weightRangeUpper[3])){
-
-        return destinationGate[3];
-
-    } else if (between(weightRangeLower[4], measuredWeight, weightRangeUpper[4])){
-
-        return destinationGate[4];
-
-    } else if (between(weightRangeLower[5], measuredWeight, weightRangeUpper[5])){
-
-        return destinationGate[5];
-
-    } else if (between(weightRangeLower[6], measuredWeight, weightRangeUpper[6])){
-
-        return destinationGate[6];
-
-    } else if (between(weightRangeLower[7], measuredWeight, weightRangeUpper[7])){
-
-        return destinationGate[7];
-
-    } else if (between(weightRangeLower[8], measuredWeight, weightRangeUpper[8])){
-
-        return destinationGate[8];
-
-    } else if (between(weightRangeLower[9], measuredWeight, weightRangeUpper[9])){
-
-        return destinationGate[9];
-
-    } else {
-
-        return 0;
-
+        for (int i = 0; i < 6; i++) {
+            if (destinationGate[0] == gate_available[i]) {
+                return destinationGate[0]; }
+        }
     }
+
+    if (between(weightRangeLower[1], measuredWeight, weightRangeUpper[1])){
+
+        for (int i = 0; i < 6; i++) {
+            if (destinationGate[1] == gate_available[i]) {
+                return destinationGate[1]; }
+        }
+    }
+
+    if (between(weightRangeLower[2], measuredWeight, weightRangeUpper[2])){
+
+        for (int i = 0; i < 6; i++) {
+            if (destinationGate[2] == gate_available[i]) {
+                return destinationGate[2]; }
+        }
+    }
+
+    if (between(weightRangeLower[3], measuredWeight, weightRangeUpper[3])){
+
+        for (int i = 0; i < 6; i++) {
+            if (destinationGate[3] == gate_available[i]) {
+                return destinationGate[3]; }
+        }
+    }
+
+    if (between(weightRangeLower[4], measuredWeight, weightRangeUpper[4])){
+
+        for (int i = 0; i < 6; i++) {
+            if (destinationGate[4] == gate_available[i]) {
+                return destinationGate[4]; }
+        }
+    }
+
+    if (between(weightRangeLower[5], measuredWeight, weightRangeUpper[5])){
+
+        for (int i = 0; i < 6; i++) {
+            if (destinationGate[5] == gate_available[i]) {
+                return destinationGate[5]; }
+        }
+    }
+
+    if (between(weightRangeLower[6], measuredWeight, weightRangeUpper[6])){
+
+        for (int i = 0; i < 6; i++) {
+            if (destinationGate[6] == gate_available[i]) {
+                return destinationGate[6]; }
+        }
+    }
+
+    if (between(weightRangeLower[7], measuredWeight, weightRangeUpper[7])){
+
+        for (int i = 0; i < 6; i++) {
+            if (destinationGate[7] == gate_available[i]) {
+                return destinationGate[7]; }
+        }
+    }
+
+    if (between(weightRangeLower[8], measuredWeight, weightRangeUpper[8])){
+
+        for (int i = 0; i < 6; i++) {
+            if (destinationGate[8] == gate_available[i]) {
+                return destinationGate[8]; }
+        }
+    }
+
+    if (between(weightRangeLower[9], measuredWeight, weightRangeUpper[9])){
+
+        for (int i = 0; i < 6; i++) {
+            if (destinationGate[9] == gate_available[i]) {
+                return destinationGate[9]; }
+        }
+    }
+
+    return 0;
 }
 
 
@@ -885,6 +964,12 @@ void MyScale::weightProcessing(int weightValueFromScale) {
                         //
                         gateBufferProcessedAmount[proData.destinationGate[_elementId]] = gateBufferProcessedAmount[proData.destinationGate[_elementId]] + 1; // [pcs]
                         gateBufferProcessedWeight[proData.destinationGate[_elementId]] = gateBufferProcessedWeight[proData.destinationGate[_elementId]] + (proData.productWeight[_elementId] / 1000.0); // [gr]
+
+                        if ( (gateBufferProcessedAmount[proData.destinationGate[_elementId]] >= gateBufferAmount[proData.destinationGate[_elementId]]) ||
+                             (gateBufferProcessedWeight[proData.destinationGate[_elementId]] >= gateBufferWeight[proData.destinationGate[_elementId]])    ) {
+
+                            emit disableGate(proData.destinationGate[_elementId], true);
+                        }
 
                         //emit gateBufferStatus();
                         //
