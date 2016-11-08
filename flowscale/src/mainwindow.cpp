@@ -30,6 +30,17 @@ MainWindow::MainWindow(QWidget *parent) :
     lastSettingsFile = "";
     lastRecipeFile = "";
 
+    gate0_enabled = true;
+    gate1_enabled = true;
+    gate2_enabled = true;
+    gate3_enabled = true;
+    gate4_enabled = true;
+    gate5_enabled = true;
+    gate6_enabled = true;
+    gate7_enabled = true;
+    gate8_enabled = true;
+    gate9_enabled = true;
+
 
         // Simulation, still undone, maybe no use for this:
         //connect(this, SIGNAL(reply(unsigned char, bool)),             dio, SLOT(updateInputSim(unsigned char, bool)));
@@ -47,8 +58,17 @@ MainWindow::MainWindow(QWidget *parent) :
         connect(scale, SIGNAL(sendLength(QString)),             this,   SLOT(displayLength(QString)));
         connect(scale, SIGNAL(sendDestinationGate(QString)),    this,   SLOT(displayDestinationGate(QString)));
 
-        // Set output signals, such as grading gates:
-        connect(scale, SIGNAL(activateGate(int, bool)),          this,    SLOT(setOutput(int, bool)));
+        // Arm control & Enable/Disable gates by checkboxes or by count/weight.
+        connect(scale, SIGNAL(enableGate(int, bool)),           this,   SLOT(enableGate(int, bool)));
+        connect(scale, SIGNAL(activateGateArm(int, bool)),      this,   SLOT(activateGateArm(int, bool)));
+
+        connect(this, SIGNAL(gate1Availability(bool)),          scale,  SLOT(gate1Availability(bool)));
+        connect(this, SIGNAL(gate2Availability(bool)),          scale,  SLOT(gate2Availability(bool)));
+        connect(this, SIGNAL(gate3Availability(bool)),          scale,  SLOT(gate3Availability(bool)));
+        connect(this, SIGNAL(gate4Availability(bool)),          scale,  SLOT(gate4Availability(bool)));
+        connect(this, SIGNAL(gate5Availability(bool)),          scale,  SLOT(gate5Availability(bool)));
+        connect(this, SIGNAL(gate6Availability(bool)),          scale,  SLOT(gate6Availability(bool)));
+
 
         // Product Data Over Mosquitto transmission:
         //connect(scale, SIGNAL(sendMQTT(QString,const char*)),   mosq, SLOT(sendMessage(QString,const char*)));
@@ -64,10 +84,6 @@ MainWindow::MainWindow(QWidget *parent) :
         connect(this, SIGNAL(xmax(QString)),                    scale,  SLOT(xmax(QString)));
         connect(this, SIGNAL(ymin(QString)),                    scale,  SLOT(ymin(QString)));
         connect(this, SIGNAL(ymax(QString)),                    scale,  SLOT(ymax(QString)));
-
-        // Control if gates are enabled or disabled, by display checkboxes or by count/weight.
-        connect(this, SIGNAL(gate1Availability(bool)),          scale,  SLOT(gate1Availability(bool)));
-        connect(scale, SIGNAL(disableGate(int,bool)),           this,   SLOT(disableGate(int,bool)));
 
         ui->frameState->setStyleSheet("background-color: red");
 }
@@ -417,36 +433,48 @@ void MainWindow::on_btnAPPLY_clicked()
 //    scale->netWeight();
 //}
 
-void MainWindow::setOutput(int gate, bool value)
+void MainWindow::activateGateArm(int gate, bool value)
 {
-    if (gate == 1) {
-        if (value == true)  { ui->cbxGate1->setStyleSheet("color: #15d015"); }
-        else                { ui->cbxGate1->setStyleSheet("color: black");   }
+    if (this->gate1_enabled == true) {
+        if (gate == 1) {
+            if (value == true)  { ui->cbxGate1->setStyleSheet("color: #15d015"); }
+            else                { ui->cbxGate1->setStyleSheet("color: black");   }
+        }
     }
 
-    if (gate == 2) {
-        if (value == true)  { ui->cbxGate2->setStyleSheet("color: #15d015"); }
-        else                { ui->cbxGate2->setStyleSheet("color: black");   }
+    if (this->gate2_enabled == true) {
+        if (gate == 2) {
+            if (value == true)  { ui->cbxGate2->setStyleSheet("color: #15d015"); }
+            else                { ui->cbxGate2->setStyleSheet("color: black");   }
+        }
     }
 
-    if (gate == 3) {
-        if (value == true)  { ui->cbxGate3->setStyleSheet("color: #15d015"); }
-        else                { ui->cbxGate3->setStyleSheet("color: black");   }
+    if (this->gate3_enabled == true) {
+        if (gate == 3) {
+            if (value == true)  { ui->cbxGate3->setStyleSheet("color: #15d015"); }
+            else                { ui->cbxGate3->setStyleSheet("color: black");   }
+        }
     }
 
-    if (gate == 4) {
-        if (value == true)  { ui->cbxGate4->setStyleSheet("color: #15d015"); }
-        else                { ui->cbxGate4->setStyleSheet("color: black");   }
+    if (this->gate4_enabled == true) {
+        if (gate == 4) {
+            if (value == true)  { ui->cbxGate4->setStyleSheet("color: #15d015"); }
+            else                { ui->cbxGate4->setStyleSheet("color: black");   }
+        }
     }
 
-    if (gate == 5) {
-        if (value == true)  { ui->cbxGate5->setStyleSheet("color: #15d015"); }
-        else                { ui->cbxGate5->setStyleSheet("color: black");   }
+    if (this->gate5_enabled == true) {
+        if (gate == 5) {
+            if (value == true)  { ui->cbxGate5->setStyleSheet("color: #15d015"); }
+            else                { ui->cbxGate5->setStyleSheet("color: black");   }
+        }
     }
 
-    if (gate == 6)  {
-        if (value == true)  { ui->cbxGate6->setStyleSheet("color: #15d015"); }
-        else                { ui->cbxGate6->setStyleSheet("color: black");   }
+    if (this->gate6_enabled == true) {
+        if (gate == 6)  {
+            if (value == true)  { ui->cbxGate6->setStyleSheet("color: #15d015"); }
+            else                { ui->cbxGate6->setStyleSheet("color: black");   }
+        }
     }
 }
 
@@ -609,67 +637,66 @@ void MainWindow::on_cbSettingsMenu_activated(const QString &arg1)
 }
 
 
-void MainWindow::disableGate(int gate, bool value)
+void MainWindow::enableGate(int gate, bool enabled)
 {
     if (gate == 1) {
-        if (value == true)  { ui->cbxGate1->setChecked(true);  ui->cbxGate1->setStyleSheet("color: red");  }
-        else                { ui->cbxGate1->setChecked(false); ui->cbxGate1->setStyleSheet("color: black");}
+        if (enabled == true)    { ui->cbxGate1->setChecked(false); ui->cbxGate1->setStyleSheet("color: black"); this->gate1_enabled = true;  }
+        else                    { ui->cbxGate1->setChecked(true);  ui->cbxGate1->setStyleSheet("color: red");   this->gate1_enabled = false; }
     }
 
     if (gate == 2) {
-        if (value == true)  { ui->cbxGate2->setChecked(true);  ui->cbxGate2->setStyleSheet("color: red");  }
-        else                { ui->cbxGate2->setChecked(false); ui->cbxGate2->setStyleSheet("color: black");}
+        if (enabled == true)    { ui->cbxGate2->setChecked(false); ui->cbxGate2->setStyleSheet("color: black"); this->gate2_enabled = true;  }
+        else                    { ui->cbxGate2->setChecked(true);  ui->cbxGate2->setStyleSheet("color: red");   this->gate2_enabled = false; }
     }
 
     if (gate == 3) {
-        if (value == true)  { ui->cbxGate3->setChecked(true);  ui->cbxGate3->setStyleSheet("color: red");  }
-        else                { ui->cbxGate3->setChecked(false); ui->cbxGate3->setStyleSheet("color: black");}
+        if (enabled == true)    { ui->cbxGate3->setChecked(false); ui->cbxGate3->setStyleSheet("color: black"); this->gate3_enabled = true;  }
+        else                    { ui->cbxGate3->setChecked(true);  ui->cbxGate3->setStyleSheet("color: red");   this->gate3_enabled = false; }
     }
 
     if (gate == 4) {
-        if (value == true)  { ui->cbxGate4->setChecked(true);  ui->cbxGate4->setStyleSheet("color: red");  }
-        else                { ui->cbxGate4->setChecked(false); ui->cbxGate4->setStyleSheet("color: black");}
+        if (enabled == true)    { ui->cbxGate4->setChecked(false); ui->cbxGate4->setStyleSheet("color: black"); this->gate4_enabled = true;  }
+        else                    { ui->cbxGate4->setChecked(true);  ui->cbxGate4->setStyleSheet("color: red");   this->gate4_enabled = false; }
     }
-
     if (gate == 5) {
-        if (value == true)  { ui->cbxGate5->setChecked(true);  ui->cbxGate5->setStyleSheet("color: red");  }
-        else                { ui->cbxGate5->setChecked(false); ui->cbxGate5->setStyleSheet("color: black");}
+        if (enabled == true)    { ui->cbxGate5->setChecked(false); ui->cbxGate5->setStyleSheet("color: black"); this->gate5_enabled = true;  }
+        else                    { ui->cbxGate5->setChecked(true);  ui->cbxGate5->setStyleSheet("color: red");   this->gate5_enabled = false; }
     }
 
     if (gate == 6) {
-        if (value == true)  { ui->cbxGate6->setChecked(true);  ui->cbxGate6->setStyleSheet("color: red");  }
-        else                { ui->cbxGate6->setChecked(false); ui->cbxGate6->setStyleSheet("color: black");}
+        if (enabled == true)    { ui->cbxGate6->setChecked(false); ui->cbxGate6->setStyleSheet("color: black"); this->gate6_enabled = true;  }
+        else                    { ui->cbxGate6->setChecked(true);  ui->cbxGate6->setStyleSheet("color: red");   this->gate6_enabled = false; }
     }
 }
 
 
 
-void MainWindow::on_cbxGate1_clicked(bool checked)
+void MainWindow::on_cbxGate1_clicked(bool disabled)
 {
-    emit gate1Availability(checked);
+    emit gate1Availability(disabled);
 }
 
-void MainWindow::on_cbxGate2_clicked(bool checked)
+void MainWindow::on_cbxGate2_clicked(bool disabled)
 {
-    emit gate2Availability(checked);
+    emit gate2Availability(disabled);
 }
 
-void MainWindow::on_cbxGate3_clicked(bool checked)
+void MainWindow::on_cbxGate3_clicked(bool disabled)
 {
-    emit gate3Availability(checked);
+    emit gate3Availability(disabled);
 }
 
-void MainWindow::on_cbxGate4_clicked(bool checked)
+void MainWindow::on_cbxGate4_clicked(bool disabled)
 {
-    emit gate4Availability(checked);
+    emit gate4Availability(disabled);
 }
 
-void MainWindow::on_cbxGate5_clicked(bool checked)
+void MainWindow::on_cbxGate5_clicked(bool disabled)
 {
-    emit gate5Availability(checked);
+    emit gate5Availability(disabled);
 }
 
-void MainWindow::on_cbxGate6_clicked(bool checked)
+void MainWindow::on_cbxGate6_clicked(bool disabled)
 {
-    emit gate6Availability(checked);
+    emit gate6Availability(disabled);
 }

@@ -93,7 +93,7 @@ void MyDio::updateOutputs() {
 }
 
 
-void MyDio::setOutput(int output, bool value) {
+void MyDio::activateGateArm(int output, bool value) {
 
 //    activeOutput = output;
 //    activeValue  = value;

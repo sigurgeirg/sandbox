@@ -89,12 +89,16 @@ MyScale::MyScale(QObject *parent) :
     // Grader settings variables:
     distanceToGraderGate[0] = 200;  // [mm]
     distanceToGraderGate[1] = 200;
-    distanceToGraderGate[2] = 1200;
-    distanceToGraderGate[3] = 1200;
-    distanceToGraderGate[4] = 2200;
-    distanceToGraderGate[5] = 2200;
+    distanceToGraderGate[2] = 1000;
+    distanceToGraderGate[3] = 1000;
+    distanceToGraderGate[4] = 1800;
+    distanceToGraderGate[5] = 1800;
+    distanceToGraderGate[6] = 2600;
+    distanceToGraderGate[7] = 2600;
+    distanceToGraderGate[8] = 3400;
+    distanceToGraderGate[9] = 3400;
 
-    distanceToEndOfGrader   = 3000; // [mm]
+    distanceToEndOfGrader   = 4000; // [mm]
 
     distanceOpenGate[0] = 500;      // [mm]
     distanceOpenGate[1] = 500;
@@ -102,6 +106,10 @@ MyScale::MyScale(QObject *parent) :
     distanceOpenGate[3] = 500;
     distanceOpenGate[4] = 500;
     distanceOpenGate[5] = 500;
+    distanceOpenGate[6] = 500;
+    distanceOpenGate[7] = 500;
+    distanceOpenGate[8] = 500;
+    distanceOpenGate[9] = 500;
 
     evenDistribution = 1;
     fillUpInSequence = 2;
@@ -111,12 +119,16 @@ MyScale::MyScale(QObject *parent) :
     bufferByCount  = 2;
     bufferByWeightOrByCount = bufferByWeight;
 
-    gate_available[0] = 1;
-    gate_available[1] = 2;
-    gate_available[2] = 3;
-    gate_available[3] = 4;
-    gate_available[4] = 5;
-    gate_available[5] = 6;
+    gate_available[0] = 0;
+    gate_available[1] = 1;
+    gate_available[2] = 2;
+    gate_available[3] = 3;
+    gate_available[4] = 4;
+    gate_available[5] = 5;
+    gate_available[6] = 6;
+    gate_available[7] = 7;
+    gate_available[8] = 8;
+    gate_available[9] = 9;
 
 
     gateBufferWeight[0] = 2; // [kg]
@@ -125,6 +137,10 @@ MyScale::MyScale(QObject *parent) :
     gateBufferWeight[3] = 2;
     gateBufferWeight[4] = 4;
     gateBufferWeight[5] = 4;
+    gateBufferWeight[6] = 4;
+    gateBufferWeight[7] = 4;
+    gateBufferWeight[8] = 4;
+    gateBufferWeight[9] = 4;
 
     gateBufferAmount[0] = 4; // [pcs]
     gateBufferAmount[1] = 4;
@@ -132,6 +148,10 @@ MyScale::MyScale(QObject *parent) :
     gateBufferAmount[3] = 4;
     gateBufferAmount[4] = 4;
     gateBufferAmount[5] = 4;
+    gateBufferAmount[6] = 4;
+    gateBufferAmount[7] = 4;
+    gateBufferAmount[8] = 4;
+    gateBufferAmount[9] = 4;
 
     gateBufferProcessedAmount[0] = 0; // [pcs]
     gateBufferProcessedAmount[1] = 0;
@@ -139,6 +159,10 @@ MyScale::MyScale(QObject *parent) :
     gateBufferProcessedAmount[3] = 0;
     gateBufferProcessedAmount[4] = 0;
     gateBufferProcessedAmount[5] = 0;
+    gateBufferProcessedAmount[6] = 0;
+    gateBufferProcessedAmount[7] = 0;
+    gateBufferProcessedAmount[8] = 0;
+    gateBufferProcessedAmount[9] = 0;
 
     gateBufferProcessedWeight[0] = 0.0; // [kg]
     gateBufferProcessedWeight[1] = 0.0;
@@ -146,12 +170,16 @@ MyScale::MyScale(QObject *parent) :
     gateBufferProcessedWeight[3] = 0.0;
     gateBufferProcessedWeight[4] = 0.0;
     gateBufferProcessedWeight[5] = 0.0;
+    gateBufferProcessedWeight[6] = 0.0;
+    gateBufferProcessedWeight[7] = 0.0;
+    gateBufferProcessedWeight[8] = 0.0;
+    gateBufferProcessedWeight[9] = 0.0;
 
     emit conveyorRunState("conveyorOff");
 
 
     // Set output signals, such as grading gates:
-    connect(this, SIGNAL(activateGate(int, bool)),          dio,    SLOT(setOutput(int, bool)));
+    connect(this, SIGNAL(activateGateArm(int, bool)),          dio,    SLOT(activateGateArm(int, bool)));
 
     // Input sensor signals:
     connect(dio,   SIGNAL(conveyorSignal()),                this,  SLOT(conveyorBeltSignal()));
@@ -173,12 +201,12 @@ MyScale::~MyScale()
 void MyScale::updateRecipe(QString selectedRecipe) {
 
     // FIXME: Write recipeData To File
-    for (int i = 0; i < 6; i++) {
+    for (int i = 0; i < numberOfGates; i++) {
         if (gateBufferProcessedWeight[i] > 0.0) {
             qDebug() << "gateBufferProcessedWeight[" << i << "] : " << QString::number(int(gateBufferProcessedWeight[i] * 1000) / 1000.0, 'f', 3);
         }
     }
-    for (int i = 0; i < 6; i++) {
+    for (int i = 0; i < numberOfGates; i++) {
         if (gateBufferProcessedAmount[i] > 0) {
             qDebug() << "gateBufferProcessedAmount[" << i << "] : " << gateBufferProcessedAmount[i];
         }
@@ -211,7 +239,7 @@ void MyScale::updateRecipe(QString selectedRecipe) {
     emit sendDescription(QString::fromStdString(productDescription.c_str()));
 
     // FIXME: Clear recipe variables
-    for (int i = 0; i < 6; i++) {
+    for (int i = 0; i < numberOfGates; i++) {
         gateBufferProcessedWeight[i] = 0.0;
         gateBufferProcessedAmount[i] = 0;
     }
@@ -227,39 +255,110 @@ bool MyScale::between(int less, int value, int greater) {
     }
 }
 
-void MyScale::gate1Availability(bool checked) {
+void MyScale::gate0Availability(bool disabled) {
 
-    if (checked == false)   { gate_available[0] = 1; }
-    else                    { gate_available[0] = 0; }
+    if (disabled == false) {
+        gate_available[0] = 0;
+
+        // Here we need to clear the total weight+count,
+        // dump them to some kind of totalizer that will be
+        // written to file when the recipe is closed or dumped
+
+        // FIXME: Save data before clearing like I do here
+        gateBufferProcessedAmount[0] = 0;
+        gateBufferProcessedWeight[0] = 0.0;
+        emit enableGate(0, true);
+
+    }
+    else { gate_available[0] = -1; }
 }
 
-void MyScale::gate2Availability(bool checked) {
+void MyScale::gate1Availability(bool disabled) {
 
-    if (checked == false)   { gate_available[1] = 2; }
-    else                    { gate_available[1] = 0; }
+    if (disabled == false) {
+        gate_available[1] = 1;
+
+        // FIXME: Save data before clearing like I do here
+        gateBufferProcessedAmount[1] = 0;
+        gateBufferProcessedWeight[1] = 0.0;
+        emit enableGate(1, true);
+
+    }
+    else { gate_available[1] = -1; }
 }
 
-void MyScale::gate3Availability(bool checked) {
+void MyScale::gate2Availability(bool disabled) {
 
-    if (checked == false)   { gate_available[2] = 3; }
-    else                    { gate_available[2] = 0; }
+    if (disabled == false) {
+        gate_available[2] = 2;
+
+        // FIXME: Save data before clearing like I do here
+        gateBufferProcessedAmount[2] = 0;
+        gateBufferProcessedWeight[2] = 0.0;
+        emit enableGate(2, true);
+
+    }
+    else { gate_available[2] = -1; }
 }
 
-void MyScale::gate4Availability(bool checked) {
+void MyScale::gate3Availability(bool disabled) {
 
-    if (checked == false)   { gate_available[3] = 4; }
-    else                    { gate_available[3] = 0; }
+    if (disabled == false) {
+        gate_available[3] = 3;
+
+        // FIXME: Save data before clearing like I do here
+        gateBufferProcessedAmount[3] = 0;
+        gateBufferProcessedWeight[3] = 0.0;
+        emit enableGate(3, true);
+
+    }
+    else { gate_available[3] = -1; }
 }
 
-void MyScale::gate5Availability(bool checked) {
+void MyScale::gate4Availability(bool disabled) {
 
-    if (checked == false)   { gate_available[4] = 5; }
-    else                    { gate_available[4] = 0; }
+    if (disabled == false) {
+        gate_available[4] = 4;
+
+        // FIXME: Save data before clearing like I do here
+        gateBufferProcessedAmount[4] = 0;
+        gateBufferProcessedWeight[4] = 0.0;
+        emit enableGate(4, true);
+
+    }
+    else { gate_available[4] = -1; }
 }
 
-void MyScale::gate6Availability(bool checked) {
-    if (checked == false)   { gate_available[5] = 6; }
-    else                    { gate_available[5] = 0; }
+void MyScale::gate5Availability(bool disabled) {
+
+    qDebug() << "Gate5Availability check";
+
+    if (disabled == false) {
+        gate_available[5] = 5;
+
+        // FIXME: Save data before clearing like I do here
+        gateBufferProcessedAmount[5] = 0;
+        gateBufferProcessedWeight[5] = 0.0;
+        emit enableGate(5, true);
+
+    }
+    else { gate_available[5] = -1; }
+}
+
+void MyScale::gate6Availability(bool disabled) {
+
+    qDebug() << "Gate6Availability check";
+
+    if (disabled == false) {
+        gate_available[6] = 6;
+
+        // FIXME: Save data before clearing like I do here
+        gateBufferProcessedAmount[6] = 0;
+        gateBufferProcessedWeight[6] = 0.0;
+        emit enableGate(6, true);
+
+    }
+    else { gate_available[6] = -1; }
 }
 
 
@@ -267,7 +366,7 @@ int MyScale::returnToGate(int measuredWeight) {
 
     if (between(weightRangeLower[0], measuredWeight, weightRangeUpper[0])){
 
-        for (int i = 0; i < 6; i++) {
+        for (int i = 0; i < numberOfGates; i++) {
             if (destinationGate[0] == gate_available[i]) {
                 return destinationGate[0]; }
         }
@@ -275,7 +374,7 @@ int MyScale::returnToGate(int measuredWeight) {
 
     if (between(weightRangeLower[1], measuredWeight, weightRangeUpper[1])){
 
-        for (int i = 0; i < 6; i++) {
+        for (int i = 0; i < numberOfGates; i++) {
             if (destinationGate[1] == gate_available[i]) {
                 return destinationGate[1]; }
         }
@@ -283,7 +382,7 @@ int MyScale::returnToGate(int measuredWeight) {
 
     if (between(weightRangeLower[2], measuredWeight, weightRangeUpper[2])){
 
-        for (int i = 0; i < 6; i++) {
+        for (int i = 0; i < numberOfGates; i++) {
             if (destinationGate[2] == gate_available[i]) {
                 return destinationGate[2]; }
         }
@@ -291,7 +390,7 @@ int MyScale::returnToGate(int measuredWeight) {
 
     if (between(weightRangeLower[3], measuredWeight, weightRangeUpper[3])){
 
-        for (int i = 0; i < 6; i++) {
+        for (int i = 0; i < numberOfGates; i++) {
             if (destinationGate[3] == gate_available[i]) {
                 return destinationGate[3]; }
         }
@@ -299,7 +398,7 @@ int MyScale::returnToGate(int measuredWeight) {
 
     if (between(weightRangeLower[4], measuredWeight, weightRangeUpper[4])){
 
-        for (int i = 0; i < 6; i++) {
+        for (int i = 0; i < numberOfGates; i++) {
             if (destinationGate[4] == gate_available[i]) {
                 return destinationGate[4]; }
         }
@@ -307,23 +406,29 @@ int MyScale::returnToGate(int measuredWeight) {
 
     if (between(weightRangeLower[5], measuredWeight, weightRangeUpper[5])){
 
-        for (int i = 0; i < 6; i++) {
+        qDebug() << "Gate5 being considdered";
+        for (int i = 0; i < numberOfGates; i++) {
             if (destinationGate[5] == gate_available[i]) {
+
+                qDebug() << "destinationGate[5] == " << destinationGate[5] << " => gate_available[" << i << "] == " << gate_available[i] ;
                 return destinationGate[5]; }
         }
     }
 
     if (between(weightRangeLower[6], measuredWeight, weightRangeUpper[6])){
 
-        for (int i = 0; i < 6; i++) {
+        qDebug() << "Gate6 being considdered";
+        for (int i = 0; i < numberOfGates; i++) {
             if (destinationGate[6] == gate_available[i]) {
+
+                qDebug() << "destinationGate[6] == " << destinationGate[6] << " => gate_available[" << i << "] == " << gate_available[i] ;
                 return destinationGate[6]; }
         }
     }
 
     if (between(weightRangeLower[7], measuredWeight, weightRangeUpper[7])){
 
-        for (int i = 0; i < 6; i++) {
+        for (int i = 0; i < numberOfGates; i++) {
             if (destinationGate[7] == gate_available[i]) {
                 return destinationGate[7]; }
         }
@@ -331,7 +436,7 @@ int MyScale::returnToGate(int measuredWeight) {
 
     if (between(weightRangeLower[8], measuredWeight, weightRangeUpper[8])){
 
-        for (int i = 0; i < 6; i++) {
+        for (int i = 0; i < numberOfGates; i++) {
             if (destinationGate[8] == gate_available[i]) {
                 return destinationGate[8]; }
         }
@@ -339,7 +444,7 @@ int MyScale::returnToGate(int measuredWeight) {
 
     if (between(weightRangeLower[9], measuredWeight, weightRangeUpper[9])){
 
-        for (int i = 0; i < 6; i++) {
+        for (int i = 0; i < numberOfGates; i++) {
             if (destinationGate[9] == gate_available[i]) {
                 return destinationGate[9]; }
         }
@@ -747,7 +852,7 @@ void MyScale::weightProcessing(int weightValueFromScale) {
             productReleasePulse = (int)((double)(productRelease)/pulseResolution + 0.5);
             maxProductLengthPulse = (int)((double)(maxProductLength)/pulseResolution + 0.5);
 
-            for (int i = 0; i < 6; i++) {
+            for (int i = 0; i < numberOfGates; i++) {
                 pulseDistanceToGate[i] = (int)((double)(productRelease + distanceToGraderGate[i])/pulseResolution + 0.5);
                 pulseDistanceToEndOfGate[i] = (int)((double)(productRelease + distanceToGraderGate[i] + distanceOpenGate[i])/pulseResolution + 0.5);
             }
@@ -968,7 +1073,10 @@ void MyScale::weightProcessing(int weightValueFromScale) {
                         if ( (gateBufferProcessedAmount[proData.destinationGate[_elementId]] >= gateBufferAmount[proData.destinationGate[_elementId]]) ||
                              (gateBufferProcessedWeight[proData.destinationGate[_elementId]] >= gateBufferWeight[proData.destinationGate[_elementId]])    ) {
 
-                            emit disableGate(proData.destinationGate[_elementId], true);
+                            gate_available[proData.destinationGate[_elementId]] = -1;
+                            emit enableGate(proData.destinationGate[_elementId], false);
+
+                            qDebug() << "gate_available[" << proData.destinationGate[_elementId] << "] == " << gate_available[proData.destinationGate[_elementId]];
                         }
 
                         //emit gateBufferStatus();
@@ -1020,7 +1128,7 @@ void MyScale::weightProcessing(int weightValueFromScale) {
 
                             qDebug() << "@product: " << _elementId << " - productTickPosition: " << productTickPosition[_elementId] << "ENTERING@GATE !!!";
 
-                            emit activateGate(proData.destinationGate[_elementId], true);
+                            emit activateGateArm(proData.destinationGate[_elementId], true);
 
                             proData.openGate[_elementId] = false;
                             proData.closeGate[_elementId] = true;
@@ -1037,7 +1145,7 @@ void MyScale::weightProcessing(int weightValueFromScale) {
 
                             qDebug() << "@product: " << _elementId << " - productTickPosition: " << productTickPosition[_elementId] << "LEAVING@GATE !!!";
 
-                            emit activateGate(proData.destinationGate[_elementId], false);
+                            emit activateGateArm(proData.destinationGate[_elementId], false);
 
                             proData.productEnteringGateArea[_elementId] = false;
                             proData.closeGate[_elementId] = false;

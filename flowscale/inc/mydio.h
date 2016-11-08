@@ -66,7 +66,7 @@ signals:
 
 
 public slots:
-    void setOutput(int, bool);
+    void activateGateArm(int, bool);
     // /////////////////////////
     // Simulation
 //    void updateInputSim(unsigned char, bool);

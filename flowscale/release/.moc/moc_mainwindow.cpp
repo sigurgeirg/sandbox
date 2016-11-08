@@ -54,39 +54,39 @@ static const uint qt_meta_data_MainWindow[] = {
      433,   11,   11,   11, 0x08,
      451,   11,   11,   11, 0x08,
      471,  469,   11,   11, 0x08,
-     491,   11,   11,   11, 0x08,
-     515,   11,   11,   11, 0x08,
-     539,   11,   11,   11, 0x08,
-     572,   11,   11,   11, 0x08,
-     606,   11,   11,   11, 0x08,
-     647,  642,   11,   11, 0x08,
-     682,  642,   11,   11, 0x08,
-     719,  269,   11,   11, 0x08,
-     745,  269,   11,   11, 0x08,
-     771,  269,   11,   11, 0x08,
-     797,  269,   11,   11, 0x08,
-     823,  269,   11,   11, 0x08,
-     849,  269,   11,   11, 0x08,
-     875,   11,   11,   11, 0x0a,
-     896,   11,   11,   11, 0x0a,
-     931,   11,   11,   11, 0x0a,
-     949,   11,   11,   11, 0x0a,
-     976,   11,   11,   11, 0x0a,
-    1004,   11,   11,   11, 0x0a,
-    1028,   11,   11,   11, 0x0a,
-    1053,   11,   11,   11, 0x0a,
-    1079,   11,   11,   11, 0x0a,
-    1107,   11,   11,   11, 0x0a,
-    1132,   11,   11,   11, 0x0a,
-    1159,   11,   11,   11, 0x0a,
-    1186,   11,   11,   11, 0x0a,
-    1209,   11,   11,   11, 0x0a,
-    1241,   11,   11,   11, 0x0a,
-    1266,   11,   11,   11, 0x0a,
-    1294,   11,   11,   11, 0x0a,
-    1316,   11,   11,   11, 0x0a,
-    1334,   11,   11,   11, 0x0a,
-    1359,  469,   11,   11, 0x0a,
+     497,   11,   11,   11, 0x08,
+     521,   11,   11,   11, 0x08,
+     545,   11,   11,   11, 0x08,
+     578,   11,   11,   11, 0x08,
+     612,   11,   11,   11, 0x08,
+     653,  648,   11,   11, 0x08,
+     688,  648,   11,   11, 0x08,
+     725,  269,   11,   11, 0x08,
+     751,  269,   11,   11, 0x08,
+     777,  269,   11,   11, 0x08,
+     803,  269,   11,   11, 0x08,
+     829,  269,   11,   11, 0x08,
+     855,  269,   11,   11, 0x08,
+     881,   11,   11,   11, 0x0a,
+     902,   11,   11,   11, 0x0a,
+     937,   11,   11,   11, 0x0a,
+     955,   11,   11,   11, 0x0a,
+     982,   11,   11,   11, 0x0a,
+    1010,   11,   11,   11, 0x0a,
+    1034,   11,   11,   11, 0x0a,
+    1059,   11,   11,   11, 0x0a,
+    1085,   11,   11,   11, 0x0a,
+    1113,   11,   11,   11, 0x0a,
+    1138,   11,   11,   11, 0x0a,
+    1165,   11,   11,   11, 0x0a,
+    1192,   11,   11,   11, 0x0a,
+    1215,   11,   11,   11, 0x0a,
+    1247,   11,   11,   11, 0x0a,
+    1272,   11,   11,   11, 0x0a,
+    1300,   11,   11,   11, 0x0a,
+    1322,   11,   11,   11, 0x0a,
+    1340,   11,   11,   11, 0x0a,
+    1365,  469,   11,   11, 0x0a,
 
        0        // eod
 };
@@ -104,7 +104,7 @@ static const char qt_meta_stringdata_MainWindow[] = {
     "on_btnCalibrateWEIGHT_clicked()\0"
     "on_btnAPPLY_clicked()\0on_xmin_clicked()\0"
     "on_xmax_clicked()\0on_ymin_clicked()\0"
-    "on_ymax_clicked()\0,\0setOutput(int,bool)\0"
+    "on_ymax_clicked()\0,\0activateGateArm(int,bool)\0"
     "on_btnReverse_clicked()\0on_btnForward_clicked()\0"
     "on_btnNetWeightConnect_clicked()\0"
     "on_btnRefreshRecipeList_clicked()\0"
@@ -133,7 +133,7 @@ static const char qt_meta_stringdata_MainWindow[] = {
     "displayInputValue(ulong)\0"
     "productWeightToDisplay(int)\0"
     "plotProductGraph(int)\0keyValue(QString)\0"
-    "graphBoundaries(QString)\0disableGate(int,bool)\0"
+    "graphBoundaries(QString)\0enableGate(int,bool)\0"
 };
 
 void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
@@ -163,7 +163,7 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         case 18: _t->on_xmax_clicked(); break;
         case 19: _t->on_ymin_clicked(); break;
         case 20: _t->on_ymax_clicked(); break;
-        case 21: _t->setOutput((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< bool(*)>(_a[2]))); break;
+        case 21: _t->activateGateArm((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< bool(*)>(_a[2]))); break;
         case 22: _t->on_btnReverse_clicked(); break;
         case 23: _t->on_btnForward_clicked(); break;
         case 24: _t->on_btnNetWeightConnect_clicked(); break;
@@ -196,7 +196,7 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         case 51: _t->plotProductGraph((*reinterpret_cast< int(*)>(_a[1]))); break;
         case 52: _t->keyValue((*reinterpret_cast< QString(*)>(_a[1]))); break;
         case 53: _t->graphBoundaries((*reinterpret_cast< QString(*)>(_a[1]))); break;
-        case 54: _t->disableGate((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< bool(*)>(_a[2]))); break;
+        case 54: _t->enableGate((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< bool(*)>(_a[2]))); break;
         default: ;
         }
     }

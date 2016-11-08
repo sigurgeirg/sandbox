@@ -49,6 +49,17 @@ public:
 
     Settings *settings;
 
+    bool gate0_enabled;
+    bool gate1_enabled;
+    bool gate2_enabled;
+    bool gate3_enabled;
+    bool gate4_enabled;
+    bool gate5_enabled;
+    bool gate6_enabled;
+    bool gate7_enabled;
+    bool gate8_enabled;
+    bool gate9_enabled;
+
 
 
 private:
@@ -110,7 +121,7 @@ private slots:
     void on_xmax_clicked();
     void on_ymin_clicked();
     void on_ymax_clicked();
-    void setOutput(int, bool);
+    void activateGateArm(int, bool);
 
     // /////////////////////////
     // Simulation
@@ -158,7 +169,7 @@ public slots:
     void plotProductGraph(int);
     void keyValue(QString);
     void graphBoundaries(QString);
-    void disableGate(int, bool);
+    void enableGate(int, bool);
 
 
 };

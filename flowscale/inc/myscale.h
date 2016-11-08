@@ -189,7 +189,7 @@ private:
     int meanWeightSample;
 
     // Grader settings variables:
-    bool gate_available[10];
+    int gate_available[10];
 
     int distanceToGraderGate[10];        // [mm]
     int distanceOpenGate[10];            // [mm]
@@ -231,8 +231,8 @@ signals:
     void requestNewRecipe(QString);
     void conveyorRunState(QString);
     void sendMQTT(QString, const char*);
-    void activateGate(int, bool);
-    void disableGate(int, bool);
+    void activateGateArm(int, bool);
+    void enableGate(int, bool);
 
 public slots:
     void conveyorBeltSignal();
@@ -242,6 +242,7 @@ public slots:
     void xmax(QString);
     void ymin(QString);
     void ymax(QString);
+    void gate0Availability(bool);
     void gate1Availability(bool);
     void gate2Availability(bool);
     void gate3Availability(bool);
