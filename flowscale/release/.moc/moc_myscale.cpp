@@ -22,12 +22,12 @@ static const uint qt_meta_data_MyScale[] = {
        6,       // revision
        0,       // classname
        0,    0, // classinfo
-      32,   14, // methods
+      34,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
        0,       // flags
-      18,       // signalCount
+      20,       // signalCount
 
  // signals: signature, parameters, type, tag, flags
        9,    8,    8,    8, 0x05,
@@ -48,22 +48,24 @@ static const uint qt_meta_data_MyScale[] = {
      359,  357,    8,    8, 0x05,
      389,  357,    8,    8, 0x05,
      415,  357,    8,    8, 0x05,
+     436,  357,    8,    8, 0x05,
+     461,  357,    8,    8, 0x05,
 
  // slots: signature, parameters, type, tag, flags
-     436,    8,    8,    8, 0x0a,
-     457,    8,    8,    8, 0x0a,
      487,    8,    8,    8, 0x0a,
-     516,    8,    8,    8, 0x0a,
-     530,    8,    8,    8, 0x0a,
-     544,    8,    8,    8, 0x0a,
-     558,    8,    8,    8, 0x0a,
-     572,    8,    8,    8, 0x0a,
-     596,    8,    8,    8, 0x0a,
-     620,    8,    8,    8, 0x0a,
-     644,    8,    8,    8, 0x0a,
-     668,    8,    8,    8, 0x0a,
-     692,    8,    8,    8, 0x0a,
-     716,    8,    8,    8, 0x0a,
+     508,    8,    8,    8, 0x0a,
+     538,    8,    8,    8, 0x0a,
+     567,    8,    8,    8, 0x0a,
+     581,    8,    8,    8, 0x0a,
+     595,    8,    8,    8, 0x0a,
+     609,    8,    8,    8, 0x0a,
+     623,    8,    8,    8, 0x0a,
+     647,    8,    8,    8, 0x0a,
+     671,    8,    8,    8, 0x0a,
+     695,    8,    8,    8, 0x0a,
+     719,    8,    8,    8, 0x0a,
+     743,    8,    8,    8, 0x0a,
+     767,    8,    8,    8, 0x0a,
 
        0        // eod
 };
@@ -80,8 +82,9 @@ static const char qt_meta_stringdata_MyScale[] = {
     "conveyorRunState(QString)\0,\0"
     "sendMQTT(QString,const char*)\0"
     "activateGateArm(int,bool)\0"
-    "enableGate(int,bool)\0conveyorBeltSignal()\0"
-    "enteringProductSensorSignal()\0"
+    "enableGate(int,bool)\0BufferCount(int,QString)\0"
+    "BufferWeight(int,QString)\0"
+    "conveyorBeltSignal()\0enteringProductSensorSignal()\0"
     "leavingProductSensorSignal()\0xmin(QString)\0"
     "xmax(QString)\0ymin(QString)\0ymax(QString)\0"
     "gate0Availability(bool)\0gate1Availability(bool)\0"
@@ -114,20 +117,22 @@ void MyScale::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, voi
         case 15: _t->sendMQTT((*reinterpret_cast< QString(*)>(_a[1])),(*reinterpret_cast< const char*(*)>(_a[2]))); break;
         case 16: _t->activateGateArm((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< bool(*)>(_a[2]))); break;
         case 17: _t->enableGate((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< bool(*)>(_a[2]))); break;
-        case 18: _t->conveyorBeltSignal(); break;
-        case 19: _t->enteringProductSensorSignal(); break;
-        case 20: _t->leavingProductSensorSignal(); break;
-        case 21: _t->xmin((*reinterpret_cast< QString(*)>(_a[1]))); break;
-        case 22: _t->xmax((*reinterpret_cast< QString(*)>(_a[1]))); break;
-        case 23: _t->ymin((*reinterpret_cast< QString(*)>(_a[1]))); break;
-        case 24: _t->ymax((*reinterpret_cast< QString(*)>(_a[1]))); break;
-        case 25: _t->gate0Availability((*reinterpret_cast< bool(*)>(_a[1]))); break;
-        case 26: _t->gate1Availability((*reinterpret_cast< bool(*)>(_a[1]))); break;
-        case 27: _t->gate2Availability((*reinterpret_cast< bool(*)>(_a[1]))); break;
-        case 28: _t->gate3Availability((*reinterpret_cast< bool(*)>(_a[1]))); break;
-        case 29: _t->gate4Availability((*reinterpret_cast< bool(*)>(_a[1]))); break;
-        case 30: _t->gate5Availability((*reinterpret_cast< bool(*)>(_a[1]))); break;
-        case 31: _t->gate6Availability((*reinterpret_cast< bool(*)>(_a[1]))); break;
+        case 18: _t->BufferCount((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2]))); break;
+        case 19: _t->BufferWeight((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2]))); break;
+        case 20: _t->conveyorBeltSignal(); break;
+        case 21: _t->enteringProductSensorSignal(); break;
+        case 22: _t->leavingProductSensorSignal(); break;
+        case 23: _t->xmin((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 24: _t->xmax((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 25: _t->ymin((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 26: _t->ymax((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 27: _t->gate0Availability((*reinterpret_cast< bool(*)>(_a[1]))); break;
+        case 28: _t->gate1Availability((*reinterpret_cast< bool(*)>(_a[1]))); break;
+        case 29: _t->gate2Availability((*reinterpret_cast< bool(*)>(_a[1]))); break;
+        case 30: _t->gate3Availability((*reinterpret_cast< bool(*)>(_a[1]))); break;
+        case 31: _t->gate4Availability((*reinterpret_cast< bool(*)>(_a[1]))); break;
+        case 32: _t->gate5Availability((*reinterpret_cast< bool(*)>(_a[1]))); break;
+        case 33: _t->gate6Availability((*reinterpret_cast< bool(*)>(_a[1]))); break;
         default: ;
         }
     }
@@ -165,9 +170,9 @@ int MyScale::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 32)
+        if (_id < 34)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 32;
+        _id -= 34;
     }
     return _id;
 }
@@ -296,5 +301,19 @@ void MyScale::enableGate(int _t1, bool _t2)
 {
     void *_a[] = { 0, const_cast<void*>(reinterpret_cast<const void*>(&_t1)), const_cast<void*>(reinterpret_cast<const void*>(&_t2)) };
     QMetaObject::activate(this, &staticMetaObject, 17, _a);
+}
+
+// SIGNAL 18
+void MyScale::BufferCount(int _t1, QString _t2)
+{
+    void *_a[] = { 0, const_cast<void*>(reinterpret_cast<const void*>(&_t1)), const_cast<void*>(reinterpret_cast<const void*>(&_t2)) };
+    QMetaObject::activate(this, &staticMetaObject, 18, _a);
+}
+
+// SIGNAL 19
+void MyScale::BufferWeight(int _t1, QString _t2)
+{
+    void *_a[] = { 0, const_cast<void*>(reinterpret_cast<const void*>(&_t1)), const_cast<void*>(reinterpret_cast<const void*>(&_t2)) };
+    QMetaObject::activate(this, &staticMetaObject, 19, _a);
 }
 QT_END_MOC_NAMESPACE

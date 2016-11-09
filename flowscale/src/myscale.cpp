@@ -175,6 +175,28 @@ MyScale::MyScale(QObject *parent) :
     gateBufferProcessedWeight[8] = 0.0;
     gateBufferProcessedWeight[9] = 0.0;
 
+    gateBufferProcessedAmountTotalizer[0] = 0;
+    gateBufferProcessedAmountTotalizer[1] = 0;
+    gateBufferProcessedAmountTotalizer[2] = 0;
+    gateBufferProcessedAmountTotalizer[3] = 0;
+    gateBufferProcessedAmountTotalizer[4] = 0;
+    gateBufferProcessedAmountTotalizer[5] = 0;
+    gateBufferProcessedAmountTotalizer[6] = 0;
+    gateBufferProcessedAmountTotalizer[7] = 0;
+    gateBufferProcessedAmountTotalizer[8] = 0;
+    gateBufferProcessedAmountTotalizer[9] = 0;
+
+    gateBufferProcessedWeightTotalizer[0] = 0.0;
+    gateBufferProcessedWeightTotalizer[1] = 0.0;
+    gateBufferProcessedWeightTotalizer[2] = 0.0;
+    gateBufferProcessedWeightTotalizer[3] = 0.0;
+    gateBufferProcessedWeightTotalizer[4] = 0.0;
+    gateBufferProcessedWeightTotalizer[5] = 0.0;
+    gateBufferProcessedWeightTotalizer[6] = 0.0;
+    gateBufferProcessedWeightTotalizer[7] = 0.0;
+    gateBufferProcessedWeightTotalizer[8] = 0.0;
+    gateBufferProcessedWeightTotalizer[9] = 0.0;
+
     emit conveyorRunState("conveyorOff");
 
 
@@ -198,19 +220,47 @@ MyScale::~MyScale()
 }
 
 
+void MyScale::writeBufferDataToFile() {
+
+    for (int i = 0; i < numberOfGates; i++)
+    {
+        gateBufferProcessedAmountTotalizer[i] = gateBufferProcessedAmountTotalizer[i] + gateBufferProcessedAmount[i];
+        gateBufferProcessedWeightTotalizer[i] = gateBufferProcessedWeightTotalizer[i] + gateBufferProcessedWeight[i];
+    }
+
+    qDebug() << "";
+    qDebug() << "";
+    qDebug() << "";
+    qDebug() << "gateBufferProcessedAmountTotalizer: ";
+    qDebug() << "=================================== ";
+    for (int i = 0; i < numberOfGates; i++) {
+        if (gateBufferProcessedAmountTotalizer[i] > 0) {
+            qDebug() << "gateBufferProcessedAmountTotalizer[" << i << "] : " << gateBufferProcessedAmountTotalizer[i];
+        }
+    }
+
+    qDebug() << "";
+    qDebug() << "gateBufferProcessedWeightTotalizer: ";
+    qDebug() << "=================================== ";
+    for (int i = 0; i < numberOfGates; i++) {
+        if (gateBufferProcessedWeightTotalizer[i] > 0) {
+            qDebug() << "gateBufferProcessedWeightTotalizer[" << i << "] : " << QString::number(int(gateBufferProcessedWeightTotalizer[i] * 1000) / 1000.0, 'f', 3);
+        }
+    }
+
+    // FIXME: Clear recipe variables
+    for (int i = 0; i < numberOfGates; i++) {
+        gateBufferProcessedAmount[i] = 0;
+        gateBufferProcessedWeight[i] = 0.0;
+        gateBufferProcessedAmountTotalizer[i] = 0;
+        gateBufferProcessedWeightTotalizer[i] = 0.0;
+    }
+}
+
+
 void MyScale::updateRecipe(QString selectedRecipe) {
 
-    // FIXME: Write recipeData To File
-    for (int i = 0; i < numberOfGates; i++) {
-        if (gateBufferProcessedWeight[i] > 0.0) {
-            qDebug() << "gateBufferProcessedWeight[" << i << "] : " << QString::number(int(gateBufferProcessedWeight[i] * 1000) / 1000.0, 'f', 3);
-        }
-    }
-    for (int i = 0; i < numberOfGates; i++) {
-        if (gateBufferProcessedAmount[i] > 0) {
-            qDebug() << "gateBufferProcessedAmount[" << i << "] : " << gateBufferProcessedAmount[i];
-        }
-    }
+    this->writeBufferDataToFile();
 
     recipe->updateRecipe(selectedRecipe);
 
@@ -237,12 +287,6 @@ void MyScale::updateRecipe(QString selectedRecipe) {
     emit sendProductId(QString::fromStdString(productID.c_str()));
     emit sendProductType(QString::fromStdString(productType.c_str()));
     emit sendDescription(QString::fromStdString(productDescription.c_str()));
-
-    // FIXME: Clear recipe variables
-    for (int i = 0; i < numberOfGates; i++) {
-        gateBufferProcessedWeight[i] = 0.0;
-        gateBufferProcessedAmount[i] = 0;
-    }
 }
 
 
@@ -258,6 +302,10 @@ bool MyScale::between(int less, int value, int greater) {
 void MyScale::gate0Availability(bool disabled) {
 
     if (disabled == false) {
+
+        gateBufferProcessedAmountTotalizer[0] = gateBufferProcessedAmountTotalizer[0] + gateBufferProcessedAmount[0];
+        gateBufferProcessedWeightTotalizer[0] = gateBufferProcessedWeightTotalizer[0] + gateBufferProcessedWeight[0];
+
         gate_available[0] = 0;
 
         // Here we need to clear the total weight+count,
@@ -276,6 +324,10 @@ void MyScale::gate0Availability(bool disabled) {
 void MyScale::gate1Availability(bool disabled) {
 
     if (disabled == false) {
+
+        gateBufferProcessedAmountTotalizer[1] = gateBufferProcessedAmountTotalizer[1] + gateBufferProcessedAmount[1];
+        gateBufferProcessedWeightTotalizer[1] = gateBufferProcessedWeightTotalizer[1] + gateBufferProcessedWeight[1];
+
         gate_available[1] = 1;
 
         // FIXME: Save data before clearing like I do here
@@ -290,6 +342,10 @@ void MyScale::gate1Availability(bool disabled) {
 void MyScale::gate2Availability(bool disabled) {
 
     if (disabled == false) {
+
+        gateBufferProcessedAmountTotalizer[2] = gateBufferProcessedAmountTotalizer[2] + gateBufferProcessedAmount[2];
+        gateBufferProcessedWeightTotalizer[2] = gateBufferProcessedWeightTotalizer[2] + gateBufferProcessedWeight[2];
+
         gate_available[2] = 2;
 
         // FIXME: Save data before clearing like I do here
@@ -304,6 +360,10 @@ void MyScale::gate2Availability(bool disabled) {
 void MyScale::gate3Availability(bool disabled) {
 
     if (disabled == false) {
+
+        gateBufferProcessedAmountTotalizer[3] = gateBufferProcessedAmountTotalizer[3] + gateBufferProcessedAmount[3];
+        gateBufferProcessedWeightTotalizer[3] = gateBufferProcessedWeightTotalizer[3] + gateBufferProcessedWeight[3];
+
         gate_available[3] = 3;
 
         // FIXME: Save data before clearing like I do here
@@ -318,6 +378,10 @@ void MyScale::gate3Availability(bool disabled) {
 void MyScale::gate4Availability(bool disabled) {
 
     if (disabled == false) {
+
+        gateBufferProcessedAmountTotalizer[4] = gateBufferProcessedAmountTotalizer[4] + gateBufferProcessedAmount[4];
+        gateBufferProcessedWeightTotalizer[4] = gateBufferProcessedWeightTotalizer[4] + gateBufferProcessedWeight[4];
+
         gate_available[4] = 4;
 
         // FIXME: Save data before clearing like I do here
@@ -334,6 +398,10 @@ void MyScale::gate5Availability(bool disabled) {
     qDebug() << "Gate5Availability check";
 
     if (disabled == false) {
+
+        gateBufferProcessedAmountTotalizer[5] = gateBufferProcessedAmountTotalizer[5] + gateBufferProcessedAmount[5];
+        gateBufferProcessedWeightTotalizer[5] = gateBufferProcessedWeightTotalizer[5] + gateBufferProcessedWeight[5];
+
         gate_available[5] = 5;
 
         // FIXME: Save data before clearing like I do here
@@ -350,6 +418,10 @@ void MyScale::gate6Availability(bool disabled) {
     qDebug() << "Gate6Availability check";
 
     if (disabled == false) {
+
+        gateBufferProcessedAmountTotalizer[6] = gateBufferProcessedAmountTotalizer[6] + gateBufferProcessedAmount[6];
+        gateBufferProcessedWeightTotalizer[6] = gateBufferProcessedWeightTotalizer[6] + gateBufferProcessedWeight[6];
+
         gate_available[6] = 6;
 
         // FIXME: Save data before clearing like I do here
@@ -1069,6 +1141,9 @@ void MyScale::weightProcessing(int weightValueFromScale) {
                         //
                         gateBufferProcessedAmount[proData.destinationGate[_elementId]] = gateBufferProcessedAmount[proData.destinationGate[_elementId]] + 1; // [pcs]
                         gateBufferProcessedWeight[proData.destinationGate[_elementId]] = gateBufferProcessedWeight[proData.destinationGate[_elementId]] + (proData.productWeight[_elementId] / 1000.0); // [gr]
+
+                        emit BufferCount(proData.destinationGate[_elementId], QString::number(gateBufferProcessedAmount[proData.destinationGate[_elementId]]));
+                        emit BufferWeight(proData.destinationGate[_elementId], QString::number(gateBufferProcessedWeight[proData.destinationGate[_elementId]]));
 
                         if ( (gateBufferProcessedAmount[proData.destinationGate[_elementId]] >= gateBufferAmount[proData.destinationGate[_elementId]]) ||
                              (gateBufferProcessedWeight[proData.destinationGate[_elementId]] >= gateBufferWeight[proData.destinationGate[_elementId]])    ) {

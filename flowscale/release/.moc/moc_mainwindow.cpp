@@ -22,7 +22,7 @@ static const uint qt_meta_data_MainWindow[] = {
        6,       // revision
        0,       // classname
        0,    0, // classinfo
-      55,   14, // methods
+      58,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -67,26 +67,29 @@ static const uint qt_meta_data_MainWindow[] = {
      803,  269,   11,   11, 0x08,
      829,  269,   11,   11, 0x08,
      855,  269,   11,   11, 0x08,
-     881,   11,   11,   11, 0x0a,
-     902,   11,   11,   11, 0x0a,
-     937,   11,   11,   11, 0x0a,
-     955,   11,   11,   11, 0x0a,
+     881,   11,   11,   11, 0x08,
+     908,   11,   11,   11, 0x0a,
+     929,   11,   11,   11, 0x0a,
+     964,   11,   11,   11, 0x0a,
      982,   11,   11,   11, 0x0a,
-    1010,   11,   11,   11, 0x0a,
-    1034,   11,   11,   11, 0x0a,
-    1059,   11,   11,   11, 0x0a,
-    1085,   11,   11,   11, 0x0a,
-    1113,   11,   11,   11, 0x0a,
-    1138,   11,   11,   11, 0x0a,
+    1009,   11,   11,   11, 0x0a,
+    1037,   11,   11,   11, 0x0a,
+    1061,   11,   11,   11, 0x0a,
+    1086,   11,   11,   11, 0x0a,
+    1112,   11,   11,   11, 0x0a,
+    1140,   11,   11,   11, 0x0a,
     1165,   11,   11,   11, 0x0a,
     1192,   11,   11,   11, 0x0a,
-    1215,   11,   11,   11, 0x0a,
-    1247,   11,   11,   11, 0x0a,
-    1272,   11,   11,   11, 0x0a,
-    1300,   11,   11,   11, 0x0a,
-    1322,   11,   11,   11, 0x0a,
-    1340,   11,   11,   11, 0x0a,
-    1365,  469,   11,   11, 0x0a,
+    1219,   11,   11,   11, 0x0a,
+    1242,   11,   11,   11, 0x0a,
+    1274,   11,   11,   11, 0x0a,
+    1299,   11,   11,   11, 0x0a,
+    1327,   11,   11,   11, 0x0a,
+    1349,   11,   11,   11, 0x0a,
+    1367,   11,   11,   11, 0x0a,
+    1392,  469,   11,   11, 0x0a,
+    1413,  469,   11,   11, 0x0a,
+    1445,  469,   11,   11, 0x0a,
 
        0        // eod
 };
@@ -117,6 +120,7 @@ static const char qt_meta_stringdata_MainWindow[] = {
     "on_cbxGate4_clicked(bool)\0"
     "on_cbxGate5_clicked(bool)\0"
     "on_cbxGate6_clicked(bool)\0"
+    "on_btnCloseBatch_clicked()\0"
     "conveyorBeltSignal()\0"
     "conveyorRunStateIndicator(QString)\0"
     "recordWeight(int)\0displayReceivedWeight(int)\0"
@@ -134,6 +138,8 @@ static const char qt_meta_stringdata_MainWindow[] = {
     "productWeightToDisplay(int)\0"
     "plotProductGraph(int)\0keyValue(QString)\0"
     "graphBoundaries(QString)\0enableGate(int,bool)\0"
+    "displayBufferCount(int,QString)\0"
+    "displayBufferWeight(int,QString)\0"
 };
 
 void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
@@ -177,26 +183,29 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         case 32: _t->on_cbxGate4_clicked((*reinterpret_cast< bool(*)>(_a[1]))); break;
         case 33: _t->on_cbxGate5_clicked((*reinterpret_cast< bool(*)>(_a[1]))); break;
         case 34: _t->on_cbxGate6_clicked((*reinterpret_cast< bool(*)>(_a[1]))); break;
-        case 35: _t->conveyorBeltSignal(); break;
-        case 36: _t->conveyorRunStateIndicator((*reinterpret_cast< QString(*)>(_a[1]))); break;
-        case 37: _t->recordWeight((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 38: _t->displayReceivedWeight((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 39: _t->displayDescription((*reinterpret_cast< QString(*)>(_a[1]))); break;
-        case 40: _t->displayBatchId((*reinterpret_cast< QString(*)>(_a[1]))); break;
-        case 41: _t->displayRecipeId((*reinterpret_cast< QString(*)>(_a[1]))); break;
-        case 42: _t->displayProductId((*reinterpret_cast< QString(*)>(_a[1]))); break;
-        case 43: _t->displayProductType((*reinterpret_cast< QString(*)>(_a[1]))); break;
-        case 44: _t->displaySerialNumber((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 45: _t->displayFilteredWeight((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 46: _t->displayConfidence((*reinterpret_cast< QString(*)>(_a[1]))); break;
-        case 47: _t->displayLength((*reinterpret_cast< QString(*)>(_a[1]))); break;
-        case 48: _t->displayDestinationGate((*reinterpret_cast< QString(*)>(_a[1]))); break;
-        case 49: _t->displayInputValue((*reinterpret_cast< ulong(*)>(_a[1]))); break;
-        case 50: _t->productWeightToDisplay((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 51: _t->plotProductGraph((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 52: _t->keyValue((*reinterpret_cast< QString(*)>(_a[1]))); break;
-        case 53: _t->graphBoundaries((*reinterpret_cast< QString(*)>(_a[1]))); break;
-        case 54: _t->enableGate((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< bool(*)>(_a[2]))); break;
+        case 35: _t->on_btnCloseBatch_clicked(); break;
+        case 36: _t->conveyorBeltSignal(); break;
+        case 37: _t->conveyorRunStateIndicator((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 38: _t->recordWeight((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 39: _t->displayReceivedWeight((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 40: _t->displayDescription((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 41: _t->displayBatchId((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 42: _t->displayRecipeId((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 43: _t->displayProductId((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 44: _t->displayProductType((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 45: _t->displaySerialNumber((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 46: _t->displayFilteredWeight((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 47: _t->displayConfidence((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 48: _t->displayLength((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 49: _t->displayDestinationGate((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 50: _t->displayInputValue((*reinterpret_cast< ulong(*)>(_a[1]))); break;
+        case 51: _t->productWeightToDisplay((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 52: _t->plotProductGraph((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 53: _t->keyValue((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 54: _t->graphBoundaries((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 55: _t->enableGate((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< bool(*)>(_a[2]))); break;
+        case 56: _t->displayBufferCount((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2]))); break;
+        case 57: _t->displayBufferWeight((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2]))); break;
         default: ;
         }
     }
@@ -234,9 +243,9 @@ int MainWindow::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 55)
+        if (_id < 58)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 55;
+        _id -= 58;
     }
     return _id;
 }

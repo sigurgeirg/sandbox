@@ -33,6 +33,7 @@ public:
     MyDio *dio;
     Dio io;
 
+    void writeBufferDataToFile();
     void updateRecipe(QString);
     bool between(int less, int value, int greater);
     int  returnToGate(int measuredWeight);
@@ -189,21 +190,24 @@ private:
     int meanWeightSample;
 
     // Grader settings variables:
-    int gate_available[10];
+    int gate_available[numberOfGates];
 
-    int distanceToGraderGate[10];        // [mm]
-    int distanceOpenGate[10];            // [mm]
-    int distanceToEndOfGraderGate[10];   // [mm]
-    int pulseDistanceToGate[10];         // [ticks]
-    int pulseDistanceToEndOfGate[10];    // [ticks]
-    int distanceToEndOfGrader;           // [mm]
-    int pulseDistanceToEndOfConveyorBelt;// [ticks]
+    int distanceToGraderGate[numberOfGates];        // [mm]
+    int distanceOpenGate[numberOfGates];            // [mm]
+    int distanceToEndOfGraderGate[numberOfGates];   // [mm]
+    int pulseDistanceToGate[numberOfGates];         // [ticks]
+    int pulseDistanceToEndOfGate[numberOfGates];    // [ticks]
+    int distanceToEndOfGrader;                      // [mm]
+    int pulseDistanceToEndOfConveyorBelt;           // [ticks]
 
-    int gateBufferWeight[10]; // [kg]
-    int gateBufferAmount[10]; // [pcs]
+    int gateBufferWeight[numberOfGates];            // [kg]
+    int gateBufferAmount[numberOfGates];            // [pcs]
 
-    int gateBufferProcessedAmount[10]; // [pcs]
-    double gateBufferProcessedWeight[10]; // [kg]
+    int gateBufferProcessedAmount[numberOfGates];    // [pcs]
+    double gateBufferProcessedWeight[numberOfGates]; // [kg]
+
+    int gateBufferProcessedAmountTotalizer[numberOfGates];    // [pcs]
+    double gateBufferProcessedWeightTotalizer[numberOfGates]; // [kg]
 
     int evenDistribution;
     int fillUpInSequence;
@@ -233,6 +237,8 @@ signals:
     void sendMQTT(QString, const char*);
     void activateGateArm(int, bool);
     void enableGate(int, bool);
+    void BufferCount(int, QString);
+    void BufferWeight(int, QString);
 
 public slots:
     void conveyorBeltSignal();

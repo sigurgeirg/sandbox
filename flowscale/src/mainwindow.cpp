@@ -57,6 +57,8 @@ MainWindow::MainWindow(QWidget *parent) :
         connect(scale, SIGNAL(sendConfidence(QString)),         this,   SLOT(displayConfidence(QString)));
         connect(scale, SIGNAL(sendLength(QString)),             this,   SLOT(displayLength(QString)));
         connect(scale, SIGNAL(sendDestinationGate(QString)),    this,   SLOT(displayDestinationGate(QString)));
+        connect(scale, SIGNAL(BufferCount(int,QString)),        this,   SLOT(displayBufferCount(int,QString)));
+        connect(scale, SIGNAL(BufferWeight(int,QString)),       this,   SLOT(displayBufferWeight(int,QString)));
 
         // Arm control & Enable/Disable gates by checkboxes or by count/weight.
         connect(scale, SIGNAL(enableGate(int, bool)),           this,   SLOT(enableGate(int, bool)));
@@ -85,7 +87,10 @@ MainWindow::MainWindow(QWidget *parent) :
         connect(this, SIGNAL(ymin(QString)),                    scale,  SLOT(ymin(QString)));
         connect(this, SIGNAL(ymax(QString)),                    scale,  SLOT(ymax(QString)));
 
+        ui->tabWidget->setStyleSheet("QTabBar::tab { height: 50px; }");
         ui->frameState->setStyleSheet("background-color: red");
+        ui->btnNetWeightConnect->setStyleSheet("background-color: #15d015; color: white");
+        ui->btnDisconnect->setStyleSheet("background-color: red; color: white");
 }
 
 MainWindow::~MainWindow()
@@ -272,6 +277,7 @@ void MainWindow::displayDescription(QString description)
 void MainWindow::displayBatchId(QString batchId)
 {
     ui->lblBatchID->setText(batchId);
+    ui->lblBatchID_2->setText(batchId);
 }
 
 void MainWindow::displayRecipeId(QString recipeId)
@@ -292,12 +298,14 @@ void MainWindow::displayProductType(QString productType)
 void MainWindow::displaySerialNumber(int serialNumber)
 {
     ui->lblSerialNumber->setText(QString::number(serialNumber));
+    ui->lblSerialNumber_2->setText(QString::number(serialNumber));
     ui->lblElementId->setText(QString::number(serialNumber));
 }
 
 void MainWindow::displayFilteredWeight(int filteredWeight)
 {
     ui->lblProductWeight->setText(QString::number(filteredWeight));
+    ui->lblProductWeight_2->setText(QString::number(filteredWeight));
     ui->lblFilteredWeight->setText(QString::number(filteredWeight));
 }
 
@@ -314,9 +322,28 @@ void MainWindow::displayLength(QString length)
 void MainWindow::displayDestinationGate(QString destinationGate)
 {
     ui->lblDestinationGate->setText(destinationGate);
+    ui->lblDestinationGate_2->setText(destinationGate);
 }
 
+void MainWindow::displayBufferCount(int gate, QString bufferCount)
+{
+    if (gate == 1) { ui->lblBCnt1->setText(bufferCount);}
+    if (gate == 2) { ui->lblBCnt2->setText(bufferCount);}
+    if (gate == 3) { ui->lblBCnt3->setText(bufferCount);}
+    if (gate == 4) { ui->lblBCnt4->setText(bufferCount);}
+    if (gate == 5) { ui->lblBCnt5->setText(bufferCount);}
+    if (gate == 6) { ui->lblBCnt6->setText(bufferCount);}
+}
 
+void MainWindow::displayBufferWeight(int gate, QString bufferWeight)
+{
+    if (gate == 1) { ui->lblBWgt1->setText(bufferWeight);}
+    if (gate == 2) { ui->lblBWgt2->setText(bufferWeight);}
+    if (gate == 3) { ui->lblBWgt3->setText(bufferWeight);}
+    if (gate == 4) { ui->lblBWgt4->setText(bufferWeight);}
+    if (gate == 5) { ui->lblBWgt5->setText(bufferWeight);}
+    if (gate == 6) { ui->lblBWgt6->setText(bufferWeight);}
+}
 
 // /////////////////////////
 // Simulation
@@ -699,4 +726,30 @@ void MainWindow::on_cbxGate5_clicked(bool disabled)
 void MainWindow::on_cbxGate6_clicked(bool disabled)
 {
     emit gate6Availability(disabled);
+}
+
+void MainWindow::on_btnCloseBatch_clicked()
+{
+    scale->writeBufferDataToFile();
+
+    ui->lblBCnt1->setText("0");
+    ui->lblBCnt2->setText("0");
+    ui->lblBCnt3->setText("0");
+    ui->lblBCnt4->setText("0");
+    ui->lblBCnt5->setText("0");
+    ui->lblBCnt6->setText("0");
+
+    ui->lblBWgt1->setText("0");
+    ui->lblBWgt2->setText("0");
+    ui->lblBWgt3->setText("0");
+    ui->lblBWgt4->setText("0");
+    ui->lblBWgt5->setText("0");
+    ui->lblBWgt6->setText("0");
+
+    ui->cbxGate1->setChecked(false);
+    ui->cbxGate2->setChecked(false);
+    ui->cbxGate3->setChecked(false);
+    ui->cbxGate4->setChecked(false);
+    ui->cbxGate5->setChecked(false);
+    ui->cbxGate6->setChecked(false);
 }

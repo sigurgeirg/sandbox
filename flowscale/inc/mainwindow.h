@@ -147,6 +147,8 @@ private slots:
     void on_cbxGate5_clicked(bool checked);
     void on_cbxGate6_clicked(bool checked);
 
+    void on_btnCloseBatch_clicked();
+
 public slots:
     void conveyorBeltSignal();
     void conveyorRunStateIndicator(QString);
@@ -170,6 +172,9 @@ public slots:
     void keyValue(QString);
     void graphBoundaries(QString);
     void enableGate(int, bool);
+
+    void displayBufferCount(int, QString);
+    void displayBufferWeight(int, QString);
 
 
 };
