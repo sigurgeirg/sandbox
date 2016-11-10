@@ -170,7 +170,7 @@
       <enum>QTabWidget::Rounded</enum>
      </property>
      <property name="currentIndex">
-      <number>1</number>
+      <number>2</number>
      </property>
      <property name="iconSize">
       <size>
@@ -834,9 +834,9 @@
           <colorrole role="Base">
            <brush brushstyle="SolidPattern">
             <color alpha="255">
-             <red>255</red>
-             <green>255</green>
-             <blue>255</blue>
+             <red>100</red>
+             <green>135</green>
+             <blue>223</blue>
             </color>
            </brush>
           </colorrole>
@@ -980,9 +980,9 @@
           <colorrole role="Base">
            <brush brushstyle="SolidPattern">
             <color alpha="255">
-             <red>255</red>
-             <green>255</green>
-             <blue>255</blue>
+             <red>100</red>
+             <green>135</green>
+             <blue>223</blue>
             </color>
            </brush>
           </colorrole>
@@ -2691,6 +2691,12 @@
          <height>0</height>
         </size>
        </property>
+       <property name="styleSheet">
+        <string notr="true">QScrollBar:vertical {min-width: 50px; margin-right: 20px;}</string>
+       </property>
+       <property name="rowCount">
+        <number>55</number>
+       </property>
        <row>
         <property name="text">
          <string>01</string>
@@ -2886,11 +2892,22 @@
          <string>39</string>
         </property>
        </row>
-       <row>
-        <property name="text">
-         <string>40</string>
-        </property>
-       </row>
+       <row/>
+       <row/>
+       <row/>
+       <row/>
+       <row/>
+       <row/>
+       <row/>
+       <row/>
+       <row/>
+       <row/>
+       <row/>
+       <row/>
+       <row/>
+       <row/>
+       <row/>
+       <row/>
        <column>
         <property name="text">
          <string>01</string>
@@ -3399,54 +3416,6 @@
         </property>
        </widget>
       </widget>
-     </widget>
-     <widget class="QWidget" name="tabStuff">
-      <property name="enabled">
-       <bool>true</bool>
-      </property>
-      <attribute name="title">
-       <string>Page</string>
-      </attribute>
-      <widget class="QLabel" name="PenguinImage">
-       <property name="geometry">
-        <rect>
-         <x>50</x>
-         <y>40</y>
-         <width>61</width>
-         <height>21</height>
-        </rect>
-       </property>
-       <property name="accessibleDescription">
-        <string/>
-       </property>
-       <property name="midLineWidth">
-        <number>0</number>
-       </property>
-       <property name="text">
-        <string>Penguin</string>
-       </property>
-       <property name="margin">
-        <number>0</number>
-       </property>
-       <property name="indent">
-        <number>-1</number>
-       </property>
-      </widget>
-      <widget class="QLabel" name="FlowScaleImage">
-       <property name="geometry">
-        <rect>
-         <x>50</x>
-         <y>40</y>
-         <width>211</width>
-         <height>61</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>FlowScale</string>
-       </property>
-      </widget>
-      <zorder>FlowScaleImage</zorder>
-      <zorder>PenguinImage</zorder>
      </widget>
     </widget>
     <widget class="QFrame" name="frameState">

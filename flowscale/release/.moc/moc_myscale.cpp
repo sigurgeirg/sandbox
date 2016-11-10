@@ -22,7 +22,7 @@ static const uint qt_meta_data_MyScale[] = {
        6,       // revision
        0,       // classname
        0,    0, // classinfo
-      34,   14, // methods
+      33,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -60,12 +60,11 @@ static const uint qt_meta_data_MyScale[] = {
      595,    8,    8,    8, 0x0a,
      609,    8,    8,    8, 0x0a,
      623,    8,    8,    8, 0x0a,
-     647,    8,    8,    8, 0x0a,
-     671,    8,    8,    8, 0x0a,
-     695,    8,    8,    8, 0x0a,
-     719,    8,    8,    8, 0x0a,
-     743,    8,    8,    8, 0x0a,
-     767,    8,    8,    8, 0x0a,
+     649,    8,    8,    8, 0x0a,
+     675,    8,    8,    8, 0x0a,
+     701,    8,    8,    8, 0x0a,
+     727,    8,    8,    8, 0x0a,
+     753,    8,    8,    8, 0x0a,
 
        0        // eod
 };
@@ -87,10 +86,12 @@ static const char qt_meta_stringdata_MyScale[] = {
     "conveyorBeltSignal()\0enteringProductSensorSignal()\0"
     "leavingProductSensorSignal()\0xmin(QString)\0"
     "xmax(QString)\0ymin(QString)\0ymax(QString)\0"
-    "gate0Availability(bool)\0gate1Availability(bool)\0"
-    "gate2Availability(bool)\0gate3Availability(bool)\0"
-    "gate4Availability(bool)\0gate5Availability(bool)\0"
-    "gate6Availability(bool)\0"
+    "gate01_Availability(bool)\0"
+    "gate02_Availability(bool)\0"
+    "gate03_Availability(bool)\0"
+    "gate04_Availability(bool)\0"
+    "gate05_Availability(bool)\0"
+    "gate06_Availability(bool)\0"
 };
 
 void MyScale::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
@@ -126,13 +127,12 @@ void MyScale::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, voi
         case 24: _t->xmax((*reinterpret_cast< QString(*)>(_a[1]))); break;
         case 25: _t->ymin((*reinterpret_cast< QString(*)>(_a[1]))); break;
         case 26: _t->ymax((*reinterpret_cast< QString(*)>(_a[1]))); break;
-        case 27: _t->gate0Availability((*reinterpret_cast< bool(*)>(_a[1]))); break;
-        case 28: _t->gate1Availability((*reinterpret_cast< bool(*)>(_a[1]))); break;
-        case 29: _t->gate2Availability((*reinterpret_cast< bool(*)>(_a[1]))); break;
-        case 30: _t->gate3Availability((*reinterpret_cast< bool(*)>(_a[1]))); break;
-        case 31: _t->gate4Availability((*reinterpret_cast< bool(*)>(_a[1]))); break;
-        case 32: _t->gate5Availability((*reinterpret_cast< bool(*)>(_a[1]))); break;
-        case 33: _t->gate6Availability((*reinterpret_cast< bool(*)>(_a[1]))); break;
+        case 27: _t->gate01_Availability((*reinterpret_cast< bool(*)>(_a[1]))); break;
+        case 28: _t->gate02_Availability((*reinterpret_cast< bool(*)>(_a[1]))); break;
+        case 29: _t->gate03_Availability((*reinterpret_cast< bool(*)>(_a[1]))); break;
+        case 30: _t->gate04_Availability((*reinterpret_cast< bool(*)>(_a[1]))); break;
+        case 31: _t->gate05_Availability((*reinterpret_cast< bool(*)>(_a[1]))); break;
+        case 32: _t->gate06_Availability((*reinterpret_cast< bool(*)>(_a[1]))); break;
         default: ;
         }
     }
@@ -170,9 +170,9 @@ int MyScale::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 34)
+        if (_id < 33)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 34;
+        _id -= 33;
     }
     return _id;
 }

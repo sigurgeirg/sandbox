@@ -11,8 +11,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     QPixmap conveyorObject("../images/conveyor.png");
-    ui->FlowScaleImage->setFixedSize(480,240);
-    ui->FlowScaleImage->setPixmap(conveyorObject);
+//    ui->FlowScaleImage->setFixedSize(480,240);
+//    ui->FlowScaleImage->setPixmap(conveyorObject);
 
     scale = new MyScale(this);
     mosq = new MyMessages(this);
@@ -30,16 +30,16 @@ MainWindow::MainWindow(QWidget *parent) :
     lastSettingsFile = "";
     lastRecipeFile = "";
 
-    gate0_enabled = true;
-    gate1_enabled = true;
-    gate2_enabled = true;
-    gate3_enabled = true;
-    gate4_enabled = true;
-    gate5_enabled = true;
-    gate6_enabled = true;
-    gate7_enabled = true;
-    gate8_enabled = true;
-    gate9_enabled = true;
+    gate01_enabled = true;
+    gate02_enabled = true;
+    gate03_enabled = true;
+    gate04_enabled = true;
+    gate05_enabled = true;
+    gate06_enabled = true;
+    gate07_enabled = true;
+    gate08_enabled = true;
+    gate09_enabled = true;
+    gate10_enabled = true;
 
 
         // Simulation, still undone, maybe no use for this:
@@ -64,12 +64,12 @@ MainWindow::MainWindow(QWidget *parent) :
         connect(scale, SIGNAL(enableGate(int, bool)),           this,   SLOT(enableGate(int, bool)));
         connect(scale, SIGNAL(activateGateArm(int, bool)),      this,   SLOT(activateGateArm(int, bool)));
 
-        connect(this, SIGNAL(gate1Availability(bool)),          scale,  SLOT(gate1Availability(bool)));
-        connect(this, SIGNAL(gate2Availability(bool)),          scale,  SLOT(gate2Availability(bool)));
-        connect(this, SIGNAL(gate3Availability(bool)),          scale,  SLOT(gate3Availability(bool)));
-        connect(this, SIGNAL(gate4Availability(bool)),          scale,  SLOT(gate4Availability(bool)));
-        connect(this, SIGNAL(gate5Availability(bool)),          scale,  SLOT(gate5Availability(bool)));
-        connect(this, SIGNAL(gate6Availability(bool)),          scale,  SLOT(gate6Availability(bool)));
+        connect(this, SIGNAL(gate01_Availability(bool)),          scale,  SLOT(gate01_Availability(bool)));
+        connect(this, SIGNAL(gate02_Availability(bool)),          scale,  SLOT(gate02_Availability(bool)));
+        connect(this, SIGNAL(gate03_Availability(bool)),          scale,  SLOT(gate03_Availability(bool)));
+        connect(this, SIGNAL(gate04_Availability(bool)),          scale,  SLOT(gate04_Availability(bool)));
+        connect(this, SIGNAL(gate05_Availability(bool)),          scale,  SLOT(gate05_Availability(bool)));
+        connect(this, SIGNAL(gate06_Availability(bool)),          scale,  SLOT(gate06_Availability(bool)));
 
 
         // Product Data Over Mosquitto transmission:
@@ -87,10 +87,11 @@ MainWindow::MainWindow(QWidget *parent) :
         connect(this, SIGNAL(ymin(QString)),                    scale,  SLOT(ymin(QString)));
         connect(this, SIGNAL(ymax(QString)),                    scale,  SLOT(ymax(QString)));
 
-        ui->tabWidget->setStyleSheet("QTabBar::tab { height: 50px; }");
-        ui->frameState->setStyleSheet("background-color: red");
-        ui->btnNetWeightConnect->setStyleSheet("background-color: #15d015; color: white");
-        ui->btnDisconnect->setStyleSheet("background-color: red; color: white");
+
+    ui->tabWidget->setStyleSheet("QTabBar::tab { height: 50px; }");
+    ui->frameState->setStyleSheet("background-color: red");
+    ui->btnNetWeightConnect->setStyleSheet("background-color: #15d015; color: white");
+    ui->btnDisconnect->setStyleSheet("background-color: red; color: white");
 }
 
 MainWindow::~MainWindow()
@@ -187,7 +188,7 @@ void MainWindow::graphBoundaries(QString value)
 
 void MainWindow::conveyorBeltSignal()
 {
-    // FIXME: This has to be redifined wrt types *int = bool --- change or remote
+    // FIXME: This has to be redifined wrt types *int = bool --- change or remove
 }
 
 
@@ -197,7 +198,7 @@ void MainWindow::conveyorRunStateIndicator(QString state)
 
     if        (state == "conveyorOff") {
 
-        stateMessage = "Start conveyor to full speed, then press Connect";
+        stateMessage = "Start conveyor ... Press Connect";
 
     } else if (state == "conveyorIdle") {
 
@@ -257,7 +258,7 @@ void MainWindow::plotProductGraph(int workingID)
 {
     currentWorkingID = workingID;
 
-    ui->PenguinImage->clear();
+//    ui->PenguinImage->clear();
 
     //ui->lblElementId->setText(QString::number(currentWorkingID));
     scale->setupPlot(ui->customPlot, currentWorkingID);
@@ -462,42 +463,42 @@ void MainWindow::on_btnAPPLY_clicked()
 
 void MainWindow::activateGateArm(int gate, bool value)
 {
-    if (this->gate1_enabled == true) {
+    if (this->gate01_enabled == true) {
         if (gate == 1) {
             if (value == true)  { ui->cbxGate1->setStyleSheet("color: #15d015"); }
             else                { ui->cbxGate1->setStyleSheet("color: black");   }
         }
     }
 
-    if (this->gate2_enabled == true) {
+    if (this->gate02_enabled == true) {
         if (gate == 2) {
             if (value == true)  { ui->cbxGate2->setStyleSheet("color: #15d015"); }
             else                { ui->cbxGate2->setStyleSheet("color: black");   }
         }
     }
 
-    if (this->gate3_enabled == true) {
+    if (this->gate03_enabled == true) {
         if (gate == 3) {
             if (value == true)  { ui->cbxGate3->setStyleSheet("color: #15d015"); }
             else                { ui->cbxGate3->setStyleSheet("color: black");   }
         }
     }
 
-    if (this->gate4_enabled == true) {
+    if (this->gate04_enabled == true) {
         if (gate == 4) {
             if (value == true)  { ui->cbxGate4->setStyleSheet("color: #15d015"); }
             else                { ui->cbxGate4->setStyleSheet("color: black");   }
         }
     }
 
-    if (this->gate5_enabled == true) {
+    if (this->gate05_enabled == true) {
         if (gate == 5) {
             if (value == true)  { ui->cbxGate5->setStyleSheet("color: #15d015"); }
             else                { ui->cbxGate5->setStyleSheet("color: black");   }
         }
     }
 
-    if (this->gate6_enabled == true) {
+    if (this->gate06_enabled == true) {
         if (gate == 6)  {
             if (value == true)  { ui->cbxGate6->setStyleSheet("color: #15d015"); }
             else                { ui->cbxGate6->setStyleSheet("color: black");   }
@@ -667,32 +668,32 @@ void MainWindow::on_cbSettingsMenu_activated(const QString &arg1)
 void MainWindow::enableGate(int gate, bool enabled)
 {
     if (gate == 1) {
-        if (enabled == true)    { ui->cbxGate1->setChecked(false); ui->cbxGate1->setStyleSheet("color: black"); this->gate1_enabled = true;  }
-        else                    { ui->cbxGate1->setChecked(true);  ui->cbxGate1->setStyleSheet("color: red");   this->gate1_enabled = false; }
+        if (enabled == true)    { ui->cbxGate1->setChecked(false); ui->cbxGate1->setStyleSheet("color: black"); this->gate01_enabled = true;  }
+        else                    { ui->cbxGate1->setChecked(true);  ui->cbxGate1->setStyleSheet("color: red");   this->gate01_enabled = false; }
     }
 
     if (gate == 2) {
-        if (enabled == true)    { ui->cbxGate2->setChecked(false); ui->cbxGate2->setStyleSheet("color: black"); this->gate2_enabled = true;  }
-        else                    { ui->cbxGate2->setChecked(true);  ui->cbxGate2->setStyleSheet("color: red");   this->gate2_enabled = false; }
+        if (enabled == true)    { ui->cbxGate2->setChecked(false); ui->cbxGate2->setStyleSheet("color: black"); this->gate02_enabled = true;  }
+        else                    { ui->cbxGate2->setChecked(true);  ui->cbxGate2->setStyleSheet("color: red");   this->gate02_enabled = false; }
     }
 
     if (gate == 3) {
-        if (enabled == true)    { ui->cbxGate3->setChecked(false); ui->cbxGate3->setStyleSheet("color: black"); this->gate3_enabled = true;  }
-        else                    { ui->cbxGate3->setChecked(true);  ui->cbxGate3->setStyleSheet("color: red");   this->gate3_enabled = false; }
+        if (enabled == true)    { ui->cbxGate3->setChecked(false); ui->cbxGate3->setStyleSheet("color: black"); this->gate03_enabled = true;  }
+        else                    { ui->cbxGate3->setChecked(true);  ui->cbxGate3->setStyleSheet("color: red");   this->gate03_enabled = false; }
     }
 
     if (gate == 4) {
-        if (enabled == true)    { ui->cbxGate4->setChecked(false); ui->cbxGate4->setStyleSheet("color: black"); this->gate4_enabled = true;  }
-        else                    { ui->cbxGate4->setChecked(true);  ui->cbxGate4->setStyleSheet("color: red");   this->gate4_enabled = false; }
+        if (enabled == true)    { ui->cbxGate4->setChecked(false); ui->cbxGate4->setStyleSheet("color: black"); this->gate04_enabled = true;  }
+        else                    { ui->cbxGate4->setChecked(true);  ui->cbxGate4->setStyleSheet("color: red");   this->gate04_enabled = false; }
     }
     if (gate == 5) {
-        if (enabled == true)    { ui->cbxGate5->setChecked(false); ui->cbxGate5->setStyleSheet("color: black"); this->gate5_enabled = true;  }
-        else                    { ui->cbxGate5->setChecked(true);  ui->cbxGate5->setStyleSheet("color: red");   this->gate5_enabled = false; }
+        if (enabled == true)    { ui->cbxGate5->setChecked(false); ui->cbxGate5->setStyleSheet("color: black"); this->gate05_enabled = true;  }
+        else                    { ui->cbxGate5->setChecked(true);  ui->cbxGate5->setStyleSheet("color: red");   this->gate05_enabled = false; }
     }
 
     if (gate == 6) {
-        if (enabled == true)    { ui->cbxGate6->setChecked(false); ui->cbxGate6->setStyleSheet("color: black"); this->gate6_enabled = true;  }
-        else                    { ui->cbxGate6->setChecked(true);  ui->cbxGate6->setStyleSheet("color: red");   this->gate6_enabled = false; }
+        if (enabled == true)    { ui->cbxGate6->setChecked(false); ui->cbxGate6->setStyleSheet("color: black"); this->gate06_enabled = true;  }
+        else                    { ui->cbxGate6->setChecked(true);  ui->cbxGate6->setStyleSheet("color: red");   this->gate06_enabled = false; }
     }
 }
 
@@ -700,32 +701,32 @@ void MainWindow::enableGate(int gate, bool enabled)
 
 void MainWindow::on_cbxGate1_clicked(bool disabled)
 {
-    emit gate1Availability(disabled);
+    emit gate01_Availability(disabled);
 }
 
 void MainWindow::on_cbxGate2_clicked(bool disabled)
 {
-    emit gate2Availability(disabled);
+    emit gate02_Availability(disabled);
 }
 
 void MainWindow::on_cbxGate3_clicked(bool disabled)
 {
-    emit gate3Availability(disabled);
+    emit gate03_Availability(disabled);
 }
 
 void MainWindow::on_cbxGate4_clicked(bool disabled)
 {
-    emit gate4Availability(disabled);
+    emit gate04_Availability(disabled);
 }
 
 void MainWindow::on_cbxGate5_clicked(bool disabled)
 {
-    emit gate5Availability(disabled);
+    emit gate05_Availability(disabled);
 }
 
 void MainWindow::on_cbxGate6_clicked(bool disabled)
 {
-    emit gate6Availability(disabled);
+    emit gate06_Availability(disabled);
 }
 
 void MainWindow::on_btnCloseBatch_clicked()

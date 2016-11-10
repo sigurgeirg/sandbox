@@ -5,6 +5,7 @@
 
     static const int numberOfUsedDigitalInputs = 16;
     static const int numberOfGates = 10;
+    static const int numberOfWeightRangesForGrading = 20;
 
     static const int numberOfBeltRounds = 10;
     static const int samplesPerBeltRound = 2000;

@@ -9,6 +9,7 @@
 #include <sstream>
 #include <fstream>
 #include <string>
+#include "constants.h"
 
 
 class Recipe : public QThread
@@ -36,6 +37,9 @@ public:
     std::string weightRangeLower[50];
     std::string weightRangeUpper[50];
     std::string destinationGate[50];
+
+    std::string Gate_BufferWeight[numberOfGates+1];
+    std::string Gate_BufferAmount[numberOfGates+1];
 
 
 public slots:

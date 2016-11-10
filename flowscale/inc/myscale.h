@@ -97,7 +97,7 @@ private:
     int readFromRegister;   // Points to some register, fx. statusRegister ...
     int writeToRegister;    // Points to some register, fx. commandRegister ...
     //int calibrationWeight;  // Variable that keeps calibration weight value in terms of [g]
-    int weightGROSSorNET[1];// Indicates whether selected weight is GROSS or NET weight.
+    int weightGROSSorNET[1];// Indicates whether selected weight is sampleWeightForCalibrationLGROSS or NET weight.
 
     bool processingProduct;
     bool productOnScaleArea[numberOfElementsInList];
@@ -194,19 +194,19 @@ private:
     // Grader settings variables:
     int gate_available[numberOfGates+1];
 
-    double distanceToGraderGate[numberOfGates+1];        // [mm]
-    double distanceOpenGate[numberOfGates+1];            // [mm]
-    double distanceToEndOfGrader;                      // [mm]
+    double distanceToGraderGate[numberOfGates+1];               // [mm]
+    double distanceOpenGate[numberOfGates+1];                   // [mm]
+    double distanceToEndOfGrader;                               // [mm]
 
-    int pulseDistanceToGate[numberOfGates+1];         // [ticks]
-    int pulseDistanceToEndOfGate[numberOfGates+1];    // [ticks]
-    int pulseDistanceToEndOfConveyorBelt;           // [ticks]
+    int pulseDistanceToGate[numberOfGates+1];                   // [ticks]
+    int pulseDistanceToEndOfGate[numberOfGates+1];              // [ticks]
+    int pulseDistanceToEndOfConveyorBelt;                       // [ticks]
 
-    int gateBufferAmount[numberOfGates+1];            // [pcs]
-    double gateBufferWeight[numberOfGates+1];            // [kg]
+    int gateBufferAmount[numberOfGates+1];                      // [pcs]
+    double gateBufferWeight[numberOfGates+1];                   // [kg]
 
-    int gateBufferProcessedAmount[numberOfGates+1];    // [pcs]
-    double gateBufferProcessedWeight[numberOfGates+1]; // [kg]
+    int gateBufferProcessedAmount[numberOfGates+1];             // [pcs]
+    double gateBufferProcessedWeight[numberOfGates+1];          // [kg]
 
     int gateBufferProcessedAmountTotalizer[numberOfGates+1];    // [pcs]
     double gateBufferProcessedWeightTotalizer[numberOfGates+1]; // [kg]
@@ -250,13 +250,12 @@ public slots:
     void xmax(QString);
     void ymin(QString);
     void ymax(QString);
-    void gate0Availability(bool);
-    void gate1Availability(bool);
-    void gate2Availability(bool);
-    void gate3Availability(bool);
-    void gate4Availability(bool);
-    void gate5Availability(bool);
-    void gate6Availability(bool);
+    void gate01_Availability(bool);
+    void gate02_Availability(bool);
+    void gate03_Availability(bool);
+    void gate04_Availability(bool);
+    void gate05_Availability(bool);
+    void gate06_Availability(bool);
 
 };
 

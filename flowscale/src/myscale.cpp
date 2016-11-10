@@ -112,28 +112,6 @@ MyScale::MyScale(QObject *parent) :
     }
 
 
-    gateBufferWeight[ 1] = 2; // [kg]
-    gateBufferWeight[ 2] = 2;
-    gateBufferWeight[ 3] = 2;
-    gateBufferWeight[ 4] = 2;
-    gateBufferWeight[ 5] = 4;
-    gateBufferWeight[ 6] = 4;
-    gateBufferWeight[ 7] = 4;
-    gateBufferWeight[ 8] = 4;
-    gateBufferWeight[ 9] = 4;
-    gateBufferWeight[10] = 4;
-
-    gateBufferAmount[ 1] = 4; // [pcs]
-    gateBufferAmount[ 2] = 4;
-    gateBufferAmount[ 3] = 4;
-    gateBufferAmount[ 4] = 4;
-    gateBufferAmount[ 5] = 4;
-    gateBufferAmount[ 6] = 4;
-    gateBufferAmount[ 7] = 4;
-    gateBufferAmount[ 8] = 4;
-    gateBufferAmount[ 9] = 4;
-    gateBufferAmount[10] = 4;
-
     emit conveyorRunState("conveyorOff");
 
 
@@ -212,12 +190,19 @@ void MyScale::updateRecipe(QString selectedRecipe) {
     maxProductLength                = QString::fromStdString(recipe->maxProductLength.c_str()).toInt();
     maxProductPieceGap              = QString::fromStdString(recipe->maxProductPieceGap.c_str()).toInt();
 
-    for (int t = 0; t < 50; t++) {
+    for (int t = 1; t <= numberOfWeightRangesForGrading; t++) {
 
         weightRangeLower[t] = QString::fromStdString(recipe->weightRangeLower[t].c_str()).toInt();
         weightRangeUpper[t] = QString::fromStdString(recipe->weightRangeUpper[t].c_str()).toInt();
         destinationGate[t]  = QString::fromStdString(recipe->destinationGate[t].c_str()).toInt();
     }
+
+    for (int t = 1; t <= numberOfGates ; t++) {
+
+        gateBufferAmount[t] = QString::fromStdString(recipe->Gate_BufferAmount[t].c_str()).toInt();         // [pcs]
+        gateBufferWeight[t]     = QString::fromStdString(recipe->Gate_BufferWeight[t].c_str()).toFloat();   // [kg]
+    }
+
 
     emit sendBatchId(QString::fromStdString(batchID.c_str()));
     emit sendRecipeId(QString::fromStdString(recipeID.c_str()));
@@ -236,29 +221,8 @@ bool MyScale::between(int less, int value, int greater) {
     }
 }
 
-void MyScale::gate0Availability(bool disabled) {
 
-    if (disabled == false) {
-
-        gateBufferProcessedAmountTotalizer[0] = gateBufferProcessedAmountTotalizer[0] + gateBufferProcessedAmount[0];
-        gateBufferProcessedWeightTotalizer[0] = gateBufferProcessedWeightTotalizer[0] + gateBufferProcessedWeight[0];
-
-        gate_available[0] = 0;
-
-        // Here we need to clear the total weight+count,
-        // dump them to some kind of totalizer that will be
-        // written to file when the recipe is closed or dumped
-
-        // FIXME: Save data before clearing like I do here
-        gateBufferProcessedAmount[0] = 0;
-        gateBufferProcessedWeight[0] = 0.0;
-        emit enableGate(0, true);
-
-    }
-    else { gate_available[0] = -1; }
-}
-
-void MyScale::gate1Availability(bool disabled) {
+void MyScale::gate01_Availability(bool disabled) {
 
     if (disabled == false) {
 
@@ -276,7 +240,7 @@ void MyScale::gate1Availability(bool disabled) {
     else { gate_available[1] = -1; }
 }
 
-void MyScale::gate2Availability(bool disabled) {
+void MyScale::gate02_Availability(bool disabled) {
 
     if (disabled == false) {
 
@@ -294,7 +258,7 @@ void MyScale::gate2Availability(bool disabled) {
     else { gate_available[2] = -1; }
 }
 
-void MyScale::gate3Availability(bool disabled) {
+void MyScale::gate03_Availability(bool disabled) {
 
     if (disabled == false) {
 
@@ -312,7 +276,7 @@ void MyScale::gate3Availability(bool disabled) {
     else { gate_available[3] = -1; }
 }
 
-void MyScale::gate4Availability(bool disabled) {
+void MyScale::gate04_Availability(bool disabled) {
 
     if (disabled == false) {
 
@@ -330,7 +294,7 @@ void MyScale::gate4Availability(bool disabled) {
     else { gate_available[4] = -1; }
 }
 
-void MyScale::gate5Availability(bool disabled) {
+void MyScale::gate05_Availability(bool disabled) {
 
     qDebug() << "Gate5Availability check";
 
@@ -350,7 +314,7 @@ void MyScale::gate5Availability(bool disabled) {
     else { gate_available[5] = -1; }
 }
 
-void MyScale::gate6Availability(bool disabled) {
+void MyScale::gate06_Availability(bool disabled) {
 
     qDebug() << "Gate6Availability check";
 
@@ -372,14 +336,6 @@ void MyScale::gate6Availability(bool disabled) {
 
 
 int MyScale::returnToGate(int measuredWeight) {
-
-    if (between(weightRangeLower[0], measuredWeight, weightRangeUpper[0])){
-
-        for (int i = 1; i <= numberOfGates; i++) {
-            if (destinationGate[0] == gate_available[i]) {
-                return destinationGate[0]; }
-        }
-    }
 
     if (between(weightRangeLower[1], measuredWeight, weightRangeUpper[1])){
 
@@ -456,6 +412,14 @@ int MyScale::returnToGate(int measuredWeight) {
         for (int i = 1; i <= numberOfGates; i++) {
             if (destinationGate[9] == gate_available[i]) {
                 return destinationGate[9]; }
+        }
+    }
+
+    if (between(weightRangeLower[10], measuredWeight, weightRangeUpper[10])){
+
+        for (int i = 1; i <= numberOfGates; i++) {
+            if (destinationGate[10] == gate_available[i]) {
+                return destinationGate[10]; }
         }
     }
 

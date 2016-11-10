@@ -83,8 +83,6 @@ void Recipe::updateRecipe(QString selectedRecipeFullPath) {
             maxProductPieceGap = recipeArray[k][1];
         } else if (recipeArray[k][0] == "Recipe_Description"){
             description = recipeArray[k][1];
-        } else if (recipeArray[k][0] == "Weight_Range_00"){
-            for (int s = 1; s < 4; s++) weightRange[0][s] = recipeArray[k][s];
         } else if (recipeArray[k][0] == "Weight_Range_01"){
             for (int s = 1; s < 4; s++) weightRange[1][s] = recipeArray[k][s];
         } else if (recipeArray[k][0] == "Weight_Range_02"){
@@ -125,6 +123,46 @@ void Recipe::updateRecipe(QString selectedRecipeFullPath) {
             for (int s = 1; s < 4; s++) weightRange[19][s] = recipeArray[k][s];
         } else if (recipeArray[k][0] == "Weight_Range_20"){
             for (int s = 1; s < 4; s++) weightRange[20][s] = recipeArray[k][s];
+        } else if (recipeArray[k][0] == "Gate_01_BufferWeight"){
+            Gate_BufferWeight[ 1] = recipeArray[k][1];
+        } else if (recipeArray[k][0] == "Gate_02_BufferWeight"){
+            Gate_BufferWeight[ 2] = recipeArray[k][1];
+        } else if (recipeArray[k][0] == "Gate_03_BufferWeight"){
+            Gate_BufferWeight[ 3] = recipeArray[k][1];
+        } else if (recipeArray[k][0] == "Gate_04_BufferWeight"){
+            Gate_BufferWeight[ 4] = recipeArray[k][1];
+        } else if (recipeArray[k][0] == "Gate_05_BufferWeight"){
+            Gate_BufferWeight[ 5] = recipeArray[k][1];
+        } else if (recipeArray[k][0] == "Gate_06_BufferWeight"){
+            Gate_BufferWeight[ 6] = recipeArray[k][1];
+        } else if (recipeArray[k][0] == "Gate_07_BufferWeight"){
+            Gate_BufferWeight[ 7] = recipeArray[k][1];
+        } else if (recipeArray[k][0] == "Gate_08_BufferWeight"){
+            Gate_BufferWeight[ 8] = recipeArray[k][1];
+        } else if (recipeArray[k][0] == "Gate_09_BufferWeight"){
+            Gate_BufferWeight[ 9] = recipeArray[k][1];
+        } else if (recipeArray[k][0] == "Gate_10_BufferWeight"){
+            Gate_BufferWeight[10] = recipeArray[k][1];
+        } else if (recipeArray[k][0] == "Gate_01_BufferAmount"){
+            Gate_BufferAmount[ 1] = recipeArray[k][1];
+        } else if (recipeArray[k][0] == "Gate_02_BufferAmount"){
+            Gate_BufferAmount[ 2] = recipeArray[k][1];
+        } else if (recipeArray[k][0] == "Gate_03_BufferAmount"){
+            Gate_BufferAmount[ 3] = recipeArray[k][1];
+        } else if (recipeArray[k][0] == "Gate_04_BufferAmount"){
+            Gate_BufferAmount[ 4] = recipeArray[k][1];
+        } else if (recipeArray[k][0] == "Gate_05_BufferAmount"){
+            Gate_BufferAmount[ 5] = recipeArray[k][1];
+        } else if (recipeArray[k][0] == "Gate_06_BufferAmount"){
+            Gate_BufferAmount[ 6] = recipeArray[k][1];
+        } else if (recipeArray[k][0] == "Gate_07_BufferAmount"){
+            Gate_BufferAmount[ 7] = recipeArray[k][1];
+        } else if (recipeArray[k][0] == "Gate_08_BufferAmount"){
+            Gate_BufferAmount[ 8] = recipeArray[k][1];
+        } else if (recipeArray[k][0] == "Gate_09_BufferAmount"){
+            Gate_BufferAmount[ 9] = recipeArray[k][1];
+        } else if (recipeArray[k][0] == "Gate_10_BufferAmount"){
+            Gate_BufferAmount[10] = recipeArray[k][1];
         }
     }
 

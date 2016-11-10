@@ -171,9 +171,6 @@ public:
     QPushButton *btnAPPLY;
     QLabel *label;
     QCheckBox *chkWriteToLoadcell;
-    QWidget *tabStuff;
-    QLabel *PenguinImage;
-    QLabel *FlowScaleImage;
     QFrame *frameState;
     QLabel *lblSystemState;
     QLabel *lblCountDown;
@@ -413,7 +410,7 @@ public:
         brush7.setStyle(Qt::SolidPattern);
         palette1.setBrush(QPalette::Active, QPalette::BrightText, brush7);
         palette1.setBrush(QPalette::Active, QPalette::ButtonText, brush1);
-        palette1.setBrush(QPalette::Active, QPalette::Base, brush7);
+        palette1.setBrush(QPalette::Active, QPalette::Base, brush2);
         palette1.setBrush(QPalette::Active, QPalette::Window, brush2);
         palette1.setBrush(QPalette::Active, QPalette::Shadow, brush1);
         palette1.setBrush(QPalette::Active, QPalette::Highlight, brush7);
@@ -433,7 +430,7 @@ public:
         palette1.setBrush(QPalette::Inactive, QPalette::Text, brush1);
         palette1.setBrush(QPalette::Inactive, QPalette::BrightText, brush7);
         palette1.setBrush(QPalette::Inactive, QPalette::ButtonText, brush1);
-        palette1.setBrush(QPalette::Inactive, QPalette::Base, brush7);
+        palette1.setBrush(QPalette::Inactive, QPalette::Base, brush2);
         palette1.setBrush(QPalette::Inactive, QPalette::Window, brush2);
         palette1.setBrush(QPalette::Inactive, QPalette::Shadow, brush1);
         QBrush brush10(QColor(229, 227, 225, 255));
@@ -872,8 +869,8 @@ public:
         recipeTable->setHorizontalHeaderItem(2, __qtablewidgetitem44);
         QTableWidgetItem *__qtablewidgetitem45 = new QTableWidgetItem();
         recipeTable->setHorizontalHeaderItem(3, __qtablewidgetitem45);
-        if (recipeTable->rowCount() < 40)
-            recipeTable->setRowCount(40);
+        if (recipeTable->rowCount() < 55)
+            recipeTable->setRowCount(55);
         QTableWidgetItem *__qtablewidgetitem46 = new QTableWidgetItem();
         recipeTable->setVerticalHeaderItem(0, __qtablewidgetitem46);
         QTableWidgetItem *__qtablewidgetitem47 = new QTableWidgetItem();
@@ -952,11 +949,11 @@ public:
         recipeTable->setVerticalHeaderItem(37, __qtablewidgetitem83);
         QTableWidgetItem *__qtablewidgetitem84 = new QTableWidgetItem();
         recipeTable->setVerticalHeaderItem(38, __qtablewidgetitem84);
-        QTableWidgetItem *__qtablewidgetitem85 = new QTableWidgetItem();
-        recipeTable->setVerticalHeaderItem(39, __qtablewidgetitem85);
         recipeTable->setObjectName(QString::fromUtf8("recipeTable"));
         recipeTable->setGeometry(QRect(10, 60, 601, 281));
         recipeTable->setMinimumSize(QSize(451, 0));
+        recipeTable->setStyleSheet(QString::fromUtf8("QScrollBar:vertical {min-width: 50px; margin-right: 20px;}"));
+        recipeTable->setRowCount(55);
         tabWidget->addTab(tabRecipe, QString());
         tabDio = new QWidget();
         tabDio->setObjectName(QString::fromUtf8("tabDio"));
@@ -1162,21 +1159,6 @@ public:
         chkWriteToLoadcell->setObjectName(QString::fromUtf8("chkWriteToLoadcell"));
         chkWriteToLoadcell->setGeometry(QRect(170, 40, 91, 26));
         tabWidget->addTab(tabDio, QString());
-        tabStuff = new QWidget();
-        tabStuff->setObjectName(QString::fromUtf8("tabStuff"));
-        tabStuff->setEnabled(true);
-        PenguinImage = new QLabel(tabStuff);
-        PenguinImage->setObjectName(QString::fromUtf8("PenguinImage"));
-        PenguinImage->setGeometry(QRect(50, 40, 61, 21));
-        PenguinImage->setMidLineWidth(0);
-        PenguinImage->setMargin(0);
-        PenguinImage->setIndent(-1);
-        FlowScaleImage = new QLabel(tabStuff);
-        FlowScaleImage->setObjectName(QString::fromUtf8("FlowScaleImage"));
-        FlowScaleImage->setGeometry(QRect(50, 40, 211, 61));
-        tabWidget->addTab(tabStuff, QString());
-        FlowScaleImage->raise();
-        PenguinImage->raise();
         frameState = new QFrame(frame_2);
         frameState->setObjectName(QString::fromUtf8("frameState"));
         frameState->setGeometry(QRect(20, 460, 621, 51));
@@ -1202,7 +1184,7 @@ public:
 
         retranslateUi(MainWindow);
 
-        tabWidget->setCurrentIndex(1);
+        tabWidget->setCurrentIndex(2);
 
 
         QMetaObject::connectSlotsByName(MainWindow);
@@ -1447,8 +1429,6 @@ public:
         ___qtablewidgetitem83->setText(QApplication::translate("MainWindow", "38", 0, QApplication::UnicodeUTF8));
         QTableWidgetItem *___qtablewidgetitem84 = recipeTable->verticalHeaderItem(38);
         ___qtablewidgetitem84->setText(QApplication::translate("MainWindow", "39", 0, QApplication::UnicodeUTF8));
-        QTableWidgetItem *___qtablewidgetitem85 = recipeTable->verticalHeaderItem(39);
-        ___qtablewidgetitem85->setText(QApplication::translate("MainWindow", "40", 0, QApplication::UnicodeUTF8));
         tabWidget->setTabText(tabWidget->indexOf(tabRecipe), QApplication::translate("MainWindow", "Recipe", 0, QApplication::UnicodeUTF8));
         chkDIN_03->setText(QApplication::translate("MainWindow", "SI_03", 0, QApplication::UnicodeUTF8));
         label_6->setText(QApplication::translate("MainWindow", "I 03", 0, QApplication::UnicodeUTF8));
@@ -1476,12 +1456,6 @@ public:
         label->setText(QApplication::translate("MainWindow", "Calibration weight:", 0, QApplication::UnicodeUTF8));
         chkWriteToLoadcell->setText(QApplication::translate("MainWindow", "Activate", 0, QApplication::UnicodeUTF8));
         tabWidget->setTabText(tabWidget->indexOf(tabDio), QApplication::translate("MainWindow", "Service", 0, QApplication::UnicodeUTF8));
-#ifndef QT_NO_ACCESSIBILITY
-        PenguinImage->setAccessibleDescription(QString());
-#endif // QT_NO_ACCESSIBILITY
-        PenguinImage->setText(QApplication::translate("MainWindow", "Penguin", 0, QApplication::UnicodeUTF8));
-        FlowScaleImage->setText(QApplication::translate("MainWindow", "FlowScale", 0, QApplication::UnicodeUTF8));
-        tabWidget->setTabText(tabWidget->indexOf(tabStuff), QApplication::translate("MainWindow", "Page", 0, QApplication::UnicodeUTF8));
         lblSystemState->setText(QApplication::translate("MainWindow", "System state", 0, QApplication::UnicodeUTF8));
         lblCountDown->setText(QApplication::translate("MainWindow", "Counter", 0, QApplication::UnicodeUTF8));
     } // retranslateUi

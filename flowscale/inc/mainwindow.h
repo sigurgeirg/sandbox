@@ -49,17 +49,16 @@ public:
 
     Settings *settings;
 
-    bool gate0_enabled;
-    bool gate1_enabled;
-    bool gate2_enabled;
-    bool gate3_enabled;
-    bool gate4_enabled;
-    bool gate5_enabled;
-    bool gate6_enabled;
-    bool gate7_enabled;
-    bool gate8_enabled;
-    bool gate9_enabled;
-
+    bool gate01_enabled;
+    bool gate02_enabled;
+    bool gate03_enabled;
+    bool gate04_enabled;
+    bool gate05_enabled;
+    bool gate06_enabled;
+    bool gate07_enabled;
+    bool gate08_enabled;
+    bool gate09_enabled;
+    bool gate10_enabled;
 
 
 private:
@@ -95,12 +94,12 @@ signals:
     void ymin(QString);
     void ymax(QString);
 
-    void gate1Availability(bool);
-    void gate2Availability(bool);
-    void gate3Availability(bool);
-    void gate4Availability(bool);
-    void gate5Availability(bool);
-    void gate6Availability(bool);
+    void gate01_Availability(bool);
+    void gate02_Availability(bool);
+    void gate03_Availability(bool);
+    void gate04_Availability(bool);
+    void gate05_Availability(bool);
+    void gate06_Availability(bool);
     // /////////////////////////
     // Simulation
     // void reply(unsigned char, bool);
