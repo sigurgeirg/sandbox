@@ -57,6 +57,13 @@ MyScale::MyScale(QObject *parent) :
     plotXvalueMAX                   = QString::fromStdString(settings->XvalueMAX.c_str()).toInt();
     plotYvalueMIN                   = QString::fromStdString(settings->YvalueMIN.c_str()).toInt();
     plotYvalueMAX                   = QString::fromStdString(settings->YvalueMAX.c_str()).toInt();
+    distanceToEndOfGrader           = QString::fromStdString(settings->Grader_DistanceToEnd.c_str()).toFloat();
+
+    for (int t = 1; t <= numberOfGates ; t++) {
+
+        distanceToGraderGate[t] = QString::fromStdString(settings->gate_distanceTo[t].c_str()).toFloat();
+        distanceOpenGate[t]     = QString::fromStdString(settings->gate_distanceOpen[t].c_str()).toFloat();
+    }
 
     lengthOfEachBeltPeriod  = (lengthOfEachBeltChain * numberOfBeltChains);
 
@@ -87,30 +94,6 @@ MyScale::MyScale(QObject *parent) :
     zeroTracking = zt_InitializeZeroVectors;
 
     // Grader settings variables:
-    distanceToGraderGate[0] = 200;  // [mm]
-    distanceToGraderGate[1] = 200;
-    distanceToGraderGate[2] = 1000;
-    distanceToGraderGate[3] = 1000;
-    distanceToGraderGate[4] = 1800;
-    distanceToGraderGate[5] = 1800;
-    distanceToGraderGate[6] = 2600;
-    distanceToGraderGate[7] = 2600;
-    distanceToGraderGate[8] = 3400;
-    distanceToGraderGate[9] = 3400;
-
-    distanceToEndOfGrader   = 4000; // [mm]
-
-    distanceOpenGate[0] = 500;      // [mm]
-    distanceOpenGate[1] = 500;
-    distanceOpenGate[2] = 500;
-    distanceOpenGate[3] = 500;
-    distanceOpenGate[4] = 500;
-    distanceOpenGate[5] = 500;
-    distanceOpenGate[6] = 500;
-    distanceOpenGate[7] = 500;
-    distanceOpenGate[8] = 500;
-    distanceOpenGate[9] = 500;
-
     evenDistribution = 1;
     fillUpInSequence = 2;
     sortingMethod    = evenDistribution;
@@ -119,83 +102,37 @@ MyScale::MyScale(QObject *parent) :
     bufferByCount  = 2;
     bufferByWeightOrByCount = bufferByWeight;
 
-    gate_available[0] = 0;
-    gate_available[1] = 1;
-    gate_available[2] = 2;
-    gate_available[3] = 3;
-    gate_available[4] = 4;
-    gate_available[5] = 5;
-    gate_available[6] = 6;
-    gate_available[7] = 7;
-    gate_available[8] = 8;
-    gate_available[9] = 9;
+    for (int i = 1; i <= numberOfGates; i++)
+    {
+        gate_available[i] = i;
+        gateBufferProcessedAmount[i] = 0;           // [pcs]
+        gateBufferProcessedAmountTotalizer[i] = 0;  // [pcs]
+        gateBufferProcessedWeight[i] = 0.0;         // [kg]
+        gateBufferProcessedWeightTotalizer[i] = 0.0;// [kg]
+    }
 
 
-    gateBufferWeight[0] = 2; // [kg]
-    gateBufferWeight[1] = 2;
-    gateBufferWeight[2] = 2;
-    gateBufferWeight[3] = 2;
-    gateBufferWeight[4] = 4;
-    gateBufferWeight[5] = 4;
-    gateBufferWeight[6] = 4;
-    gateBufferWeight[7] = 4;
-    gateBufferWeight[8] = 4;
-    gateBufferWeight[9] = 4;
+    gateBufferWeight[ 1] = 2; // [kg]
+    gateBufferWeight[ 2] = 2;
+    gateBufferWeight[ 3] = 2;
+    gateBufferWeight[ 4] = 2;
+    gateBufferWeight[ 5] = 4;
+    gateBufferWeight[ 6] = 4;
+    gateBufferWeight[ 7] = 4;
+    gateBufferWeight[ 8] = 4;
+    gateBufferWeight[ 9] = 4;
+    gateBufferWeight[10] = 4;
 
-    gateBufferAmount[0] = 4; // [pcs]
-    gateBufferAmount[1] = 4;
-    gateBufferAmount[2] = 4;
-    gateBufferAmount[3] = 4;
-    gateBufferAmount[4] = 4;
-    gateBufferAmount[5] = 4;
-    gateBufferAmount[6] = 4;
-    gateBufferAmount[7] = 4;
-    gateBufferAmount[8] = 4;
-    gateBufferAmount[9] = 4;
-
-    gateBufferProcessedAmount[0] = 0; // [pcs]
-    gateBufferProcessedAmount[1] = 0;
-    gateBufferProcessedAmount[2] = 0;
-    gateBufferProcessedAmount[3] = 0;
-    gateBufferProcessedAmount[4] = 0;
-    gateBufferProcessedAmount[5] = 0;
-    gateBufferProcessedAmount[6] = 0;
-    gateBufferProcessedAmount[7] = 0;
-    gateBufferProcessedAmount[8] = 0;
-    gateBufferProcessedAmount[9] = 0;
-
-    gateBufferProcessedWeight[0] = 0.0; // [kg]
-    gateBufferProcessedWeight[1] = 0.0;
-    gateBufferProcessedWeight[2] = 0.0;
-    gateBufferProcessedWeight[3] = 0.0;
-    gateBufferProcessedWeight[4] = 0.0;
-    gateBufferProcessedWeight[5] = 0.0;
-    gateBufferProcessedWeight[6] = 0.0;
-    gateBufferProcessedWeight[7] = 0.0;
-    gateBufferProcessedWeight[8] = 0.0;
-    gateBufferProcessedWeight[9] = 0.0;
-
-    gateBufferProcessedAmountTotalizer[0] = 0;
-    gateBufferProcessedAmountTotalizer[1] = 0;
-    gateBufferProcessedAmountTotalizer[2] = 0;
-    gateBufferProcessedAmountTotalizer[3] = 0;
-    gateBufferProcessedAmountTotalizer[4] = 0;
-    gateBufferProcessedAmountTotalizer[5] = 0;
-    gateBufferProcessedAmountTotalizer[6] = 0;
-    gateBufferProcessedAmountTotalizer[7] = 0;
-    gateBufferProcessedAmountTotalizer[8] = 0;
-    gateBufferProcessedAmountTotalizer[9] = 0;
-
-    gateBufferProcessedWeightTotalizer[0] = 0.0;
-    gateBufferProcessedWeightTotalizer[1] = 0.0;
-    gateBufferProcessedWeightTotalizer[2] = 0.0;
-    gateBufferProcessedWeightTotalizer[3] = 0.0;
-    gateBufferProcessedWeightTotalizer[4] = 0.0;
-    gateBufferProcessedWeightTotalizer[5] = 0.0;
-    gateBufferProcessedWeightTotalizer[6] = 0.0;
-    gateBufferProcessedWeightTotalizer[7] = 0.0;
-    gateBufferProcessedWeightTotalizer[8] = 0.0;
-    gateBufferProcessedWeightTotalizer[9] = 0.0;
+    gateBufferAmount[ 1] = 4; // [pcs]
+    gateBufferAmount[ 2] = 4;
+    gateBufferAmount[ 3] = 4;
+    gateBufferAmount[ 4] = 4;
+    gateBufferAmount[ 5] = 4;
+    gateBufferAmount[ 6] = 4;
+    gateBufferAmount[ 7] = 4;
+    gateBufferAmount[ 8] = 4;
+    gateBufferAmount[ 9] = 4;
+    gateBufferAmount[10] = 4;
 
     emit conveyorRunState("conveyorOff");
 
@@ -222,7 +159,7 @@ MyScale::~MyScale()
 
 void MyScale::writeBufferDataToFile() {
 
-    for (int i = 0; i < numberOfGates; i++)
+    for (int i = 1; i <= numberOfGates; i++)
     {
         gateBufferProcessedAmountTotalizer[i] = gateBufferProcessedAmountTotalizer[i] + gateBufferProcessedAmount[i];
         gateBufferProcessedWeightTotalizer[i] = gateBufferProcessedWeightTotalizer[i] + gateBufferProcessedWeight[i];
@@ -233,7 +170,7 @@ void MyScale::writeBufferDataToFile() {
     qDebug() << "";
     qDebug() << "gateBufferProcessedAmountTotalizer: ";
     qDebug() << "=================================== ";
-    for (int i = 0; i < numberOfGates; i++) {
+    for (int i = 1; i <= numberOfGates; i++) {
         if (gateBufferProcessedAmountTotalizer[i] > 0) {
             qDebug() << "gateBufferProcessedAmountTotalizer[" << i << "] : " << gateBufferProcessedAmountTotalizer[i];
         }
@@ -242,14 +179,14 @@ void MyScale::writeBufferDataToFile() {
     qDebug() << "";
     qDebug() << "gateBufferProcessedWeightTotalizer: ";
     qDebug() << "=================================== ";
-    for (int i = 0; i < numberOfGates; i++) {
+    for (int i = 1; i <= numberOfGates; i++) {
         if (gateBufferProcessedWeightTotalizer[i] > 0) {
             qDebug() << "gateBufferProcessedWeightTotalizer[" << i << "] : " << QString::number(int(gateBufferProcessedWeightTotalizer[i] * 1000) / 1000.0, 'f', 3);
         }
     }
 
     // FIXME: Clear recipe variables
-    for (int i = 0; i < numberOfGates; i++) {
+    for (int i = 1; i <= numberOfGates; i++) {
         gateBufferProcessedAmount[i] = 0;
         gateBufferProcessedWeight[i] = 0.0;
         gateBufferProcessedAmountTotalizer[i] = 0;
@@ -438,7 +375,7 @@ int MyScale::returnToGate(int measuredWeight) {
 
     if (between(weightRangeLower[0], measuredWeight, weightRangeUpper[0])){
 
-        for (int i = 0; i < numberOfGates; i++) {
+        for (int i = 1; i <= numberOfGates; i++) {
             if (destinationGate[0] == gate_available[i]) {
                 return destinationGate[0]; }
         }
@@ -446,7 +383,7 @@ int MyScale::returnToGate(int measuredWeight) {
 
     if (between(weightRangeLower[1], measuredWeight, weightRangeUpper[1])){
 
-        for (int i = 0; i < numberOfGates; i++) {
+        for (int i = 1; i <= numberOfGates; i++) {
             if (destinationGate[1] == gate_available[i]) {
                 return destinationGate[1]; }
         }
@@ -454,7 +391,7 @@ int MyScale::returnToGate(int measuredWeight) {
 
     if (between(weightRangeLower[2], measuredWeight, weightRangeUpper[2])){
 
-        for (int i = 0; i < numberOfGates; i++) {
+        for (int i = 1; i <= numberOfGates; i++) {
             if (destinationGate[2] == gate_available[i]) {
                 return destinationGate[2]; }
         }
@@ -462,7 +399,7 @@ int MyScale::returnToGate(int measuredWeight) {
 
     if (between(weightRangeLower[3], measuredWeight, weightRangeUpper[3])){
 
-        for (int i = 0; i < numberOfGates; i++) {
+        for (int i = 1; i <= numberOfGates; i++) {
             if (destinationGate[3] == gate_available[i]) {
                 return destinationGate[3]; }
         }
@@ -470,7 +407,7 @@ int MyScale::returnToGate(int measuredWeight) {
 
     if (between(weightRangeLower[4], measuredWeight, weightRangeUpper[4])){
 
-        for (int i = 0; i < numberOfGates; i++) {
+        for (int i = 1; i <= numberOfGates; i++) {
             if (destinationGate[4] == gate_available[i]) {
                 return destinationGate[4]; }
         }
@@ -479,7 +416,7 @@ int MyScale::returnToGate(int measuredWeight) {
     if (between(weightRangeLower[5], measuredWeight, weightRangeUpper[5])){
 
         qDebug() << "Gate5 being considdered";
-        for (int i = 0; i < numberOfGates; i++) {
+        for (int i = 1; i <= numberOfGates; i++) {
             if (destinationGate[5] == gate_available[i]) {
 
                 qDebug() << "destinationGate[5] == " << destinationGate[5] << " => gate_available[" << i << "] == " << gate_available[i] ;
@@ -490,7 +427,7 @@ int MyScale::returnToGate(int measuredWeight) {
     if (between(weightRangeLower[6], measuredWeight, weightRangeUpper[6])){
 
         qDebug() << "Gate6 being considdered";
-        for (int i = 0; i < numberOfGates; i++) {
+        for (int i = 1; i <= numberOfGates; i++) {
             if (destinationGate[6] == gate_available[i]) {
 
                 qDebug() << "destinationGate[6] == " << destinationGate[6] << " => gate_available[" << i << "] == " << gate_available[i] ;
@@ -500,7 +437,7 @@ int MyScale::returnToGate(int measuredWeight) {
 
     if (between(weightRangeLower[7], measuredWeight, weightRangeUpper[7])){
 
-        for (int i = 0; i < numberOfGates; i++) {
+        for (int i = 1; i <= numberOfGates; i++) {
             if (destinationGate[7] == gate_available[i]) {
                 return destinationGate[7]; }
         }
@@ -508,7 +445,7 @@ int MyScale::returnToGate(int measuredWeight) {
 
     if (between(weightRangeLower[8], measuredWeight, weightRangeUpper[8])){
 
-        for (int i = 0; i < numberOfGates; i++) {
+        for (int i = 1; i <= numberOfGates; i++) {
             if (destinationGate[8] == gate_available[i]) {
                 return destinationGate[8]; }
         }
@@ -516,7 +453,7 @@ int MyScale::returnToGate(int measuredWeight) {
 
     if (between(weightRangeLower[9], measuredWeight, weightRangeUpper[9])){
 
-        for (int i = 0; i < numberOfGates; i++) {
+        for (int i = 1; i <= numberOfGates; i++) {
             if (destinationGate[9] == gate_available[i]) {
                 return destinationGate[9]; }
         }
@@ -924,7 +861,7 @@ void MyScale::weightProcessing(int weightValueFromScale) {
             productReleasePulse = (int)((double)(productRelease)/pulseResolution + 0.5);
             maxProductLengthPulse = (int)((double)(maxProductLength)/pulseResolution + 0.5);
 
-            for (int i = 0; i < numberOfGates; i++) {
+            for (int i = 1; i <= numberOfGates; i++) {
                 pulseDistanceToGate[i] = (int)((double)(productRelease + distanceToGraderGate[i])/pulseResolution + 0.5);
                 pulseDistanceToEndOfGate[i] = (int)((double)(productRelease + distanceToGraderGate[i] + distanceOpenGate[i])/pulseResolution + 0.5);
             }

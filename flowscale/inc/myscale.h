@@ -125,6 +125,8 @@ private:
     double lengthOfEachBeltPeriod;
     double dMedian;
 
+    double gate01_distanceTo;
+
     double dSorted[numberOfBeltRounds];
     int zeroArray[samplesPerBeltRound];
     int updateZeroArray[samplesPerBeltRound];
@@ -190,24 +192,24 @@ private:
     int meanWeightSample;
 
     // Grader settings variables:
-    int gate_available[numberOfGates];
+    int gate_available[numberOfGates+1];
 
-    int distanceToGraderGate[numberOfGates];        // [mm]
-    int distanceOpenGate[numberOfGates];            // [mm]
-    int distanceToEndOfGraderGate[numberOfGates];   // [mm]
-    int pulseDistanceToGate[numberOfGates];         // [ticks]
-    int pulseDistanceToEndOfGate[numberOfGates];    // [ticks]
-    int distanceToEndOfGrader;                      // [mm]
+    double distanceToGraderGate[numberOfGates+1];        // [mm]
+    double distanceOpenGate[numberOfGates+1];            // [mm]
+    double distanceToEndOfGrader;                      // [mm]
+
+    int pulseDistanceToGate[numberOfGates+1];         // [ticks]
+    int pulseDistanceToEndOfGate[numberOfGates+1];    // [ticks]
     int pulseDistanceToEndOfConveyorBelt;           // [ticks]
 
-    int gateBufferWeight[numberOfGates];            // [kg]
-    int gateBufferAmount[numberOfGates];            // [pcs]
+    int gateBufferAmount[numberOfGates+1];            // [pcs]
+    double gateBufferWeight[numberOfGates+1];            // [kg]
 
-    int gateBufferProcessedAmount[numberOfGates];    // [pcs]
-    double gateBufferProcessedWeight[numberOfGates]; // [kg]
+    int gateBufferProcessedAmount[numberOfGates+1];    // [pcs]
+    double gateBufferProcessedWeight[numberOfGates+1]; // [kg]
 
-    int gateBufferProcessedAmountTotalizer[numberOfGates];    // [pcs]
-    double gateBufferProcessedWeightTotalizer[numberOfGates]; // [kg]
+    int gateBufferProcessedAmountTotalizer[numberOfGates+1];    // [pcs]
+    double gateBufferProcessedWeightTotalizer[numberOfGates+1]; // [kg]
 
     int evenDistribution;
     int fillUpInSequence;

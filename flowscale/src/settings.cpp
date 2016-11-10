@@ -50,14 +50,56 @@ Settings::Settings(QObject *parent) :
             productWeighingStopDistance = settingsArray[k][1];
         } else if (settingsArray[k][0] == "Product_Release"){
             productRelease = settingsArray[k][1];
-        } else if (settingsArray[k][0] == "X_Value_Min"){
+        } else if (settingsArray[k][0] == "Graph_X_Min"){
             XvalueMIN = settingsArray[k][1];
-        } else if (settingsArray[k][0] == "X_Value_Max"){
+        } else if (settingsArray[k][0] == "Graph_X_Max"){
             XvalueMAX = settingsArray[k][1];
-        } else if (settingsArray[k][0] == "Y_Value_Min"){
+        } else if (settingsArray[k][0] == "Graph_Y_Min"){
             YvalueMIN = settingsArray[k][1];
-        } else if (settingsArray[k][0] == "Y_Value_Max"){
+        } else if (settingsArray[k][0] == "Graph_Y_Max"){
             YvalueMAX = settingsArray[k][1];
+        } else if (settingsArray[k][0] == "Gate_01_Distance_To"){
+            gate_distanceTo[ 1] = settingsArray[k][1];
+        } else if (settingsArray[k][0] == "Gate_02_Distance_To"){
+            gate_distanceTo[ 2] = settingsArray[k][1];
+        } else if (settingsArray[k][0] == "Gate_03_Distance_To"){
+            gate_distanceTo[ 3] = settingsArray[k][1];
+        } else if (settingsArray[k][0] == "Gate_04_Distance_To"){
+            gate_distanceTo[ 4] = settingsArray[k][1];
+        } else if (settingsArray[k][0] == "Gate_05_Distance_To"){
+            gate_distanceTo[ 5] = settingsArray[k][1];
+        } else if (settingsArray[k][0] == "Gate_06_Distance_To"){
+            gate_distanceTo[ 6] = settingsArray[k][1];
+        } else if (settingsArray[k][0] == "Gate_07_Distance_To"){
+            gate_distanceTo[ 7] = settingsArray[k][1];
+        } else if (settingsArray[k][0] == "Gate_08_Distance_To"){
+            gate_distanceTo[ 8] = settingsArray[k][1];
+        } else if (settingsArray[k][0] == "Gate_09_Distance_To"){
+            gate_distanceTo[ 9] = settingsArray[k][1];
+        } else if (settingsArray[k][0] == "Gate_10_Distance_To"){
+            gate_distanceTo[10] = settingsArray[k][1];
+        } else if (settingsArray[k][0] == "Grader_Distance_To_End"){
+            Grader_DistanceToEnd = settingsArray[k][1];
+        } else if (settingsArray[k][0] == "Gate_01_Distance_Open"){
+            gate_distanceOpen[ 1] = settingsArray[k][1];
+        } else if (settingsArray[k][0] == "Gate_02_Distance_Open"){
+            gate_distanceOpen[ 2] = settingsArray[k][1];
+        } else if (settingsArray[k][0] == "Gate_03_Distance_Open"){
+            gate_distanceOpen[ 3] = settingsArray[k][1];
+        } else if (settingsArray[k][0] == "Gate_04_Distance_Open"){
+            gate_distanceOpen[ 4] = settingsArray[k][1];
+        } else if (settingsArray[k][0] == "Gate_05_Distance_Open"){
+            gate_distanceOpen[ 5] = settingsArray[k][1];
+        } else if (settingsArray[k][0] == "Gate_06_Distance_Open"){
+            gate_distanceOpen[ 6] = settingsArray[k][1];
+        } else if (settingsArray[k][0] == "Gate_07_Distance_Open"){
+            gate_distanceOpen[ 7] = settingsArray[k][1];
+        } else if (settingsArray[k][0] == "Gate_08_Distance_Open"){
+            gate_distanceOpen[ 8] = settingsArray[k][1];
+        } else if (settingsArray[k][0] == "Gate_09_Distance_Open"){
+            gate_distanceOpen[ 9] = settingsArray[k][1];
+        } else if (settingsArray[k][0] == "Gate_10_Distance_Open"){
+            gate_distanceOpen[10] = settingsArray[k][1];
         }
     }
 

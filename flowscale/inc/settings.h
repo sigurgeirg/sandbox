@@ -9,6 +9,7 @@
 #include <sstream>
 #include <fstream>
 #include <string>
+#include "constants.h"
 
 class Settings : public QThread
 {
@@ -31,6 +32,9 @@ public:
     std::string YvalueMIN;
     std::string YvalueMAX;
 
+    std::string gate_distanceTo[numberOfGates+1];
+    std::string gate_distanceOpen[numberOfGates+1];
+    std::string Grader_DistanceToEnd;
 };
 
 #endif // SETTINGS_H
