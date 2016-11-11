@@ -51,6 +51,7 @@ public:
     void run();
     int *statusRegisterBinary(uint16_t number[]);
     std::ofstream filezero;
+    std::ofstream filebatch;
     std::string recipeArray[100][5];
 
     int zeroUnfilteredArray[numberOfBeltRounds][samplesPerBeltRound];

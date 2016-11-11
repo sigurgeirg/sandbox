@@ -143,25 +143,36 @@ void MyScale::writeBufferDataToFile() {
         gateBufferProcessedWeightTotalizer[i] = gateBufferProcessedWeightTotalizer[i] + gateBufferProcessedWeight[i];
     }
 
-    qDebug() << "";
-    qDebug() << "";
-    qDebug() << "";
-    qDebug() << "gateBufferProcessedAmountTotalizer: ";
-    qDebug() << "=================================== ";
-    for (int i = 1; i <= numberOfGates; i++) {
-        if (gateBufferProcessedAmountTotalizer[i] > 0) {
-            qDebug() << "gateBufferProcessedAmountTotalizer[" << i << "] : " << gateBufferProcessedAmountTotalizer[i];
-        }
-    }
+    filebatch.open("batch_xxx.csv", std::ofstream::out | std::ofstream::trunc); // trunc changed to app, trunc clears the file while app appends it
+    //filebatch.open("batch_xxx.csv", std::ofstream::out | std::ofstream::app); // trunc changed to app, trunc clears the file while app appends it
 
-    qDebug() << "";
-    qDebug() << "gateBufferProcessedWeightTotalizer: ";
-    qDebug() << "=================================== ";
-    for (int i = 1; i <= numberOfGates; i++) {
-        if (gateBufferProcessedWeightTotalizer[i] > 0) {
-            qDebug() << "gateBufferProcessedWeightTotalizer[" << i << "] : " << QString::number(int(gateBufferProcessedWeightTotalizer[i] * 1000) / 1000.0, 'f', 3);
+    if (filebatch.is_open()) {
+
+
+        filebatch << "" << std::endl;
+        filebatch << "" << std::endl;
+        filebatch << "" << std::endl;
+        filebatch << "gateBufferProcessedAmountTotalizer: " << std::endl;
+        filebatch << "=================================== " << std::endl;
+        for (int i = 1; i <= numberOfGates; i++) {
+            if (gateBufferProcessedAmountTotalizer[i] > 0) {
+                filebatch << "gateBufferProcessedAmountTotalizer[" << i << "] : " << gateBufferProcessedAmountTotalizer[i] << std::endl;
+            }
+        }
+
+        filebatch << "" << std::endl;
+        filebatch << "" << std::endl;
+        filebatch << "" << std::endl;
+        filebatch << "gateBufferProcessedWeightTotalizer: " << std::endl;
+        filebatch << "=================================== ";
+        for (int i = 1; i <= numberOfGates; i++) {
+            if (gateBufferProcessedWeightTotalizer[i] > 0) {
+                filebatch << "gateBufferProcessedWeightTotalizer[" << i << "] : " << (double)gateBufferProcessedWeightTotalizer[i] << std::endl;
+            }
         }
     }
+    filebatch.close();
+
 
     // FIXME: Clear recipe variables
     for (int i = 1; i <= numberOfGates; i++) {
