@@ -24,7 +24,7 @@ MyScale::MyScale(QObject *parent) :
     weightGROSSorNET[0] = netDisplay; // Default NET weight
 
     statusRegisterBinaryTempValue = new int[16];
-    statusRegisterBinaryReturnValue = new int[16];
+    statusRegisterBinaryReturnValue = new int[16];@
 
     processingProduct = false;
     requestBeltRoundPulse = false;
@@ -98,7 +98,7 @@ MyScale::MyScale(QObject *parent) :
     fillUpInSequence = 2;
     sortingMethod    = evenDistribution;
 
-    bufferByWeight = 1;
+    bufferByWeight = 1;@
     bufferByCount  = 2;
     bufferByWeightOrByCount = bufferByWeight;
 
