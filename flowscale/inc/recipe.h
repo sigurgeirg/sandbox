@@ -23,7 +23,9 @@ public:
 
     QString recipePathAndName;
     std::string recipeArray[100][5];
-    std::string weightRange[50][5];
+    std::string weightRange[100][5];
+    std::string gateBufferWeight[100];
+    std::string gateBufferCount[100];
 
     std::string recipeID;
     std::string productID;
@@ -34,12 +36,10 @@ public:
     std::string maxProductLength;
     std::string maxProductPieceGap;
     std::string description;
-    std::string weightRangeLower[50];
-    std::string weightRangeUpper[50];
-    std::string destinationGate[50];
+    std::string weightRangeLower[100];
+    std::string weightRangeUpper[100];
+    std::string destinationGate[100];
 
-    std::string Gate_BufferWeight[numberOfGates+1];
-    std::string Gate_BufferAmount[numberOfGates+1];
 
 
 public slots:

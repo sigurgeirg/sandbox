@@ -22,7 +22,6 @@ Recipe::Recipe(QObject *parent) :
 //    int value = atoi(recipe->filterDelay.c_str()); //value = 45
 // ///////////////////////////////////////////////////////////////////////////////////
 
-
 }
 
 
@@ -83,7 +82,9 @@ void Recipe::updateRecipe(QString selectedRecipeFullPath) {
             maxProductPieceGap = recipeArray[k][1];
         } else if (recipeArray[k][0] == "Recipe_Description"){
             description = recipeArray[k][1];
-        } else if (recipeArray[k][0] == "Weight_Range_01"){
+        }
+
+          else if (recipeArray[k][0] == "Weight_Range_01"){
             for (int s = 1; s < 4; s++) weightRange[1][s] = recipeArray[k][s];
         } else if (recipeArray[k][0] == "Weight_Range_02"){
             for (int s = 1; s < 4; s++) weightRange[2][s] = recipeArray[k][s];
@@ -123,55 +124,60 @@ void Recipe::updateRecipe(QString selectedRecipeFullPath) {
             for (int s = 1; s < 4; s++) weightRange[19][s] = recipeArray[k][s];
         } else if (recipeArray[k][0] == "Weight_Range_20"){
             for (int s = 1; s < 4; s++) weightRange[20][s] = recipeArray[k][s];
-        } else if (recipeArray[k][0] == "Gate_01_BufferWeight"){
-            Gate_BufferWeight[ 1] = recipeArray[k][1];
-        } else if (recipeArray[k][0] == "Gate_02_BufferWeight"){
-            Gate_BufferWeight[ 2] = recipeArray[k][1];
-        } else if (recipeArray[k][0] == "Gate_03_BufferWeight"){
-            Gate_BufferWeight[ 3] = recipeArray[k][1];
-        } else if (recipeArray[k][0] == "Gate_04_BufferWeight"){
-            Gate_BufferWeight[ 4] = recipeArray[k][1];
-        } else if (recipeArray[k][0] == "Gate_05_BufferWeight"){
-            Gate_BufferWeight[ 5] = recipeArray[k][1];
-        } else if (recipeArray[k][0] == "Gate_06_BufferWeight"){
-            Gate_BufferWeight[ 6] = recipeArray[k][1];
-        } else if (recipeArray[k][0] == "Gate_07_BufferWeight"){
-            Gate_BufferWeight[ 7] = recipeArray[k][1];
-        } else if (recipeArray[k][0] == "Gate_08_BufferWeight"){
-            Gate_BufferWeight[ 8] = recipeArray[k][1];
-        } else if (recipeArray[k][0] == "Gate_09_BufferWeight"){
-            Gate_BufferWeight[ 9] = recipeArray[k][1];
-        } else if (recipeArray[k][0] == "Gate_10_BufferWeight"){
-            Gate_BufferWeight[10] = recipeArray[k][1];
-        } else if (recipeArray[k][0] == "Gate_01_BufferAmount"){
-            Gate_BufferAmount[ 1] = recipeArray[k][1];
-        } else if (recipeArray[k][0] == "Gate_02_BufferAmount"){
-            Gate_BufferAmount[ 2] = recipeArray[k][1];
-        } else if (recipeArray[k][0] == "Gate_03_BufferAmount"){
-            Gate_BufferAmount[ 3] = recipeArray[k][1];
-        } else if (recipeArray[k][0] == "Gate_04_BufferAmount"){
-            Gate_BufferAmount[ 4] = recipeArray[k][1];
-        } else if (recipeArray[k][0] == "Gate_05_BufferAmount"){
-            Gate_BufferAmount[ 5] = recipeArray[k][1];
-        } else if (recipeArray[k][0] == "Gate_06_BufferAmount"){
-            Gate_BufferAmount[ 6] = recipeArray[k][1];
-        } else if (recipeArray[k][0] == "Gate_07_BufferAmount"){
-            Gate_BufferAmount[ 7] = recipeArray[k][1];
-        } else if (recipeArray[k][0] == "Gate_08_BufferAmount"){
-            Gate_BufferAmount[ 8] = recipeArray[k][1];
-        } else if (recipeArray[k][0] == "Gate_09_BufferAmount"){
-            Gate_BufferAmount[ 9] = recipeArray[k][1];
-        } else if (recipeArray[k][0] == "Gate_10_BufferAmount"){
-            Gate_BufferAmount[10] = recipeArray[k][1];
+        }
+
+          else if (recipeArray[k][0] == "BufferWeight_Gate01"){
+            gateBufferWeight[1] = recipeArray[k][1];
+        } else if (recipeArray[k][0] == "BufferWeight_Gate02"){
+            gateBufferWeight[2] = recipeArray[k][1];
+        } else if (recipeArray[k][0] == "BufferWeight_Gate03"){
+            gateBufferWeight[3] = recipeArray[k][1];
+        } else if (recipeArray[k][0] == "BufferWeight_Gate04"){
+            gateBufferWeight[4] = recipeArray[k][1];
+        } else if (recipeArray[k][0] == "BufferWeight_Gate05"){
+            gateBufferWeight[5] = recipeArray[k][1];
+        } else if (recipeArray[k][0] == "BufferWeight_Gate06"){
+            gateBufferWeight[6] = recipeArray[k][1];
+        } else if (recipeArray[k][0] == "BufferWeight_Gate07"){
+            gateBufferWeight[7] = recipeArray[k][1];
+        } else if (recipeArray[k][0] == "BufferWeight_Gate08"){
+            gateBufferWeight[8] = recipeArray[k][1];
+        } else if (recipeArray[k][0] == "BufferWeight_Gate09"){
+            gateBufferWeight[9] = recipeArray[k][1];
+        } else if (recipeArray[k][0] == "BufferWeight_Gate10"){
+            gateBufferWeight[10] = recipeArray[k][1];
+        }
+
+          else if (recipeArray[k][0] == "BufferCount_Gate01"){
+            gateBufferCount[1] = recipeArray[k][1];
+        } else if (recipeArray[k][0] == "BufferCount_Gate02"){
+            gateBufferCount[2] = recipeArray[k][1];
+        } else if (recipeArray[k][0] == "BufferCount_Gate03"){
+            gateBufferCount[3] = recipeArray[k][1];
+        } else if (recipeArray[k][0] == "BufferCount_Gate04"){
+            gateBufferCount[4] = recipeArray[k][1];
+        } else if (recipeArray[k][0] == "BufferCount_Gate05"){
+            gateBufferCount[5] = recipeArray[k][1];
+        } else if (recipeArray[k][0] == "BufferCount_Gate06"){
+            gateBufferCount[6] = recipeArray[k][1];
+        } else if (recipeArray[k][0] == "BufferCount_Gate07"){
+            gateBufferCount[7] = recipeArray[k][1];
+        } else if (recipeArray[k][0] == "BufferCount_Gate08"){
+            gateBufferCount[8] = recipeArray[k][1];
+        } else if (recipeArray[k][0] == "BufferCount_Gate09"){
+            gateBufferCount[9] = recipeArray[k][1];
+        } else if (recipeArray[k][0] == "BufferCount_Gate10"){
+            gateBufferCount[10] = recipeArray[k][1];
         }
     }
 
 
-    for (int t = 0; t < rowOfData.size(); t++) {
+    for (int t = 1; t <= rowOfData.size(); t++) {
 
         weightRangeLower[t] = weightRange[t][1];
         weightRangeUpper[t] = weightRange[t][2];
         destinationGate[t]  = weightRange[t][3];
     }
+
 }
 

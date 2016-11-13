@@ -170,7 +170,7 @@
       <enum>QTabWidget::Rounded</enum>
      </property>
      <property name="currentIndex">
-      <number>2</number>
+      <number>0</number>
      </property>
      <property name="iconSize">
       <size>
@@ -2695,7 +2695,7 @@
         <string notr="true">QScrollBar:vertical {min-width: 50px; margin-right: 20px;}</string>
        </property>
        <property name="rowCount">
-        <number>55</number>
+        <number>66</number>
        </property>
        <row>
         <property name="text">
@@ -2890,6 +2890,61 @@
        <row>
         <property name="text">
          <string>39</string>
+        </property>
+       </row>
+       <row>
+        <property name="text">
+         <string>40</string>
+        </property>
+       </row>
+       <row>
+        <property name="text">
+         <string>41</string>
+        </property>
+       </row>
+       <row>
+        <property name="text">
+         <string>42</string>
+        </property>
+       </row>
+       <row>
+        <property name="text">
+         <string>43</string>
+        </property>
+       </row>
+       <row>
+        <property name="text">
+         <string>44</string>
+        </property>
+       </row>
+       <row>
+        <property name="text">
+         <string>45</string>
+        </property>
+       </row>
+       <row>
+        <property name="text">
+         <string>46</string>
+        </property>
+       </row>
+       <row>
+        <property name="text">
+         <string>47</string>
+        </property>
+       </row>
+       <row>
+        <property name="text">
+         <string>48</string>
+        </property>
+       </row>
+       <row>
+        <property name="text">
+         <string>49</string>
+        </property>
+       </row>
+       <row>
+        <property name="text">
+         <string>50</string>
         </property>
        </row>
        <row/>

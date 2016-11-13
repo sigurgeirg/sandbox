@@ -94,12 +94,12 @@ signals:
     void ymin(QString);
     void ymax(QString);
 
-    void gate01_Availability(bool);
-    void gate02_Availability(bool);
-    void gate03_Availability(bool);
-    void gate04_Availability(bool);
-    void gate05_Availability(bool);
-    void gate06_Availability(bool);
+    void gate01_Closed(bool);
+    void gate02_Closed(bool);
+    void gate03_Closed(bool);
+    void gate04_Closed(bool);
+    void gate05_Closed(bool);
+    void gate06_Closed(bool);
     // /////////////////////////
     // Simulation
     // void reply(unsigned char, bool);

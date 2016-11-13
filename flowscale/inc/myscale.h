@@ -193,24 +193,24 @@ private:
     int meanWeightSample;
 
     // Grader settings variables:
-    int gate_available[numberOfGates+1];
+    int gate_available[50];
 
-    double distanceToGraderGate[numberOfGates+1];               // [mm]
-    double distanceOpenGate[numberOfGates+1];                   // [mm]
+    double distanceToGraderGate[50];               // [mm]
+    double distanceOpenGate[50];                   // [mm]
     double distanceToEndOfGrader;                               // [mm]
 
-    int pulseDistanceToGate[numberOfGates+1];                   // [ticks]
-    int pulseDistanceToEndOfGate[numberOfGates+1];              // [ticks]
+    int pulseDistanceToGate[50];                   // [ticks]
+    int pulseDistanceToEndOfGate[50];              // [ticks]
     int pulseDistanceToEndOfConveyorBelt;                       // [ticks]
 
-    int gateBufferAmount[numberOfGates+1];                      // [pcs]
-    double gateBufferWeight[numberOfGates+1];                   // [kg]
+    int gateBufferCount[50];                      // [pcs]
+    int gateBufferWeight[50];                      // [kg]
 
-    int gateBufferProcessedAmount[numberOfGates+1];             // [pcs]
-    double gateBufferProcessedWeight[numberOfGates+1];          // [kg]
+    int gateBufferProcessedCount[50];             // [pcs]
+    double gateBufferProcessedWeight[50];          // [kg]
 
-    int gateBufferProcessedAmountTotalizer[numberOfGates+1];    // [pcs]
-    double gateBufferProcessedWeightTotalizer[numberOfGates+1]; // [kg]
+    int gateBufferProcessedCountTotalizer[50];    // [pcs]
+    double gateBufferProcessedWeightTotalizer[50]; // [kg]
 
     int evenDistribution;
     int fillUpInSequence;
@@ -251,12 +251,12 @@ public slots:
     void xmax(QString);
     void ymin(QString);
     void ymax(QString);
-    void gate01_Availability(bool);
-    void gate02_Availability(bool);
-    void gate03_Availability(bool);
-    void gate04_Availability(bool);
-    void gate05_Availability(bool);
-    void gate06_Availability(bool);
+    void gate01_Closed(bool);
+    void gate02_Closed(bool);
+    void gate03_Closed(bool);
+    void gate04_Closed(bool);
+    void gate05_Closed(bool);
+    void gate06_Closed(bool);
 
 };
 

@@ -105,8 +105,8 @@ MyScale::MyScale(QObject *parent) :
     for (int i = 1; i <= numberOfGates; i++)
     {
         gate_available[i] = i;
-        gateBufferProcessedAmount[i] = 0;           // [pcs]
-        gateBufferProcessedAmountTotalizer[i] = 0;  // [pcs]
+        gateBufferProcessedCount[i] = 0;           // [pcs]
+        gateBufferProcessedCountTotalizer[i] = 0;  // [pcs]
         gateBufferProcessedWeight[i] = 0.0;         // [kg]
         gateBufferProcessedWeightTotalizer[i] = 0.0;// [kg]
     }
@@ -139,12 +139,18 @@ void MyScale::writeBufferDataToFile() {
 
     for (int i = 1; i <= numberOfGates; i++)
     {
-        gateBufferProcessedAmountTotalizer[i] = gateBufferProcessedAmountTotalizer[i] + gateBufferProcessedAmount[i];
+        gateBufferProcessedCountTotalizer[i] = gateBufferProcessedCountTotalizer[i] + gateBufferProcessedCount[i];
         gateBufferProcessedWeightTotalizer[i] = gateBufferProcessedWeightTotalizer[i] + gateBufferProcessedWeight[i];
     }
 
-    filebatch.open("batch_xxx.csv", std::ofstream::out | std::ofstream::trunc); // trunc changed to app, trunc clears the file while app appends it
-    //filebatch.open("batch_xxx.csv", std::ofstream::out | std::ofstream::app); // trunc changed to app, trunc clears the file while app appends it
+    // /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // FIXME: Create unique batchID "batch_ddmmyyhhmm.csv"
+    // FIXME: BatchID should maybe be created in program based on timedate instead of constant name from recipe ...
+    //        ... because each recipe can be used again and again.
+    // /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    //filebatch.open("batch_xxx.csv", std::ofstream::out | std::ofstream::trunc); // trunc changed to app, trunc clears the file while app appends it
+    filebatch.open("batch_xxx.csv", std::ofstream::out | std::ofstream::app); // trunc changed to app, trunc clears the file while app appends it
 
     if (filebatch.is_open()) {
 
@@ -152,11 +158,12 @@ void MyScale::writeBufferDataToFile() {
         filebatch << "" << std::endl;
         filebatch << "" << std::endl;
         filebatch << "" << std::endl;
-        filebatch << "gateBufferProcessedAmountTotalizer: " << std::endl;
+        filebatch << "gateBufferProcessedCountTotalizer: " << std::endl;
         filebatch << "=================================== " << std::endl;
         for (int i = 1; i <= numberOfGates; i++) {
-            if (gateBufferProcessedAmountTotalizer[i] > 0) {
-                filebatch << "gateBufferProcessedAmountTotalizer[" << i << "] : " << gateBufferProcessedAmountTotalizer[i] << std::endl;
+            if (gateBufferProcessedCountTotalizer[i] > 0) {
+                filebatch << "gateBufferProcessedCountTotalizer[" << i << "] : " << gateBufferProcessedCountTotalizer[i] << std::endl;
+//                qDebug() << "gateBufferProcessedCountTotalizer[" << i << "] : " << gateBufferProcessedCountTotalizer[i];
             }
         }
 
@@ -164,10 +171,11 @@ void MyScale::writeBufferDataToFile() {
         filebatch << "" << std::endl;
         filebatch << "" << std::endl;
         filebatch << "gateBufferProcessedWeightTotalizer: " << std::endl;
-        filebatch << "=================================== ";
+        filebatch << "=================================== " << std::endl;
         for (int i = 1; i <= numberOfGates; i++) {
             if (gateBufferProcessedWeightTotalizer[i] > 0) {
                 filebatch << "gateBufferProcessedWeightTotalizer[" << i << "] : " << (double)gateBufferProcessedWeightTotalizer[i] << std::endl;
+//                qDebug() << "gateBufferProcessedWeightTotalizer[" << i << "] : " << (double)gateBufferProcessedWeightTotalizer[i];
             }
         }
     }
@@ -176,9 +184,9 @@ void MyScale::writeBufferDataToFile() {
 
     // FIXME: Clear recipe variables
     for (int i = 1; i <= numberOfGates; i++) {
-        gateBufferProcessedAmount[i] = 0;
+        gateBufferProcessedCount[i] = 0;
         gateBufferProcessedWeight[i] = 0.0;
-        gateBufferProcessedAmountTotalizer[i] = 0;
+        gateBufferProcessedCountTotalizer[i] = 0;
         gateBufferProcessedWeightTotalizer[i] = 0.0;
     }
 }
@@ -201,17 +209,17 @@ void MyScale::updateRecipe(QString selectedRecipe) {
     maxProductLength                = QString::fromStdString(recipe->maxProductLength.c_str()).toInt();
     maxProductPieceGap              = QString::fromStdString(recipe->maxProductPieceGap.c_str()).toInt();
 
-    for (int t = 1; t <= numberOfWeightRangesForGrading; t++) {
+    for (int r = 1; r <= numberOfWeightRangesForGrading; r++) {
 
-        weightRangeLower[t] = QString::fromStdString(recipe->weightRangeLower[t].c_str()).toInt();
-        weightRangeUpper[t] = QString::fromStdString(recipe->weightRangeUpper[t].c_str()).toInt();
-        destinationGate[t]  = QString::fromStdString(recipe->destinationGate[t].c_str()).toInt();
+        weightRangeLower[r] = QString::fromStdString(recipe->weightRangeLower[r].c_str()).toInt();
+        weightRangeUpper[r] = QString::fromStdString(recipe->weightRangeUpper[r].c_str()).toInt();
+        destinationGate[r]  = QString::fromStdString(recipe->destinationGate[r].c_str()).toInt();
     }
 
-    for (int t = 1; t <= numberOfGates ; t++) {
+    for (int s = 1; s <= numberOfGates; s++) {
 
-        gateBufferAmount[t] = QString::fromStdString(recipe->Gate_BufferAmount[t].c_str()).toInt();         // [pcs]
-        gateBufferWeight[t]     = QString::fromStdString(recipe->Gate_BufferWeight[t].c_str()).toFloat();   // [kg]
+        gateBufferCount[s] = QString::fromStdString(recipe->gateBufferCount[s].c_str()).toInt();   // [pcs]
+        gateBufferWeight[s] = QString::fromStdString(recipe->gateBufferWeight[s].c_str()).toInt();   // [kg]
     }
 
 
@@ -233,17 +241,17 @@ bool MyScale::between(int less, int value, int greater) {
 }
 
 
-void MyScale::gate01_Availability(bool disabled) {
+void MyScale::gate01_Closed(bool state) {
 
-    if (disabled == false) {
+    if (state == false) {
 
-        gateBufferProcessedAmountTotalizer[1] = gateBufferProcessedAmountTotalizer[1] + gateBufferProcessedAmount[1];
+        gateBufferProcessedCountTotalizer[1] = gateBufferProcessedCountTotalizer[1] + gateBufferProcessedCount[1];
         gateBufferProcessedWeightTotalizer[1] = gateBufferProcessedWeightTotalizer[1] + gateBufferProcessedWeight[1];
 
         gate_available[1] = 1;
 
         // FIXME: Save data before clearing like I do here
-        gateBufferProcessedAmount[1] = 0;
+        gateBufferProcessedCount[1] = 0;
         gateBufferProcessedWeight[1] = 0.0;
         emit enableGate(1, true);
 
@@ -251,17 +259,17 @@ void MyScale::gate01_Availability(bool disabled) {
     else { gate_available[1] = -1; }
 }
 
-void MyScale::gate02_Availability(bool disabled) {
+void MyScale::gate02_Closed(bool state) {
 
-    if (disabled == false) {
+    if (state == false) {
 
-        gateBufferProcessedAmountTotalizer[2] = gateBufferProcessedAmountTotalizer[2] + gateBufferProcessedAmount[2];
+        gateBufferProcessedCountTotalizer[2] = gateBufferProcessedCountTotalizer[2] + gateBufferProcessedCount[2];
         gateBufferProcessedWeightTotalizer[2] = gateBufferProcessedWeightTotalizer[2] + gateBufferProcessedWeight[2];
 
         gate_available[2] = 2;
 
         // FIXME: Save data before clearing like I do here
-        gateBufferProcessedAmount[2] = 0;
+        gateBufferProcessedCount[2] = 0;
         gateBufferProcessedWeight[2] = 0.0;
         emit enableGate(2, true);
 
@@ -269,17 +277,17 @@ void MyScale::gate02_Availability(bool disabled) {
     else { gate_available[2] = -1; }
 }
 
-void MyScale::gate03_Availability(bool disabled) {
+void MyScale::gate03_Closed(bool state) {
 
-    if (disabled == false) {
+    if (state == false) {
 
-        gateBufferProcessedAmountTotalizer[3] = gateBufferProcessedAmountTotalizer[3] + gateBufferProcessedAmount[3];
+        gateBufferProcessedCountTotalizer[3] = gateBufferProcessedCountTotalizer[3] + gateBufferProcessedCount[3];
         gateBufferProcessedWeightTotalizer[3] = gateBufferProcessedWeightTotalizer[3] + gateBufferProcessedWeight[3];
 
         gate_available[3] = 3;
 
         // FIXME: Save data before clearing like I do here
-        gateBufferProcessedAmount[3] = 0;
+        gateBufferProcessedCount[3] = 0;
         gateBufferProcessedWeight[3] = 0.0;
         emit enableGate(3, true);
 
@@ -287,17 +295,17 @@ void MyScale::gate03_Availability(bool disabled) {
     else { gate_available[3] = -1; }
 }
 
-void MyScale::gate04_Availability(bool disabled) {
+void MyScale::gate04_Closed(bool state) {
 
-    if (disabled == false) {
+    if (state == false) {
 
-        gateBufferProcessedAmountTotalizer[4] = gateBufferProcessedAmountTotalizer[4] + gateBufferProcessedAmount[4];
+        gateBufferProcessedCountTotalizer[4] = gateBufferProcessedCountTotalizer[4] + gateBufferProcessedCount[4];
         gateBufferProcessedWeightTotalizer[4] = gateBufferProcessedWeightTotalizer[4] + gateBufferProcessedWeight[4];
 
         gate_available[4] = 4;
 
         // FIXME: Save data before clearing like I do here
-        gateBufferProcessedAmount[4] = 0;
+        gateBufferProcessedCount[4] = 0;
         gateBufferProcessedWeight[4] = 0.0;
         emit enableGate(4, true);
 
@@ -305,19 +313,17 @@ void MyScale::gate04_Availability(bool disabled) {
     else { gate_available[4] = -1; }
 }
 
-void MyScale::gate05_Availability(bool disabled) {
+void MyScale::gate05_Closed(bool state) {
 
-    qDebug() << "Gate5Availability check";
+    if (state == false) {
 
-    if (disabled == false) {
-
-        gateBufferProcessedAmountTotalizer[5] = gateBufferProcessedAmountTotalizer[5] + gateBufferProcessedAmount[5];
+        gateBufferProcessedCountTotalizer[5] = gateBufferProcessedCountTotalizer[5] + gateBufferProcessedCount[5];
         gateBufferProcessedWeightTotalizer[5] = gateBufferProcessedWeightTotalizer[5] + gateBufferProcessedWeight[5];
 
         gate_available[5] = 5;
 
         // FIXME: Save data before clearing like I do here
-        gateBufferProcessedAmount[5] = 0;
+        gateBufferProcessedCount[5] = 0;
         gateBufferProcessedWeight[5] = 0.0;
         emit enableGate(5, true);
 
@@ -325,19 +331,17 @@ void MyScale::gate05_Availability(bool disabled) {
     else { gate_available[5] = -1; }
 }
 
-void MyScale::gate06_Availability(bool disabled) {
+void MyScale::gate06_Closed(bool state) {
 
-    qDebug() << "Gate6Availability check";
+    if (state == false) {
 
-    if (disabled == false) {
-
-        gateBufferProcessedAmountTotalizer[6] = gateBufferProcessedAmountTotalizer[6] + gateBufferProcessedAmount[6];
+        gateBufferProcessedCountTotalizer[6] = gateBufferProcessedCountTotalizer[6] + gateBufferProcessedCount[6];
         gateBufferProcessedWeightTotalizer[6] = gateBufferProcessedWeightTotalizer[6] + gateBufferProcessedWeight[6];
 
         gate_available[6] = 6;
 
         // FIXME: Save data before clearing like I do here
-        gateBufferProcessedAmount[6] = 0;
+        gateBufferProcessedCount[6] = 0;
         gateBufferProcessedWeight[6] = 0.0;
         emit enableGate(6, true);
 
@@ -374,7 +378,7 @@ int MyScale::returnToGate(int measuredWeight) {
 
     if (between(weightRangeLower[4], measuredWeight, weightRangeUpper[4])){
 
-        for (int i = 1; i <= numberOfGates; i++) {
+         for (int i = 1; i <= numberOfGates; i++) {
             if (destinationGate[4] == gate_available[i]) {
                 return destinationGate[4]; }
         }
@@ -382,7 +386,6 @@ int MyScale::returnToGate(int measuredWeight) {
 
     if (between(weightRangeLower[5], measuredWeight, weightRangeUpper[5])){
 
-        qDebug() << "Gate5 being considdered";
         for (int i = 1; i <= numberOfGates; i++) {
             if (destinationGate[5] == gate_available[i]) {
 
@@ -393,7 +396,6 @@ int MyScale::returnToGate(int measuredWeight) {
 
     if (between(weightRangeLower[6], measuredWeight, weightRangeUpper[6])){
 
-        qDebug() << "Gate6 being considdered";
         for (int i = 1; i <= numberOfGates; i++) {
             if (destinationGate[6] == gate_available[i]) {
 
@@ -434,6 +436,7 @@ int MyScale::returnToGate(int measuredWeight) {
         }
     }
 
+    qDebug() << "Gate0, because other GATES are being ignored";
     return 0;
 }
 
@@ -1051,13 +1054,13 @@ void MyScale::weightProcessing(int weightValueFromScale) {
                         productOnScaleArea[_elementId] = false;
 
                         //
-                        gateBufferProcessedAmount[proData.destinationGate[_elementId]] = gateBufferProcessedAmount[proData.destinationGate[_elementId]] + 1; // [pcs]
+                        gateBufferProcessedCount[proData.destinationGate[_elementId]] = gateBufferProcessedCount[proData.destinationGate[_elementId]] + 1; // [pcs]
                         gateBufferProcessedWeight[proData.destinationGate[_elementId]] = gateBufferProcessedWeight[proData.destinationGate[_elementId]] + (proData.productWeight[_elementId] / 1000.0); // [gr]
 
-                        emit BufferCount(proData.destinationGate[_elementId], QString::number(gateBufferProcessedAmount[proData.destinationGate[_elementId]]));
+                        emit BufferCount(proData.destinationGate[_elementId], QString::number(gateBufferProcessedCount[proData.destinationGate[_elementId]]));
                         emit BufferWeight(proData.destinationGate[_elementId], QString::number(gateBufferProcessedWeight[proData.destinationGate[_elementId]]));
 
-                        if ( (gateBufferProcessedAmount[proData.destinationGate[_elementId]] >= gateBufferAmount[proData.destinationGate[_elementId]]) ||
+                        if ( (gateBufferProcessedCount[proData.destinationGate[_elementId]] >= gateBufferCount[proData.destinationGate[_elementId]]) ||
                              (gateBufferProcessedWeight[proData.destinationGate[_elementId]] >= gateBufferWeight[proData.destinationGate[_elementId]])    ) {
 
                             gate_available[proData.destinationGate[_elementId]] = -1;

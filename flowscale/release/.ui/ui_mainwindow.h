@@ -869,8 +869,8 @@ public:
         recipeTable->setHorizontalHeaderItem(2, __qtablewidgetitem44);
         QTableWidgetItem *__qtablewidgetitem45 = new QTableWidgetItem();
         recipeTable->setHorizontalHeaderItem(3, __qtablewidgetitem45);
-        if (recipeTable->rowCount() < 55)
-            recipeTable->setRowCount(55);
+        if (recipeTable->rowCount() < 66)
+            recipeTable->setRowCount(66);
         QTableWidgetItem *__qtablewidgetitem46 = new QTableWidgetItem();
         recipeTable->setVerticalHeaderItem(0, __qtablewidgetitem46);
         QTableWidgetItem *__qtablewidgetitem47 = new QTableWidgetItem();
@@ -949,11 +949,33 @@ public:
         recipeTable->setVerticalHeaderItem(37, __qtablewidgetitem83);
         QTableWidgetItem *__qtablewidgetitem84 = new QTableWidgetItem();
         recipeTable->setVerticalHeaderItem(38, __qtablewidgetitem84);
+        QTableWidgetItem *__qtablewidgetitem85 = new QTableWidgetItem();
+        recipeTable->setVerticalHeaderItem(39, __qtablewidgetitem85);
+        QTableWidgetItem *__qtablewidgetitem86 = new QTableWidgetItem();
+        recipeTable->setVerticalHeaderItem(40, __qtablewidgetitem86);
+        QTableWidgetItem *__qtablewidgetitem87 = new QTableWidgetItem();
+        recipeTable->setVerticalHeaderItem(41, __qtablewidgetitem87);
+        QTableWidgetItem *__qtablewidgetitem88 = new QTableWidgetItem();
+        recipeTable->setVerticalHeaderItem(42, __qtablewidgetitem88);
+        QTableWidgetItem *__qtablewidgetitem89 = new QTableWidgetItem();
+        recipeTable->setVerticalHeaderItem(43, __qtablewidgetitem89);
+        QTableWidgetItem *__qtablewidgetitem90 = new QTableWidgetItem();
+        recipeTable->setVerticalHeaderItem(44, __qtablewidgetitem90);
+        QTableWidgetItem *__qtablewidgetitem91 = new QTableWidgetItem();
+        recipeTable->setVerticalHeaderItem(45, __qtablewidgetitem91);
+        QTableWidgetItem *__qtablewidgetitem92 = new QTableWidgetItem();
+        recipeTable->setVerticalHeaderItem(46, __qtablewidgetitem92);
+        QTableWidgetItem *__qtablewidgetitem93 = new QTableWidgetItem();
+        recipeTable->setVerticalHeaderItem(47, __qtablewidgetitem93);
+        QTableWidgetItem *__qtablewidgetitem94 = new QTableWidgetItem();
+        recipeTable->setVerticalHeaderItem(48, __qtablewidgetitem94);
+        QTableWidgetItem *__qtablewidgetitem95 = new QTableWidgetItem();
+        recipeTable->setVerticalHeaderItem(49, __qtablewidgetitem95);
         recipeTable->setObjectName(QString::fromUtf8("recipeTable"));
         recipeTable->setGeometry(QRect(10, 60, 601, 281));
         recipeTable->setMinimumSize(QSize(451, 0));
         recipeTable->setStyleSheet(QString::fromUtf8("QScrollBar:vertical {min-width: 50px; margin-right: 20px;}"));
-        recipeTable->setRowCount(55);
+        recipeTable->setRowCount(66);
         tabWidget->addTab(tabRecipe, QString());
         tabDio = new QWidget();
         tabDio->setObjectName(QString::fromUtf8("tabDio"));
@@ -1184,7 +1206,7 @@ public:
 
         retranslateUi(MainWindow);
 
-        tabWidget->setCurrentIndex(2);
+        tabWidget->setCurrentIndex(0);
 
 
         QMetaObject::connectSlotsByName(MainWindow);
@@ -1429,6 +1451,28 @@ public:
         ___qtablewidgetitem83->setText(QApplication::translate("MainWindow", "38", 0, QApplication::UnicodeUTF8));
         QTableWidgetItem *___qtablewidgetitem84 = recipeTable->verticalHeaderItem(38);
         ___qtablewidgetitem84->setText(QApplication::translate("MainWindow", "39", 0, QApplication::UnicodeUTF8));
+        QTableWidgetItem *___qtablewidgetitem85 = recipeTable->verticalHeaderItem(39);
+        ___qtablewidgetitem85->setText(QApplication::translate("MainWindow", "40", 0, QApplication::UnicodeUTF8));
+        QTableWidgetItem *___qtablewidgetitem86 = recipeTable->verticalHeaderItem(40);
+        ___qtablewidgetitem86->setText(QApplication::translate("MainWindow", "41", 0, QApplication::UnicodeUTF8));
+        QTableWidgetItem *___qtablewidgetitem87 = recipeTable->verticalHeaderItem(41);
+        ___qtablewidgetitem87->setText(QApplication::translate("MainWindow", "42", 0, QApplication::UnicodeUTF8));
+        QTableWidgetItem *___qtablewidgetitem88 = recipeTable->verticalHeaderItem(42);
+        ___qtablewidgetitem88->setText(QApplication::translate("MainWindow", "43", 0, QApplication::UnicodeUTF8));
+        QTableWidgetItem *___qtablewidgetitem89 = recipeTable->verticalHeaderItem(43);
+        ___qtablewidgetitem89->setText(QApplication::translate("MainWindow", "44", 0, QApplication::UnicodeUTF8));
+        QTableWidgetItem *___qtablewidgetitem90 = recipeTable->verticalHeaderItem(44);
+        ___qtablewidgetitem90->setText(QApplication::translate("MainWindow", "45", 0, QApplication::UnicodeUTF8));
+        QTableWidgetItem *___qtablewidgetitem91 = recipeTable->verticalHeaderItem(45);
+        ___qtablewidgetitem91->setText(QApplication::translate("MainWindow", "46", 0, QApplication::UnicodeUTF8));
+        QTableWidgetItem *___qtablewidgetitem92 = recipeTable->verticalHeaderItem(46);
+        ___qtablewidgetitem92->setText(QApplication::translate("MainWindow", "47", 0, QApplication::UnicodeUTF8));
+        QTableWidgetItem *___qtablewidgetitem93 = recipeTable->verticalHeaderItem(47);
+        ___qtablewidgetitem93->setText(QApplication::translate("MainWindow", "48", 0, QApplication::UnicodeUTF8));
+        QTableWidgetItem *___qtablewidgetitem94 = recipeTable->verticalHeaderItem(48);
+        ___qtablewidgetitem94->setText(QApplication::translate("MainWindow", "49", 0, QApplication::UnicodeUTF8));
+        QTableWidgetItem *___qtablewidgetitem95 = recipeTable->verticalHeaderItem(49);
+        ___qtablewidgetitem95->setText(QApplication::translate("MainWindow", "50", 0, QApplication::UnicodeUTF8));
         tabWidget->setTabText(tabWidget->indexOf(tabRecipe), QApplication::translate("MainWindow", "Recipe", 0, QApplication::UnicodeUTF8));
         chkDIN_03->setText(QApplication::translate("MainWindow", "SI_03", 0, QApplication::UnicodeUTF8));
         label_6->setText(QApplication::translate("MainWindow", "I 03", 0, QApplication::UnicodeUTF8));

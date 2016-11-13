@@ -37,59 +37,59 @@ static const uint qt_meta_data_MainWindow[] = {
       70,   11,   11,   11, 0x05,
       84,   11,   11,   11, 0x05,
       98,   11,   11,   11, 0x05,
-     124,   11,   11,   11, 0x05,
-     150,   11,   11,   11, 0x05,
-     176,   11,   11,   11, 0x05,
-     202,   11,   11,   11, 0x05,
-     228,   11,   11,   11, 0x05,
+     118,   11,   11,   11, 0x05,
+     138,   11,   11,   11, 0x05,
+     158,   11,   11,   11, 0x05,
+     178,   11,   11,   11, 0x05,
+     198,   11,   11,   11, 0x05,
 
  // slots: signature, parameters, type, tag, flags
-     254,   11,   11,   11, 0x08,
-     289,  281,   11,   11, 0x08,
-     325,   11,   11,   11, 0x08,
-     355,   11,   11,   11, 0x08,
-     387,   11,   11,   11, 0x08,
+     218,   11,   11,   11, 0x08,
+     253,  245,   11,   11, 0x08,
+     289,   11,   11,   11, 0x08,
+     319,   11,   11,   11, 0x08,
+     351,   11,   11,   11, 0x08,
+     373,   11,   11,   11, 0x08,
+     391,   11,   11,   11, 0x08,
      409,   11,   11,   11, 0x08,
      427,   11,   11,   11, 0x08,
-     445,   11,   11,   11, 0x08,
-     463,   11,   11,   11, 0x08,
-     483,  481,   11,   11, 0x08,
-     509,   11,   11,   11, 0x08,
-     533,   11,   11,   11, 0x08,
-     557,   11,   11,   11, 0x08,
-     590,   11,   11,   11, 0x08,
-     624,   11,   11,   11, 0x08,
-     665,  660,   11,   11, 0x08,
-     700,  660,   11,   11, 0x08,
-     737,  281,   11,   11, 0x08,
-     763,  281,   11,   11, 0x08,
-     789,  281,   11,   11, 0x08,
-     815,  281,   11,   11, 0x08,
-     841,  281,   11,   11, 0x08,
-     867,  281,   11,   11, 0x08,
-     893,   11,   11,   11, 0x08,
-     920,   11,   11,   11, 0x0a,
-     941,   11,   11,   11, 0x0a,
-     976,   11,   11,   11, 0x0a,
-     994,   11,   11,   11, 0x0a,
-    1021,   11,   11,   11, 0x0a,
-    1049,   11,   11,   11, 0x0a,
-    1073,   11,   11,   11, 0x0a,
-    1098,   11,   11,   11, 0x0a,
-    1124,   11,   11,   11, 0x0a,
-    1152,   11,   11,   11, 0x0a,
-    1177,   11,   11,   11, 0x0a,
-    1204,   11,   11,   11, 0x0a,
-    1231,   11,   11,   11, 0x0a,
-    1254,   11,   11,   11, 0x0a,
-    1286,   11,   11,   11, 0x0a,
-    1311,   11,   11,   11, 0x0a,
-    1339,   11,   11,   11, 0x0a,
-    1361,   11,   11,   11, 0x0a,
-    1379,   11,   11,   11, 0x0a,
-    1404,  481,   11,   11, 0x0a,
-    1425,  481,   11,   11, 0x0a,
-    1457,  481,   11,   11, 0x0a,
+     447,  445,   11,   11, 0x08,
+     473,   11,   11,   11, 0x08,
+     497,   11,   11,   11, 0x08,
+     521,   11,   11,   11, 0x08,
+     554,   11,   11,   11, 0x08,
+     588,   11,   11,   11, 0x08,
+     629,  624,   11,   11, 0x08,
+     664,  624,   11,   11, 0x08,
+     701,  245,   11,   11, 0x08,
+     727,  245,   11,   11, 0x08,
+     753,  245,   11,   11, 0x08,
+     779,  245,   11,   11, 0x08,
+     805,  245,   11,   11, 0x08,
+     831,  245,   11,   11, 0x08,
+     857,   11,   11,   11, 0x08,
+     884,   11,   11,   11, 0x0a,
+     905,   11,   11,   11, 0x0a,
+     940,   11,   11,   11, 0x0a,
+     958,   11,   11,   11, 0x0a,
+     985,   11,   11,   11, 0x0a,
+    1013,   11,   11,   11, 0x0a,
+    1037,   11,   11,   11, 0x0a,
+    1062,   11,   11,   11, 0x0a,
+    1088,   11,   11,   11, 0x0a,
+    1116,   11,   11,   11, 0x0a,
+    1141,   11,   11,   11, 0x0a,
+    1168,   11,   11,   11, 0x0a,
+    1195,   11,   11,   11, 0x0a,
+    1218,   11,   11,   11, 0x0a,
+    1250,   11,   11,   11, 0x0a,
+    1275,   11,   11,   11, 0x0a,
+    1303,   11,   11,   11, 0x0a,
+    1325,   11,   11,   11, 0x0a,
+    1343,   11,   11,   11, 0x0a,
+    1368,  445,   11,   11, 0x0a,
+    1389,  445,   11,   11, 0x0a,
+    1421,  445,   11,   11, 0x0a,
 
        0        // eod
 };
@@ -97,14 +97,11 @@ static const uint qt_meta_data_MainWindow[] = {
 static const char qt_meta_stringdata_MainWindow[] = {
     "MainWindow\0\0avgWeight(int)\0value(QString)\0"
     "xmin(QString)\0xmax(QString)\0ymin(QString)\0"
-    "ymax(QString)\0gate01_Availability(bool)\0"
-    "gate02_Availability(bool)\0"
-    "gate03_Availability(bool)\0"
-    "gate04_Availability(bool)\0"
-    "gate05_Availability(bool)\0"
-    "gate06_Availability(bool)\0"
-    "on_btnDisconnect_clicked()\0checked\0"
-    "on_chkWriteToLoadcell_toggled(bool)\0"
+    "ymax(QString)\0gate01_Closed(bool)\0"
+    "gate02_Closed(bool)\0gate03_Closed(bool)\0"
+    "gate04_Closed(bool)\0gate05_Closed(bool)\0"
+    "gate06_Closed(bool)\0on_btnDisconnect_clicked()\0"
+    "checked\0on_chkWriteToLoadcell_toggled(bool)\0"
     "on_btnCalibrateZERO_clicked()\0"
     "on_btnCalibrateWEIGHT_clicked()\0"
     "on_btnAPPLY_clicked()\0on_xmin_clicked()\0"
@@ -156,12 +153,12 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         case 3: _t->xmax((*reinterpret_cast< QString(*)>(_a[1]))); break;
         case 4: _t->ymin((*reinterpret_cast< QString(*)>(_a[1]))); break;
         case 5: _t->ymax((*reinterpret_cast< QString(*)>(_a[1]))); break;
-        case 6: _t->gate01_Availability((*reinterpret_cast< bool(*)>(_a[1]))); break;
-        case 7: _t->gate02_Availability((*reinterpret_cast< bool(*)>(_a[1]))); break;
-        case 8: _t->gate03_Availability((*reinterpret_cast< bool(*)>(_a[1]))); break;
-        case 9: _t->gate04_Availability((*reinterpret_cast< bool(*)>(_a[1]))); break;
-        case 10: _t->gate05_Availability((*reinterpret_cast< bool(*)>(_a[1]))); break;
-        case 11: _t->gate06_Availability((*reinterpret_cast< bool(*)>(_a[1]))); break;
+        case 6: _t->gate01_Closed((*reinterpret_cast< bool(*)>(_a[1]))); break;
+        case 7: _t->gate02_Closed((*reinterpret_cast< bool(*)>(_a[1]))); break;
+        case 8: _t->gate03_Closed((*reinterpret_cast< bool(*)>(_a[1]))); break;
+        case 9: _t->gate04_Closed((*reinterpret_cast< bool(*)>(_a[1]))); break;
+        case 10: _t->gate05_Closed((*reinterpret_cast< bool(*)>(_a[1]))); break;
+        case 11: _t->gate06_Closed((*reinterpret_cast< bool(*)>(_a[1]))); break;
         case 12: _t->on_btnDisconnect_clicked(); break;
         case 13: _t->on_chkWriteToLoadcell_toggled((*reinterpret_cast< bool(*)>(_a[1]))); break;
         case 14: _t->on_btnCalibrateZERO_clicked(); break;
@@ -295,42 +292,42 @@ void MainWindow::ymax(QString _t1)
 }
 
 // SIGNAL 6
-void MainWindow::gate01_Availability(bool _t1)
+void MainWindow::gate01_Closed(bool _t1)
 {
     void *_a[] = { 0, const_cast<void*>(reinterpret_cast<const void*>(&_t1)) };
     QMetaObject::activate(this, &staticMetaObject, 6, _a);
 }
 
 // SIGNAL 7
-void MainWindow::gate02_Availability(bool _t1)
+void MainWindow::gate02_Closed(bool _t1)
 {
     void *_a[] = { 0, const_cast<void*>(reinterpret_cast<const void*>(&_t1)) };
     QMetaObject::activate(this, &staticMetaObject, 7, _a);
 }
 
 // SIGNAL 8
-void MainWindow::gate03_Availability(bool _t1)
+void MainWindow::gate03_Closed(bool _t1)
 {
     void *_a[] = { 0, const_cast<void*>(reinterpret_cast<const void*>(&_t1)) };
     QMetaObject::activate(this, &staticMetaObject, 8, _a);
 }
 
 // SIGNAL 9
-void MainWindow::gate04_Availability(bool _t1)
+void MainWindow::gate04_Closed(bool _t1)
 {
     void *_a[] = { 0, const_cast<void*>(reinterpret_cast<const void*>(&_t1)) };
     QMetaObject::activate(this, &staticMetaObject, 9, _a);
 }
 
 // SIGNAL 10
-void MainWindow::gate05_Availability(bool _t1)
+void MainWindow::gate05_Closed(bool _t1)
 {
     void *_a[] = { 0, const_cast<void*>(reinterpret_cast<const void*>(&_t1)) };
     QMetaObject::activate(this, &staticMetaObject, 10, _a);
 }
 
 // SIGNAL 11
-void MainWindow::gate06_Availability(bool _t1)
+void MainWindow::gate06_Closed(bool _t1)
 {
     void *_a[] = { 0, const_cast<void*>(reinterpret_cast<const void*>(&_t1)) };
     QMetaObject::activate(this, &staticMetaObject, 11, _a);

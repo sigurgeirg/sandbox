@@ -64,12 +64,12 @@ MainWindow::MainWindow(QWidget *parent) :
         connect(scale, SIGNAL(enableGate(int, bool)),           this,   SLOT(enableGate(int, bool)));
         connect(scale, SIGNAL(activateGateArm(int, bool)),      this,   SLOT(activateGateArm(int, bool)));
 
-        connect(this, SIGNAL(gate01_Availability(bool)),          scale,  SLOT(gate01_Availability(bool)));
-        connect(this, SIGNAL(gate02_Availability(bool)),          scale,  SLOT(gate02_Availability(bool)));
-        connect(this, SIGNAL(gate03_Availability(bool)),          scale,  SLOT(gate03_Availability(bool)));
-        connect(this, SIGNAL(gate04_Availability(bool)),          scale,  SLOT(gate04_Availability(bool)));
-        connect(this, SIGNAL(gate05_Availability(bool)),          scale,  SLOT(gate05_Availability(bool)));
-        connect(this, SIGNAL(gate06_Availability(bool)),          scale,  SLOT(gate06_Availability(bool)));
+        connect(this, SIGNAL(gate01_Closed(bool)),              scale,  SLOT(gate01_Closed(bool)));
+        connect(this, SIGNAL(gate02_Closed(bool)),              scale,  SLOT(gate02_Closed(bool)));
+        connect(this, SIGNAL(gate03_Closed(bool)),              scale,  SLOT(gate03_Closed(bool)));
+        connect(this, SIGNAL(gate04_Closed(bool)),              scale,  SLOT(gate04_Closed(bool)));
+        connect(this, SIGNAL(gate05_Closed(bool)),              scale,  SLOT(gate05_Closed(bool)));
+        connect(this, SIGNAL(gate06_Closed(bool)),              scale,  SLOT(gate06_Closed(bool)));
 
 
         // Product Data Over Mosquitto transmission:
@@ -668,65 +668,71 @@ void MainWindow::on_cbSettingsMenu_activated(const QString &arg1)
 void MainWindow::enableGate(int gate, bool enabled)
 {
     if (gate == 1) {
-        if (enabled == true)    { ui->cbxGate1->setChecked(false); ui->cbxGate1->setStyleSheet("color: black"); this->gate01_enabled = true;  }
+        if (enabled == true)    { ui->cbxGate1->setChecked(false); ui->cbxGate1->setStyleSheet("color: black"); this->gate01_enabled = true;
+                                  ui->lblBCnt1->setText("0");      ui->lblBWgt1->setText("0");}
         else                    { ui->cbxGate1->setChecked(true);  ui->cbxGate1->setStyleSheet("color: red");   this->gate01_enabled = false; }
     }
 
     if (gate == 2) {
-        if (enabled == true)    { ui->cbxGate2->setChecked(false); ui->cbxGate2->setStyleSheet("color: black"); this->gate02_enabled = true;  }
+        if (enabled == true)    { ui->cbxGate2->setChecked(false); ui->cbxGate2->setStyleSheet("color: black"); this->gate02_enabled = true;
+                                  ui->lblBCnt2->setText("0");      ui->lblBWgt2->setText("0");}
         else                    { ui->cbxGate2->setChecked(true);  ui->cbxGate2->setStyleSheet("color: red");   this->gate02_enabled = false; }
     }
 
     if (gate == 3) {
-        if (enabled == true)    { ui->cbxGate3->setChecked(false); ui->cbxGate3->setStyleSheet("color: black"); this->gate03_enabled = true;  }
+        if (enabled == true)    { ui->cbxGate3->setChecked(false); ui->cbxGate3->setStyleSheet("color: black"); this->gate03_enabled = true;
+                                  ui->lblBCnt3->setText("0");      ui->lblBWgt3->setText("0");}
         else                    { ui->cbxGate3->setChecked(true);  ui->cbxGate3->setStyleSheet("color: red");   this->gate03_enabled = false; }
     }
 
     if (gate == 4) {
-        if (enabled == true)    { ui->cbxGate4->setChecked(false); ui->cbxGate4->setStyleSheet("color: black"); this->gate04_enabled = true;  }
+        if (enabled == true)    { ui->cbxGate4->setChecked(false); ui->cbxGate4->setStyleSheet("color: black"); this->gate04_enabled = true;
+                                  ui->lblBCnt4->setText("0");      ui->lblBWgt4->setText("0");}
         else                    { ui->cbxGate4->setChecked(true);  ui->cbxGate4->setStyleSheet("color: red");   this->gate04_enabled = false; }
     }
     if (gate == 5) {
-        if (enabled == true)    { ui->cbxGate5->setChecked(false); ui->cbxGate5->setStyleSheet("color: black"); this->gate05_enabled = true;  }
+        if (enabled == true)    { ui->cbxGate5->setChecked(false); ui->cbxGate5->setStyleSheet("color: black"); this->gate05_enabled = true;
+                                  ui->lblBCnt5->setText("0");      ui->lblBWgt5->setText("0");}
         else                    { ui->cbxGate5->setChecked(true);  ui->cbxGate5->setStyleSheet("color: red");   this->gate05_enabled = false; }
     }
 
     if (gate == 6) {
-        if (enabled == true)    { ui->cbxGate6->setChecked(false); ui->cbxGate6->setStyleSheet("color: black"); this->gate06_enabled = true;  }
+        if (enabled == true)    { ui->cbxGate6->setChecked(false); ui->cbxGate6->setStyleSheet("color: black"); this->gate06_enabled = true;
+                                  ui->lblBCnt6->setText("0");      ui->lblBWgt6->setText("0");}
         else                    { ui->cbxGate6->setChecked(true);  ui->cbxGate6->setStyleSheet("color: red");   this->gate06_enabled = false; }
     }
 }
 
 
 
-void MainWindow::on_cbxGate1_clicked(bool disabled)
+void MainWindow::on_cbxGate1_clicked(bool state)
 {
-    emit gate01_Availability(disabled);
+    emit gate01_Closed(state);
 }
 
-void MainWindow::on_cbxGate2_clicked(bool disabled)
+void MainWindow::on_cbxGate2_clicked(bool state)
 {
-    emit gate02_Availability(disabled);
+    emit gate02_Closed(state);
 }
 
-void MainWindow::on_cbxGate3_clicked(bool disabled)
+void MainWindow::on_cbxGate3_clicked(bool state)
 {
-    emit gate03_Availability(disabled);
+    emit gate03_Closed(state);
 }
 
-void MainWindow::on_cbxGate4_clicked(bool disabled)
+void MainWindow::on_cbxGate4_clicked(bool state)
 {
-    emit gate04_Availability(disabled);
+    emit gate04_Closed(state);
 }
 
-void MainWindow::on_cbxGate5_clicked(bool disabled)
+void MainWindow::on_cbxGate5_clicked(bool state)
 {
-    emit gate05_Availability(disabled);
+    emit gate05_Closed(state);
 }
 
-void MainWindow::on_cbxGate6_clicked(bool disabled)
+void MainWindow::on_cbxGate6_clicked(bool state)
 {
-    emit gate06_Availability(disabled);
+    emit gate06_Closed(state);
 }
 
 void MainWindow::on_btnCloseBatch_clicked()
@@ -753,4 +759,25 @@ void MainWindow::on_btnCloseBatch_clicked()
     ui->cbxGate4->setChecked(false);
     ui->cbxGate5->setChecked(false);
     ui->cbxGate6->setChecked(false);
+
+    ui->cbxGate1->setStyleSheet("color: black");
+    ui->cbxGate2->setStyleSheet("color: black");
+    ui->cbxGate3->setStyleSheet("color: black");
+    ui->cbxGate4->setStyleSheet("color: black");
+    ui->cbxGate5->setStyleSheet("color: black");
+    ui->cbxGate6->setStyleSheet("color: black");
+
+    this->gate01_enabled = true;
+    this->gate02_enabled = true;
+    this->gate03_enabled = true;
+    this->gate04_enabled = true;
+    this->gate05_enabled = true;
+    this->gate06_enabled = true;
+
+    emit gate01_Closed(false);
+    emit gate02_Closed(false);
+    emit gate03_Closed(false);
+    emit gate04_Closed(false);
+    emit gate05_Closed(false);
+    emit gate06_Closed(false);
 }
