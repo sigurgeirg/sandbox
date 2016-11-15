@@ -16,6 +16,7 @@
 #include <string>
 #include <math.h>
 #include <cmath>
+#include <ctime>
 #include <stdlib.h>
 #include "../../QCustomPlot/qcustomplot.h"
 
@@ -99,6 +100,12 @@ private:
     int writeToRegister;    // Points to some register, fx. commandRegister ...
     //int calibrationWeight;  // Variable that keeps calibration weight value in terms of [g]
     int weightGROSSorNET[1];// Indicates whether selected weight is sampleWeightForCalibrationLGROSS or NET weight.
+
+    time_t rawtime;
+    char buffer[80];
+    char batchClosedWhen[80];
+
+    int newDataReady;
 
     bool processingProduct;
     bool productOnScaleArea[numberOfElementsInList];

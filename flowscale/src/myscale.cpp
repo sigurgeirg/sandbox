@@ -69,6 +69,7 @@ MyScale::MyScale(QObject *parent) :
 
     dMedian = 0.0;
 
+    newDataReady = 0;
     productCounter = 0;
     filterCounter = 0;
     updateZeroEveryNumberOfRounds = 20;
@@ -148,39 +149,54 @@ void MyScale::writeBufferDataToFile() {
     // FIXME: BatchID should maybe be created in program based on timedate instead of constant name from recipe ...
     //        ... because each recipe can be used again and again.
     // /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    //filebatch.open("batch_xxx.csv", std::ofstream::out | std::ofstream::trunc); // trunc changed to app, trunc clears the file while app appends it
-    filebatch.open("batch_xxx.csv", std::ofstream::out | std::ofstream::app); // trunc changed to app, trunc clears the file while app appends it
-
-    if (filebatch.is_open()) {
-
-
-        filebatch << "" << std::endl;
-        filebatch << "" << std::endl;
-        filebatch << "" << std::endl;
-        filebatch << "gateBufferProcessedCountTotalizer: " << std::endl;
-        filebatch << "=================================== " << std::endl;
-        for (int i = 1; i <= numberOfGates; i++) {
-            if (gateBufferProcessedCountTotalizer[i] > 0) {
-                filebatch << "gateBufferProcessedCountTotalizer[" << i << "] : " << gateBufferProcessedCountTotalizer[i] << std::endl;
-//                qDebug() << "gateBufferProcessedCountTotalizer[" << i << "] : " << gateBufferProcessedCountTotalizer[i];
-            }
-        }
-
-        filebatch << "" << std::endl;
-        filebatch << "" << std::endl;
-        filebatch << "" << std::endl;
-        filebatch << "gateBufferProcessedWeightTotalizer: " << std::endl;
-        filebatch << "=================================== " << std::endl;
-        for (int i = 1; i <= numberOfGates; i++) {
-            if (gateBufferProcessedWeightTotalizer[i] > 0) {
-                filebatch << "gateBufferProcessedWeightTotalizer[" << i << "] : " << (double)gateBufferProcessedWeightTotalizer[i] << std::endl;
-//                qDebug() << "gateBufferProcessedWeightTotalizer[" << i << "] : " << (double)gateBufferProcessedWeightTotalizer[i];
-            }
-        }
+    for (int i = 1; i <= numberOfGates; i++) {
+        if (gateBufferProcessedCountTotalizer[i] > 0) { newDataReady = newDataReady + 1; }
     }
-    filebatch.close();
 
+    if (newDataReady > 0) {
+
+        struct tm * timeinfo;
+        time (&rawtime);
+        timeinfo = localtime(&rawtime);
+        std::strftime(batchClosedWhen,80,"%y%m%d%H%M", timeinfo);
+
+
+        //filebatch.open("batch_xxx.csv", std::ofstream::out | std::ofstream::trunc); // trunc changed to app, trunc clears the file while app appends it
+        filebatch.open("production.csv", std::ofstream::out | std::ofstream::app); // trunc changed to app, trunc clears the file while app appends it
+
+        if (filebatch.is_open()) {
+            filebatch << ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> " << std::endl;
+            filebatch << "" << std::endl;
+            filebatch << "Recipe activated at date-time: " << batchID << std::endl;
+            filebatch << "Batch closed at date-time: " << batchClosedWhen << std::endl;
+            filebatch << "Recipe name: " << recipeID << std::endl;
+            filebatch << "=================================== " << std::endl;
+
+            filebatch << "" << std::endl;
+            filebatch << "gateBufferProcessedCountTotalizer:  " << std::endl;
+            filebatch << "=================================== " << std::endl;
+            for (int i = 1; i <= numberOfGates; i++) {
+                if (gateBufferProcessedCountTotalizer[i] > 0) {
+                    filebatch << "gateBufferProcessedCountTotalizer[" << i << "] : " << gateBufferProcessedCountTotalizer[i] << std::endl;
+    //                qDebug() << "gateBufferProcessedCountTotalizer[" << i << "] : " << gateBufferProcessedCountTotalizer[i];
+                }
+            }
+
+            filebatch << "" << std::endl;
+            filebatch << "gateBufferProcessedWeightTotalizer: " << std::endl;
+            filebatch << "=================================== " << std::endl;
+            for (int i = 1; i <= numberOfGates; i++) {
+                if (gateBufferProcessedWeightTotalizer[i] > 0) {
+                    filebatch << "gateBufferProcessedWeightTotalizer[" << i << "] : " << (double)gateBufferProcessedWeightTotalizer[i] << std::endl;
+    //                qDebug() << "gateBufferProcessedWeightTotalizer[" << i << "] : " << (double)gateBufferProcessedWeightTotalizer[i];
+                }
+            }
+            filebatch << "" << std::endl;
+            filebatch << "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< " << std::endl;
+        }
+        filebatch.close();
+        newDataReady = 0;
+    }
 
     // FIXME: Clear recipe variables
     for (int i = 1; i <= numberOfGates; i++) {
@@ -194,20 +210,29 @@ void MyScale::writeBufferDataToFile() {
 
 void MyScale::updateRecipe(QString selectedRecipe) {
 
+
     this->writeBufferDataToFile();
 
     recipe->updateRecipe(selectedRecipe);
 
+
     // Recipe variables
     productDescription              = recipe->description;
     recipeID                        = recipe->recipeID;
-    batchID                         = recipe->batchID;
+    //batchID                         = recipe->batchID;
     productID                       = recipe->productID;
     productType                     = recipe->productType;
     serialStartsAt                  = QString::fromStdString(recipe->serialStartsAt.c_str()).toInt();
     minProductLength                = QString::fromStdString(recipe->minProductLength.c_str()).toInt();
     maxProductLength                = QString::fromStdString(recipe->maxProductLength.c_str()).toInt();
     maxProductPieceGap              = QString::fromStdString(recipe->maxProductPieceGap.c_str()).toInt();
+
+    struct tm * timeinfo;
+    time (&rawtime);
+    timeinfo = localtime(&rawtime);
+    std::strftime(buffer,80,"%y%m%d%H%M", timeinfo);
+    batchID = buffer;
+
 
     for (int r = 1; r <= numberOfWeightRangesForGrading; r++) {
 
