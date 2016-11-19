@@ -47,6 +47,7 @@ MyScale::MyScale(QObject *parent) :
     lengthOfEachBeltPeriod = 0.0;
 
     // System settings variables
+    calibrationWeight               = QString::fromStdString(settings->calibrationWeight.c_str()).toInt();
     lengthOfEachBeltChain           = QString::fromStdString(settings->lengthOfEachBeltChain.c_str()).toFloat();
     numberOfBeltChains              = QString::fromStdString(settings->numberOfBeltChains.c_str()).toFloat();
     productEntry                    = QString::fromStdString(settings->productEntry.c_str()).toInt();
@@ -108,8 +109,9 @@ MyScale::MyScale(QObject *parent) :
         gate_available[i] = i;
         gateBufferProcessedCount[i] = 0;           // [pcs]
         gateBufferProcessedCountTotalizer[i] = 0;  // [pcs]
-        gateBufferProcessedWeight[i] = 0.0;         // [kg]
-        gateBufferProcessedWeightTotalizer[i] = 0.0;// [kg]
+        gateBufferProcessedWeight[i] = 0.0;         // [gr]
+        gateBufferProcessedWeightTotalizer[i] = 0.0;// [gr]
+        emit activateGateDiode(i, false);
     }
 
 
@@ -118,6 +120,7 @@ MyScale::MyScale(QObject *parent) :
 
     // Set output signals, such as grading gates:
     connect(this, SIGNAL(activateGateArm(int, bool)),          dio,    SLOT(activateGateArm(int, bool)));
+    connect(this, SIGNAL(activateGateDiode(int, bool)),        dio,    SLOT(activateGateDiode(int, bool)));
 
     // Input sensor signals:
     connect(dio,   SIGNAL(conveyorSignal()),                this,  SLOT(conveyorBeltSignal()));
@@ -222,7 +225,6 @@ void MyScale::updateRecipe(QString selectedRecipe) {
     //batchID                         = recipe->batchID;
     productID                       = recipe->productID;
     productType                     = recipe->productType;
-    serialStartsAt                  = QString::fromStdString(recipe->serialStartsAt.c_str()).toInt();
     minProductLength                = QString::fromStdString(recipe->minProductLength.c_str()).toInt();
     maxProductLength                = QString::fromStdString(recipe->maxProductLength.c_str()).toInt();
     maxProductPieceGap              = QString::fromStdString(recipe->maxProductPieceGap.c_str()).toInt();
@@ -279,6 +281,7 @@ void MyScale::gate01_Closed(bool state) {
         gateBufferProcessedCount[1] = 0;
         gateBufferProcessedWeight[1] = 0.0;
         emit enableGate(1, true);
+        emit activateGateDiode(1, false);
 
     }
     else { gate_available[1] = -1; }
@@ -297,6 +300,7 @@ void MyScale::gate02_Closed(bool state) {
         gateBufferProcessedCount[2] = 0;
         gateBufferProcessedWeight[2] = 0.0;
         emit enableGate(2, true);
+        emit activateGateDiode(2, false);
 
     }
     else { gate_available[2] = -1; }
@@ -315,6 +319,7 @@ void MyScale::gate03_Closed(bool state) {
         gateBufferProcessedCount[3] = 0;
         gateBufferProcessedWeight[3] = 0.0;
         emit enableGate(3, true);
+        emit activateGateDiode(3, false);
 
     }
     else { gate_available[3] = -1; }
@@ -333,6 +338,7 @@ void MyScale::gate04_Closed(bool state) {
         gateBufferProcessedCount[4] = 0;
         gateBufferProcessedWeight[4] = 0.0;
         emit enableGate(4, true);
+        emit activateGateDiode(4, false);
 
     }
     else { gate_available[4] = -1; }
@@ -351,6 +357,7 @@ void MyScale::gate05_Closed(bool state) {
         gateBufferProcessedCount[5] = 0;
         gateBufferProcessedWeight[5] = 0.0;
         emit enableGate(5, true);
+        emit activateGateDiode(5, false);
 
     }
     else { gate_available[5] = -1; }
@@ -369,6 +376,7 @@ void MyScale::gate06_Closed(bool state) {
         gateBufferProcessedCount[6] = 0;
         gateBufferProcessedWeight[6] = 0.0;
         emit enableGate(6, true);
+        emit activateGateDiode(6, false);
 
     }
     else { gate_available[6] = -1; }
@@ -555,13 +563,19 @@ void MyScale::calibrateZERO() {
     
     writeToRegister = commandRegister;
     mbCommand[0] = zeroSettingForCalibration;
+    //writeToModbus();
 }
 
 
-void MyScale::calibrateWEIGHT(int calibrationWeight) {
+void MyScale::calibrateWEIGHT() {
 
     writeToRegister = sampleWeightForCalibrationL;
     mbCommand[0] = calibrationWeight;
+    //writeToModbus();
+
+//    writeToRegister = commandRegister;
+//    mbCommand[0] = sampleWeightStorage;
+//    writeToModbus();
 }
 
 
@@ -569,6 +583,7 @@ void MyScale::storeCalibrationWEIGHT() {
     
     writeToRegister = commandRegister;
     mbCommand[0] = sampleWeightStorage;
+    //writeToModbus();
 }
 
 
@@ -576,6 +591,7 @@ void MyScale::semiAutoZERO() {
     
     writeToRegister = commandRegister;
     mbCommand[0] = semiAutomaticZero;
+    //writeToModbus();
 }
 
 
@@ -583,6 +599,7 @@ void MyScale::grossWeight() {
     
     writeToRegister = commandRegister;
     mbCommand[0] = grossDisplay;
+    //writeToModbus();
 }
 
 
@@ -590,8 +607,34 @@ void MyScale::netWeight() {
     
     writeToRegister = commandRegister;
     mbCommand[0] = netDisplay;
+    //writeToModbus();
 }
 
+void MyScale::writeToModbus() {
+
+    if (modbusConnected == true) {
+        if(writeToLoadcell == true) {
+
+            if(mbCommand[0] != 0)
+            {
+                modbus_write_registers(ctx, writeToRegister, 1, mbCommand);
+                //qDebug() << "mbCommand: " << mbCommand[0];
+
+                if(mbCommand[0] == grossDisplay)
+                {
+                    weightGROSSorNET[0] = grossDisplay;
+                }
+
+                else if(mbCommand[0] == netDisplay)
+                {
+                    weightGROSSorNET[0] = netDisplay;
+                }
+
+                mbCommand[0] = 0;
+            }
+        }
+    }
+}
 
 void MyScale::conveyorBeltSignal()
 {
@@ -638,30 +681,13 @@ void MyScale::enteringProductSensorSignal()
 
     qDebug() << "@enteringProductSensorSignal(): " << tempID;
 
-
-    // Recipe variables
-
-    //    serialStartsAt;
-    //    minProductLength;
-    //    maxProductLength;
-    //    maxProductPieceGap;
-
-    //    for (int t = 0; t < 50; t++) {
-    //        weightRangeLower[t];
-    //        weightRangeUpper[t];
-    //        destinationGate[t];
-    //    }
-
-    // //////////////////////////////////////////////////////////
-    // FIXME: Data that follows product from scale to grader - find better location later
-    // //////////////////////////////////////////////////////////
     proData.description[tempID] = productDescription;
     proData.recipeId[tempID] = recipeID;
     proData.batchId[tempID] = batchID;
     proData.productId[tempID] = productID;
     proData.productType[tempID] = productType;
-
     proData.serialId[tempID] = productCounter;
+
     proData.productLengthPulseCounter[tempID] = 0;
     proData.productLength[tempID] = 0;
     proData.productWeight[tempID] = 0;
@@ -671,7 +697,6 @@ void MyScale::enteringProductSensorSignal()
     proData.productEnteringGateArea[tempID] = false;
     proData.openGate[tempID] = false;
     proData.closeGate[tempID] = false;
-    // //////////////////////////////////////////////////////////
 }
 
 
@@ -1080,7 +1105,7 @@ void MyScale::weightProcessing(int weightValueFromScale) {
 
                         //
                         gateBufferProcessedCount[proData.destinationGate[_elementId]] = gateBufferProcessedCount[proData.destinationGate[_elementId]] + 1; // [pcs]
-                        gateBufferProcessedWeight[proData.destinationGate[_elementId]] = gateBufferProcessedWeight[proData.destinationGate[_elementId]] + (proData.productWeight[_elementId] / 1000.0); // [gr]
+                        gateBufferProcessedWeight[proData.destinationGate[_elementId]] = gateBufferProcessedWeight[proData.destinationGate[_elementId]] + (proData.productWeight[_elementId]); // [gr]
 
                         emit BufferCount(proData.destinationGate[_elementId], QString::number(gateBufferProcessedCount[proData.destinationGate[_elementId]]));
                         emit BufferWeight(proData.destinationGate[_elementId], QString::number(gateBufferProcessedWeight[proData.destinationGate[_elementId]]));
@@ -1090,8 +1115,10 @@ void MyScale::weightProcessing(int weightValueFromScale) {
 
                             gate_available[proData.destinationGate[_elementId]] = -1;
                             emit enableGate(proData.destinationGate[_elementId], false);
+                            emit activateGateDiode(proData.destinationGate[_elementId], true);
 
                             qDebug() << "gate_available[" << proData.destinationGate[_elementId] << "] == " << gate_available[proData.destinationGate[_elementId]];
+                            qDebug() << "gateBufferProcessedWeight: " << gateBufferProcessedWeight[proData.destinationGate[_elementId]] << " >= " << "gateBufferWeight: " << gateBufferWeight[proData.destinationGate[_elementId]];
                         }
 
                         //emit gateBufferStatus();
@@ -1323,7 +1350,7 @@ void MyScale::run() {
                 {
                     weightGROSSorNET[0] = grossDisplay;
                 }
-		
+
                 else if(mbCommand[0] == netDisplay)
                 {
                     weightGROSSorNET[0] = netDisplay;

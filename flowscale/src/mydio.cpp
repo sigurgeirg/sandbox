@@ -1,15 +1,15 @@
 #include "../inc/mydio.h"
 
 
-unsigned long MyDio::lastValue[] 		= {1,1,1,1, 1,1,1,1, 1,1,1,1, 1,1,1,1};
-unsigned long MyDio::newValue[]  		= {1,1,1,1, 1,1,1,1, 1,1,1,1, 1,1,1,1};
-unsigned long MyDio::value[] 	 		= {0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0};
-unsigned char MyDio::delay[]            = {0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0};
-unsigned char MyDio::delayLeftUp[] 		= {0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0};
-unsigned char MyDio::delayLeftDown[] 	= {0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0};
-unsigned char MyDio::falling[] 			= {0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0};
-unsigned char MyDio::rising[] 			= {0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0};
-unsigned char MyDio::inverted[] 		= {0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0};
+unsigned long MyDio::lastValue[] 		= {1,1,1,1, 1,1,1,1, 1,1,1,1, 1,1,1,1, 1,1,1,1};
+unsigned long MyDio::newValue[]  		= {1,1,1,1, 1,1,1,1, 1,1,1,1, 1,1,1,1, 1,1,1,1};
+unsigned long MyDio::value[] 	 		= {0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0};
+unsigned char MyDio::delay[]            = {0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0};
+unsigned char MyDio::delayLeftUp[] 		= {0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0};
+unsigned char MyDio::delayLeftDown[] 	= {0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0};
+unsigned char MyDio::falling[] 			= {0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0};
+unsigned char MyDio::rising[] 			= {0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0};
+unsigned char MyDio::inverted[] 		= {0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0};
 
 
 
@@ -33,6 +33,10 @@ MyDio::MyDio(QObject *parent) :
     io.DICfgMode(13,DI_MODE_DIRECT);
     io.DICfgMode(14,DI_MODE_DIRECT);
     io.DICfgMode(15,DI_MODE_DIRECT);
+    io.DICfgMode(16,DI_MODE_DIRECT);
+    io.DICfgMode(17,DI_MODE_DIRECT);
+    io.DICfgMode(18,DI_MODE_DIRECT);
+    io.DICfgMode(19,DI_MODE_DIRECT);
 
     //io.DICfgMode(2,DI_MODE_EDGE_BOTH);
     //io.DICfgMode(2,DI_MODE_EDGE_LOW_GOING);
@@ -93,14 +97,19 @@ void MyDio::updateOutputs() {
 }
 
 
-void MyDio::activateGateArm(int output, bool value) {
+void MyDio::activateGateArm(int gateArm, bool gateArmStatus) {
 
-//    activeOutput = output;
-//    activeValue  = value;
+    setGateArm = gateArm;
+    setGateArmStatus  = gateArmStatus;
 
-//    qDebug() << "Output: " << activeOutput << " == " << activeValue;
+//    qDebug() << "Output: " << setGate << " == " << activeValue;
 }
 
+void MyDio::activateGateDiode(int gateDiode, bool gateDiodeStatus) {
+
+    setGateDiode = 10 + gateDiode;
+    setGateDiodeStatus = gateDiodeStatus;
+}
 
 void MyDio::newInput(unsigned char address) {
 
@@ -269,11 +278,12 @@ void MyDio::run() {
         }
 
 
-        for (int i = 0; i < 16; i++) {
+        for (int i = 0; i < numberOfUsedDigitalInputs; i++) {
             io.DOSet(i, 0);
         }
 
-        io.DOSet((unsigned char)activeOutput, (bool)activeValue);
+        io.DOSet((unsigned char)setGateArm, (bool)setGateArmStatus);
+        io.DOSet((unsigned char)setGateDiode, (bool)setGateDiodeStatus);
 
         updateOutputs();
 

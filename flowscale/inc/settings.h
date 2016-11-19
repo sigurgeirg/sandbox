@@ -22,6 +22,7 @@ public:
     std::string settingsArray[100][5];
 
     std::string lengthOfEachBeltChain;
+    std::string calibrationWeight;
     std::string numberOfBeltChains;
     std::string productEntry;
     std::string productWeighingStartDistance;

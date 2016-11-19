@@ -38,7 +38,9 @@ Settings::Settings(QObject *parent) :
 
     for (int k = 0; k < rowOfData.size(); k++) {
 
-        if (settingsArray[k][0] == "Length_Of_Each_BeltChain"){
+        if (settingsArray[k][0] == "Calibration_Weight"){
+            calibrationWeight = settingsArray[k][1];
+        } else if (settingsArray[k][0] == "Length_Of_Each_BeltChain"){
             lengthOfEachBeltChain = settingsArray[k][1];
         } else if (settingsArray[k][0] == "Number_Of_BeltChains"){
             numberOfBeltChains = settingsArray[k][1];

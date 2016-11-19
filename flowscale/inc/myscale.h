@@ -42,11 +42,12 @@ public:
     void disconnectFromSlaveDevice();
     void toggleWriteToLoadcell(bool checked);
     void calibrateZERO();
-    void calibrateWEIGHT(int calibrationWeight);
+    void calibrateWEIGHT();
     void storeCalibrationWEIGHT();
     void semiAutoZERO();
     void grossWeight();
     void netWeight();
+    void writeToModbus();
     void setupPlot(QCustomPlot* customPlot, int workingID);
     void weightProcessing(int);
     void run();
@@ -98,7 +99,7 @@ private:
     int sampleWeightStorage;        // Command 101
     int readFromRegister;   // Points to some register, fx. statusRegister ...
     int writeToRegister;    // Points to some register, fx. commandRegister ...
-    //int calibrationWeight;  // Variable that keeps calibration weight value in terms of [g]
+    int calibrationWeight;  // Variable that keeps calibration weight value in terms of [g]
     int weightGROSSorNET[1];// Indicates whether selected weight is sampleWeightForCalibrationLGROSS or NET weight.
 
     time_t rawtime;
@@ -128,6 +129,7 @@ private:
     double pulseCounterInAllRows;
     double pulsesPerBeltRound;
     double pulseResolution;
+
     double lengthOfEachBeltChain;
     double numberOfBeltChains;
     double lengthOfEachBeltPeriod;
@@ -246,6 +248,7 @@ signals:
     void conveyorRunState(QString);
     void sendMQTT(QString, const char*);
     void activateGateArm(int, bool);
+    void activateGateDiode(int, bool);
     void enableGate(int, bool);
     void BufferCount(int, QString);
     void BufferWeight(int, QString);

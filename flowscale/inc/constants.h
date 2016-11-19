@@ -3,7 +3,7 @@
 
 //#define NUMBER_OF_USED_INPUTS 16	// Number of Used    Digital Inputs in: MODE_DIRECT
 
-    static const int numberOfUsedDigitalInputs = 16;
+    static const int numberOfUsedDigitalInputs = 20;
     static const int numberOfGates = 10;
     static const int numberOfWeightRangesForGrading = 20;
 

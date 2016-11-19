@@ -438,12 +438,12 @@ void MainWindow::on_btnCalibrateZERO_clicked()
 
 void MainWindow::on_btnCalibrateWEIGHT_clicked()
 {
-//    scale->calibrateWEIGHT( ui->edtCalibrationWeight->text().toInt() );
+    scale->calibrateWEIGHT();
 }
 
 void MainWindow::on_btnAPPLY_clicked()
 {
-    scale->storeCalibrationWEIGHT();
+    //scale->storeCalibrationWEIGHT();
 }
 
 //void MainWindow::on_btnSemiAutoZERO_clicked()

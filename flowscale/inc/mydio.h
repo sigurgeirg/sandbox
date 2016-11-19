@@ -41,8 +41,10 @@ private:
     bool productEnteringSensor;
     bool productLeavingSensor;
 
-    int activeOutput;
-    int activeValue;
+    int setGateArm;
+    int setGateArmStatus;
+    int setGateDiode;
+    int setGateDiodeStatus;
 
     unsigned long tickBeltProfile;
     unsigned long beltRounds;
@@ -67,6 +69,7 @@ signals:
 
 public slots:
     void activateGateArm(int, bool);
+    void activateGateDiode(int, bool);
     // /////////////////////////
     // Simulation
 //    void updateInputSim(unsigned char, bool);
