@@ -83,8 +83,8 @@ static const char qt_meta_stringdata_MyScale[] = {
     "sendMQTT(QString,const char*)\0"
     "activateGateArm(int,bool)\0"
     "activateGateDiode(int,bool)\0"
-    "enableGate(int,bool)\0BufferCount(int,QString)\0"
-    "BufferWeight(int,QString)\0"
+    "enableGate(int,bool)\0bufferCount(int,QString)\0"
+    "bufferWeight(int,QString)\0"
     "conveyorBeltSignal()\0enteringProductSensorSignal()\0"
     "leavingProductSensorSignal()\0xmin(QString)\0"
     "xmax(QString)\0ymin(QString)\0ymax(QString)\0"
@@ -118,8 +118,8 @@ void MyScale::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, voi
         case 16: _t->activateGateArm((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< bool(*)>(_a[2]))); break;
         case 17: _t->activateGateDiode((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< bool(*)>(_a[2]))); break;
         case 18: _t->enableGate((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< bool(*)>(_a[2]))); break;
-        case 19: _t->BufferCount((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2]))); break;
-        case 20: _t->BufferWeight((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2]))); break;
+        case 19: _t->bufferCount((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2]))); break;
+        case 20: _t->bufferWeight((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2]))); break;
         case 21: _t->conveyorBeltSignal(); break;
         case 22: _t->enteringProductSensorSignal(); break;
         case 23: _t->leavingProductSensorSignal(); break;
@@ -311,14 +311,14 @@ void MyScale::enableGate(int _t1, bool _t2)
 }
 
 // SIGNAL 19
-void MyScale::BufferCount(int _t1, QString _t2)
+void MyScale::bufferCount(int _t1, QString _t2)
 {
     void *_a[] = { 0, const_cast<void*>(reinterpret_cast<const void*>(&_t1)), const_cast<void*>(reinterpret_cast<const void*>(&_t2)) };
     QMetaObject::activate(this, &staticMetaObject, 19, _a);
 }
 
 // SIGNAL 20
-void MyScale::BufferWeight(int _t1, QString _t2)
+void MyScale::bufferWeight(int _t1, QString _t2)
 {
     void *_a[] = { 0, const_cast<void*>(reinterpret_cast<const void*>(&_t1)), const_cast<void*>(reinterpret_cast<const void*>(&_t2)) };
     QMetaObject::activate(this, &staticMetaObject, 20, _a);

@@ -529,7 +529,7 @@ void MyScale::connectToSlaveDevice() {
 
 
 void MyScale::disconnectFromSlaveDevice() {
-    
+
     try {
             modbusConnected = false;
 
@@ -551,7 +551,7 @@ void MyScale::disconnectFromSlaveDevice() {
 
 
 void MyScale::toggleWriteToLoadcell(bool checked) {
-    
+
     if(checked == true)
         writeToLoadcell = true;
     else
@@ -560,7 +560,7 @@ void MyScale::toggleWriteToLoadcell(bool checked) {
 
 
 void MyScale::calibrateZERO() {
-    
+
     writeToRegister = commandRegister;
     mbCommand[0] = zeroSettingForCalibration;
     //writeToModbus();
@@ -580,7 +580,7 @@ void MyScale::calibrateWEIGHT() {
 
 
 void MyScale::storeCalibrationWEIGHT() {
-    
+
     writeToRegister = commandRegister;
     mbCommand[0] = sampleWeightStorage;
     //writeToModbus();
@@ -588,7 +588,7 @@ void MyScale::storeCalibrationWEIGHT() {
 
 
 void MyScale::semiAutoZERO() {
-    
+
     writeToRegister = commandRegister;
     mbCommand[0] = semiAutomaticZero;
     //writeToModbus();
@@ -596,7 +596,7 @@ void MyScale::semiAutoZERO() {
 
 
 void MyScale::grossWeight() {
-    
+
     writeToRegister = commandRegister;
     mbCommand[0] = grossDisplay;
     //writeToModbus();
@@ -604,7 +604,7 @@ void MyScale::grossWeight() {
 
 
 void MyScale::netWeight() {
-    
+
     writeToRegister = commandRegister;
     mbCommand[0] = netDisplay;
     //writeToModbus();
@@ -1253,7 +1253,7 @@ void MyScale::setupPlot(QCustomPlot *customPlot, int workingID) {
       x[i] = i;
       y0[i] = productIDweights[workingID][i];
       y1[i] = proData.productWeight[workingID];
-    }   
+    }
 
     // create graph
     customPlot->addGraph();
