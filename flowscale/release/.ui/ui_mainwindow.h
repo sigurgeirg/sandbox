@@ -171,6 +171,7 @@ public:
     QPushButton *btnAPPLY;
     QLabel *label;
     QCheckBox *chkWriteToLoadcell;
+    QCheckBox *chkDebugWriteToFile;
     QFrame *frameState;
     QLabel *lblSystemState;
     QLabel *lblCountDown;
@@ -1180,6 +1181,9 @@ public:
         chkWriteToLoadcell = new QCheckBox(transmitFrame);
         chkWriteToLoadcell->setObjectName(QString::fromUtf8("chkWriteToLoadcell"));
         chkWriteToLoadcell->setGeometry(QRect(170, 40, 91, 26));
+        chkDebugWriteToFile = new QCheckBox(tabDio);
+        chkDebugWriteToFile->setObjectName(QString::fromUtf8("chkDebugWriteToFile"));
+        chkDebugWriteToFile->setGeometry(QRect(20, 160, 91, 26));
         tabWidget->addTab(tabDio, QString());
         frameState = new QFrame(frame_2);
         frameState->setObjectName(QString::fromUtf8("frameState"));
@@ -1499,6 +1503,7 @@ public:
         btnAPPLY->setText(QApplication::translate("MainWindow", "Apply", 0, QApplication::UnicodeUTF8));
         label->setText(QApplication::translate("MainWindow", "Calibration weight:", 0, QApplication::UnicodeUTF8));
         chkWriteToLoadcell->setText(QApplication::translate("MainWindow", "Activate", 0, QApplication::UnicodeUTF8));
+        chkDebugWriteToFile->setText(QApplication::translate("MainWindow", "Debug", 0, QApplication::UnicodeUTF8));
         tabWidget->setTabText(tabWidget->indexOf(tabDio), QApplication::translate("MainWindow", "Service", 0, QApplication::UnicodeUTF8));
         lblSystemState->setText(QApplication::translate("MainWindow", "System state", 0, QApplication::UnicodeUTF8));
         lblCountDown->setText(QApplication::translate("MainWindow", "Counter", 0, QApplication::UnicodeUTF8));

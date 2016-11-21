@@ -148,6 +148,8 @@ private slots:
 
     void on_btnCloseBatch_clicked();
 
+    void on_chkDebugWriteToFile_clicked(bool checked);
+
 public slots:
     void conveyorBeltSignal();
     void conveyorRunStateIndicator(QString);
@@ -160,7 +162,7 @@ public slots:
     void displayProductId(QString);
     void displayProductType(QString);
     void displaySerialNumber(int);
-    void displayFilteredWeight(int);
+    void displayFilteredWeight(double);
     void displayConfidence(QString);
     void displayLength(QString);
     void displayDestinationGate(QString);

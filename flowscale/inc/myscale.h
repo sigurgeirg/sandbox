@@ -36,6 +36,7 @@ public:
 
     void writeBufferDataToFile();
     void updateRecipe(QString);
+    bool debug;
     bool between(int less, int value, int greater);
     int  returnToGate(int measuredWeight);
     void connectToSlaveDevice();
@@ -206,19 +207,19 @@ private:
 
     double distanceToGraderGate[50];               // [mm]
     double distanceOpenGate[50];                   // [mm]
-    double distanceToEndOfGrader;                               // [mm]
+    double distanceToEndOfGrader;                  // [mm]
 
     int pulseDistanceToGate[50];                   // [ticks]
     int pulseDistanceToEndOfGate[50];              // [ticks]
-    int pulseDistanceToEndOfConveyorBelt;                       // [ticks]
+    int pulseDistanceToEndOfConveyorBelt;          // [ticks]
 
     int gateBufferCount[50];                      // [pcs]
-    int gateBufferWeight[50];                      // [kg]
+    double gateBufferWeight[50];                  // [kg]
 
     int gateBufferProcessedCount[50];             // [pcs]
-    double gateBufferProcessedWeight[50];          // [kg]
+    double gateBufferProcessedWeight[50];         // [kg]
 
-    int gateBufferProcessedCountTotalizer[50];    // [pcs]
+    int gateBufferProcessedCountTotalizer[50];     // [pcs]
     double gateBufferProcessedWeightTotalizer[50]; // [kg]
 
     int evenDistribution;
@@ -232,7 +233,7 @@ private:
 
 signals:
     void continuousModbusWeight(int);
-    void sendFilteredWeight(int);
+    void sendFilteredWeight(double);
     void sendSerialNumber(int);
     void sendDescription(QString);
     void sendBatchId(QString);
@@ -250,8 +251,8 @@ signals:
     void activateGateArm(int, bool);
     void activateGateDiode(int, bool);
     void enableGate(int, bool);
-    void BufferCount(int, QString);
-    void BufferWeight(int, QString);
+    void bufferCount(int, QString);
+    void bufferWeight(int, QString);
 
 public slots:
     void conveyorBeltSignal();
@@ -267,6 +268,7 @@ public slots:
     void gate04_Closed(bool);
     void gate05_Closed(bool);
     void gate06_Closed(bool);
+    void changeGateStateWithButtonPress(int);
 
 };
 

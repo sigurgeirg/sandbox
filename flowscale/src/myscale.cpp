@@ -26,6 +26,7 @@ MyScale::MyScale(QObject *parent) :
     statusRegisterBinaryTempValue = new int[16];
     statusRegisterBinaryReturnValue = new int[16];
 
+    debug = false;
     processingProduct = false;
     requestBeltRoundPulse = false;
     beltRoundPulse = false;
@@ -127,6 +128,7 @@ MyScale::MyScale(QObject *parent) :
     connect(dio,   SIGNAL(enteringProductSensorSignal()),   this,  SLOT(enteringProductSensorSignal()));
     connect(dio,   SIGNAL(leavingProductSensorSignal()),    this,  SLOT(leavingProductSensorSignal()));
     //connect(dio,   SIGNAL(inputValue(unsigned long)),       this,   SLOT(displayInputValue(unsigned long)));
+    connect(dio,    SIGNAL(buttonPressed(int)),             this,   SLOT(changeGateStateWithButtonPress(int)));
 }
 
 
@@ -190,8 +192,8 @@ void MyScale::writeBufferDataToFile() {
             filebatch << "=================================== " << std::endl;
             for (int i = 1; i <= numberOfGates; i++) {
                 if (gateBufferProcessedWeightTotalizer[i] > 0) {
-                    filebatch << "gateBufferProcessedWeightTotalizer[" << i << "] : " << (double)gateBufferProcessedWeightTotalizer[i] << std::endl;
-    //                qDebug() << "gateBufferProcessedWeightTotalizer[" << i << "] : " << (double)gateBufferProcessedWeightTotalizer[i];
+                    filebatch << "gateBufferProcessedWeightTotalizer[" << i << "] : " << (gateBufferProcessedWeightTotalizer[i]/1000) << std::endl;
+    //                qDebug() << "gateBufferProcessedWeightTotalizer[" << i << "] : " << (gateBufferProcessedWeightTotalizer[i]/1000);
                 }
             }
             filebatch << "" << std::endl;
@@ -264,6 +266,29 @@ bool MyScale::between(int less, int value, int greater) {
         return true;
     } else {
         return false;
+    }
+}
+
+
+void MyScale::changeGateStateWithButtonPress(int button) {
+
+    if (button == 1) {
+        gate_available[1] == 1 ? gate01_Closed(true) : gate01_Closed(false);
+    }
+    else if (button == 2) {
+        gate_available[2] == 2 ? gate02_Closed(true) : gate02_Closed(false);
+    }
+    else if (button == 3) {
+        gate_available[3] == 3 ? gate03_Closed(true) : gate03_Closed(false);
+    }
+    else if (button == 4) {
+        gate_available[4] == 4 ? gate04_Closed(true) : gate04_Closed(false);
+    }
+    else if (button == 5) {
+        gate_available[5] == 5 ? gate05_Closed(true) : gate05_Closed(false);
+    }
+    else if (button == 6) {
+        gate_available[6] == 6 ? gate06_Closed(true) : gate06_Closed(false);
     }
 }
 
@@ -917,42 +942,44 @@ void MyScale::weightProcessing(int weightValueFromScale) {
 
         if (processingProduct == false) {
 
-            //filezero.open("zeroweight.csv", std::ofstream::out | std::ofstream::trunc); // trunc changed to app, trunc clears the file while app appends it
-            filezero.open("zeroweight.csv", std::ofstream::out | std::ofstream::app); // trunc changed to app, trunc clears the file while app appends it
+            if (debug == true) {
+                //filezero.open("zeroweight.csv", std::ofstream::out | std::ofstream::trunc); // trunc changed to app, trunc clears the file while app appends it
+                filezero.open("zeroweight.csv", std::ofstream::out | std::ofstream::app); // trunc changed to app, trunc clears the file while app appends it
 
-            if (filezero.is_open()) {
+                if (filezero.is_open()) {
 
-                for (int _rounds = 0; _rounds < numberOfBeltRounds; _rounds++) {
+                    for (int _rounds = 0; _rounds < numberOfBeltRounds; _rounds++) {
 
-                    filezero << "Zero sample " << _rounds << ": " << ",";
+                        filezero << "Zero sample " << _rounds << ": " << ",";
 
-                    for (int _samples = 0; _samples < samplesPerBeltRound; _samples++) {
-                        filezero << zeroUnfilteredArray[_rounds][_samples] << ",";
+                        for (int _samples = 0; _samples < samplesPerBeltRound; _samples++) {
+                            filezero << zeroUnfilteredArray[_rounds][_samples] << ",";
+                        }
+                        filezero << std::endl;
                     }
+
                     filezero << std::endl;
+                    filezero << std::endl;
+
+                    filezero << "Mean Zero sample: " << ",";
+                    for (int _samples = 0; _samples < samplesPerBeltRound; _samples++) {
+                        filezero << zeroArray[_samples] <<  ",";
+                    }
+
+                    filezero << std::endl;
+                    filezero << "Total pulses: " << pulseCounterInAllRows << "" << std::endl;
+                    filezero << std::endl;
+                    filezero << "Pulses per beltround: " << pulsesPerBeltRound << "" << std::endl;
+                    filezero << std::endl;
+                    filezero << "Resolution of each pulse: " << pulseResolution << " mm " << std::endl;
+                    filezero << std::endl;
+                    for (int i = 0; i < numberOfBeltRounds; i++) {
+                        filezero << "PulseCounterInZeroRow number " << i << ": " << pulseCounterInEachRow[i] << "" << std::endl;
+                    }
+
                 }
-
-                filezero << std::endl;
-                filezero << std::endl;
-
-                filezero << "Mean Zero sample: " << ",";
-                for (int _samples = 0; _samples < samplesPerBeltRound; _samples++) {
-                    filezero << zeroArray[_samples] <<  ",";
-                }
-
-                filezero << std::endl;
-                filezero << "Total pulses: " << pulseCounterInAllRows << "" << std::endl;
-                filezero << std::endl;
-                filezero << "Pulses per beltround: " << pulsesPerBeltRound << "" << std::endl;
-                filezero << std::endl;
-                filezero << "Resolution of each pulse: " << pulseResolution << " mm " << std::endl;
-                filezero << std::endl;
-                for (int i = 0; i < numberOfBeltRounds; i++) {
-                    filezero << "PulseCounterInZeroRow number " << i << ": " << pulseCounterInEachRow[i] << "" << std::endl;
-                }
-
+                filezero.close();
             }
-            filezero.close();
 
             qDebug() << "STATE: Go to Product Filter";
             updateZero_1 = false;
@@ -1107,8 +1134,8 @@ void MyScale::weightProcessing(int weightValueFromScale) {
                         gateBufferProcessedCount[proData.destinationGate[_elementId]] = gateBufferProcessedCount[proData.destinationGate[_elementId]] + 1; // [pcs]
                         gateBufferProcessedWeight[proData.destinationGate[_elementId]] = gateBufferProcessedWeight[proData.destinationGate[_elementId]] + (proData.productWeight[_elementId]); // [gr]
 
-                        emit BufferCount(proData.destinationGate[_elementId], QString::number(gateBufferProcessedCount[proData.destinationGate[_elementId]]));
-                        emit BufferWeight(proData.destinationGate[_elementId], QString::number(gateBufferProcessedWeight[proData.destinationGate[_elementId]]));
+                        emit bufferCount(proData.destinationGate[_elementId], QString::number(gateBufferProcessedCount[proData.destinationGate[_elementId]]));
+                        emit bufferWeight(proData.destinationGate[_elementId], QString::number((gateBufferProcessedWeight[proData.destinationGate[_elementId]]/1000),'f',3));
 
                         if ( (gateBufferProcessedCount[proData.destinationGate[_elementId]] >= gateBufferCount[proData.destinationGate[_elementId]]) ||
                              (gateBufferProcessedWeight[proData.destinationGate[_elementId]] >= gateBufferWeight[proData.destinationGate[_elementId]])    ) {
@@ -1118,7 +1145,7 @@ void MyScale::weightProcessing(int weightValueFromScale) {
                             emit activateGateDiode(proData.destinationGate[_elementId], true);
 
                             qDebug() << "gate_available[" << proData.destinationGate[_elementId] << "] == " << gate_available[proData.destinationGate[_elementId]];
-                            qDebug() << "gateBufferProcessedWeight: " << gateBufferProcessedWeight[proData.destinationGate[_elementId]] << " >= " << "gateBufferWeight: " << gateBufferWeight[proData.destinationGate[_elementId]];
+                            qDebug() << "gateBufferProcessedWeight: " << (gateBufferProcessedWeight[proData.destinationGate[_elementId]]/1000) << " >= " << "gateBufferWeight: " << (gateBufferWeight[proData.destinationGate[_elementId]]/1000);
                         }
 
                         //emit gateBufferStatus();
@@ -1136,18 +1163,18 @@ void MyScale::weightProcessing(int weightValueFromScale) {
 
                     if (productEnteringGradingArea[_elementId] == true) {
 
-//                        // FIXME: Problably no need to do this in production, suggest to leave this out
-//                        // FIXME: except when we are debugging...
-//                        if (filezero.is_open()) {
+                        if (debug == true) {
+                            if (filezero.is_open()) {
 
-//                            filezero << "Mean weight sample is :" << meanWeightSample <<",";
+                                filezero << "Mean weight sample is :" << meanWeightSample <<",";
 
-//                            for (int _sample = weightStartPulse; _sample < weightEndPulse; _sample++) {
-//                                filezero << productIDweights[_elementId][_sample] << ",";
-//                            }
-//                            filezero << std::endl;
-//                        }
-//                        filezero.close();
+                                for (int _sample = weightStartPulse; _sample < weightEndPulse; _sample++) {
+                                    filezero << productIDweights[_elementId][_sample] << ",";
+                                }
+                                filezero << std::endl;
+                            }
+                            filezero.close();
+                        }
 
                         productEnteringGradingArea[_elementId] = false;
 

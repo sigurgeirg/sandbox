@@ -56,7 +56,7 @@ MyDio::MyDio(QObject *parent) :
     address	= 0;
     tickBeltProfile = 0;
     holdBeltPulseForCount = 0;
-    holdRisingForCount = 0;
+    holdGate01RisingForCount = 0;
     holdFallingForCount = 0;
 
 }
@@ -231,11 +231,11 @@ void MyDio::run() {
             qDebug() << "Entering Product Sensor";
             productEnteringSensor = true;
 
-            holdRisingForCount++;
+            holdGate01RisingForCount++;
 
-            if (holdRisingForCount >= 2){
+            if (holdGate01RisingForCount >= 2){
                 rising[2] = 0;
-                holdRisingForCount = 0;
+                holdGate01RisingForCount = 0;
             }
         }
 
@@ -257,6 +257,79 @@ void MyDio::run() {
             rising[3] = 0;
         }
 
+        if (rising[11] == 1) {
+            qDebug() << "Gate01 button pressed";
+            gate01_buttonPressed = true;
+
+            holdGate01_risingForCount++;
+
+            if (holdGate01_risingForCount >= 2){
+                rising[11] = 0;
+                holdGate01_risingForCount = 0;
+            }
+        }
+
+        if (rising[12] == 1) {
+            qDebug() << "Gate02 button pressed";
+            gate02_buttonPressed = true;
+
+            holdGate02_risingForCount++;
+
+            if (holdGate02_risingForCount >= 2){
+                rising[12] = 0;
+                holdGate02_risingForCount = 0;
+            }
+        }
+
+        if (rising[13] == 1) {
+            qDebug() << "Gate03 button pressed";
+            gate03_buttonPressed = true;
+
+            holdGate03_risingForCount++;
+
+            if (holdGate03_risingForCount >= 2){
+                rising[13] = 0;
+                holdGate03_risingForCount = 0;
+            }
+        }
+
+        if (rising[14] == 1) {
+            qDebug() << "Gate04 button pressed";
+            gate04_buttonPressed = true;
+
+            holdGate04_risingForCount++;
+
+            if (holdGate04_risingForCount >= 2){
+                rising[14] = 0;
+                holdGate04_risingForCount = 0;
+            }
+        }
+
+        if (rising[15] == 1) {
+            qDebug() << "Gate05 button pressed";
+            gate05_buttonPressed = true;
+
+            holdGate05_risingForCount++;
+
+            if (holdGate05_risingForCount >= 2){
+                rising[15] = 0;
+                holdGate05_risingForCount = 0;
+            }
+        }
+
+        if (rising[16] == 1) {
+            qDebug() << "Gate06 button pressed";
+            gate06_buttonPressed = true;
+
+            holdGate06_risingForCount++;
+
+            if (holdGate06_risingForCount >= 2){
+                rising[16] = 0;
+                holdGate06_risingForCount = 0;
+            }
+        }
+
+
         if (conveyor == true) {
             emit conveyorSignal();
             conveyor = false;
@@ -276,6 +349,38 @@ void MyDio::run() {
             emit leavingProductSensorSignal();
             productLeavingSensor = false;
         }
+
+        if (gate01_buttonPressed == true) {
+            emit buttonPressed(1);
+            gate01_buttonPressed = false;
+        }
+
+        if (gate02_buttonPressed == true) {
+            emit buttonPressed(2);
+            gate02_buttonPressed = false;
+        }
+
+        if (gate03_buttonPressed == true) {
+            emit buttonPressed(3);
+            gate03_buttonPressed = false;
+        }
+
+        if (gate04_buttonPressed == true) {
+            emit buttonPressed(4);
+            gate04_buttonPressed = false;
+        }
+
+        if (gate05_buttonPressed == true) {
+            emit buttonPressed(5);
+            gate05_buttonPressed = false;
+        }
+
+        if (gate06_buttonPressed == true) {
+            emit buttonPressed(6);
+            gate06_buttonPressed = false;
+        }
+
+
 
 
         for (int i = 0; i < numberOfUsedDigitalInputs; i++) {

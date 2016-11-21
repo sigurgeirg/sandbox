@@ -40,6 +40,12 @@ private:
     bool conveyor;
     bool productEnteringSensor;
     bool productLeavingSensor;
+    bool gate01_buttonPressed;
+    bool gate02_buttonPressed;
+    bool gate03_buttonPressed;
+    bool gate04_buttonPressed;
+    bool gate05_buttonPressed;
+    bool gate06_buttonPressed;
 
     int setGateArm;
     int setGateArmStatus;
@@ -50,8 +56,14 @@ private:
     unsigned long beltRounds;
     unsigned char address;
     int holdBeltPulseForCount;
-    int holdRisingForCount;
+    int holdGate01RisingForCount;
     int holdFallingForCount;
+    int holdGate01_risingForCount;
+    int holdGate02_risingForCount;
+    int holdGate03_risingForCount;
+    int holdGate04_risingForCount;
+    int holdGate05_risingForCount;
+    int holdGate06_risingForCount;
     // /////////////////////////
     // Simulation
     // unsigned char _inputAddress;
@@ -65,6 +77,7 @@ signals:
     void tachoSignal(unsigned long);
     void enteringProductSensorSignal();
     void leavingProductSensorSignal();
+    void buttonPressed(int);
 
 
 public slots:

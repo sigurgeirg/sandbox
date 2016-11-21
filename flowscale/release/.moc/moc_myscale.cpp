@@ -22,7 +22,7 @@ static const uint qt_meta_data_MyScale[] = {
        6,       // revision
        0,       // classname
        0,    0, // classinfo
-      34,   14, // methods
+      35,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -32,50 +32,51 @@ static const uint qt_meta_data_MyScale[] = {
  // signals: signature, parameters, type, tag, flags
        9,    8,    8,    8, 0x05,
       37,    8,    8,    8, 0x05,
-      61,    8,    8,    8, 0x05,
-      83,    8,    8,    8, 0x05,
-     108,    8,    8,    8, 0x05,
-     129,    8,    8,    8, 0x05,
-     151,    8,    8,    8, 0x05,
-     174,    8,    8,    8, 0x05,
-     199,    8,    8,    8, 0x05,
-     223,    8,    8,    8, 0x05,
-     243,    8,    8,    8, 0x05,
-     272,    8,    8,    8, 0x05,
-     286,    8,    8,    8, 0x05,
-     305,    8,    8,    8, 0x05,
-     331,    8,    8,    8, 0x05,
-     359,  357,    8,    8, 0x05,
-     389,  357,    8,    8, 0x05,
-     415,  357,    8,    8, 0x05,
-     443,  357,    8,    8, 0x05,
-     464,  357,    8,    8, 0x05,
-     489,  357,    8,    8, 0x05,
+      64,    8,    8,    8, 0x05,
+      86,    8,    8,    8, 0x05,
+     111,    8,    8,    8, 0x05,
+     132,    8,    8,    8, 0x05,
+     154,    8,    8,    8, 0x05,
+     177,    8,    8,    8, 0x05,
+     202,    8,    8,    8, 0x05,
+     226,    8,    8,    8, 0x05,
+     246,    8,    8,    8, 0x05,
+     275,    8,    8,    8, 0x05,
+     289,    8,    8,    8, 0x05,
+     308,    8,    8,    8, 0x05,
+     334,    8,    8,    8, 0x05,
+     362,  360,    8,    8, 0x05,
+     392,  360,    8,    8, 0x05,
+     418,  360,    8,    8, 0x05,
+     446,  360,    8,    8, 0x05,
+     467,  360,    8,    8, 0x05,
+     492,  360,    8,    8, 0x05,
 
  // slots: signature, parameters, type, tag, flags
-     515,    8,    8,    8, 0x0a,
-     536,    8,    8,    8, 0x0a,
-     566,    8,    8,    8, 0x0a,
-     595,    8,    8,    8, 0x0a,
-     609,    8,    8,    8, 0x0a,
-     623,    8,    8,    8, 0x0a,
-     637,    8,    8,    8, 0x0a,
-     651,    8,    8,    8, 0x0a,
-     671,    8,    8,    8, 0x0a,
-     691,    8,    8,    8, 0x0a,
-     711,    8,    8,    8, 0x0a,
-     731,    8,    8,    8, 0x0a,
-     751,    8,    8,    8, 0x0a,
+     518,    8,    8,    8, 0x0a,
+     539,    8,    8,    8, 0x0a,
+     569,    8,    8,    8, 0x0a,
+     598,    8,    8,    8, 0x0a,
+     612,    8,    8,    8, 0x0a,
+     626,    8,    8,    8, 0x0a,
+     640,    8,    8,    8, 0x0a,
+     654,    8,    8,    8, 0x0a,
+     674,    8,    8,    8, 0x0a,
+     694,    8,    8,    8, 0x0a,
+     714,    8,    8,    8, 0x0a,
+     734,    8,    8,    8, 0x0a,
+     754,    8,    8,    8, 0x0a,
+     774,    8,    8,    8, 0x0a,
 
        0        // eod
 };
 
 static const char qt_meta_stringdata_MyScale[] = {
     "MyScale\0\0continuousModbusWeight(int)\0"
-    "sendFilteredWeight(int)\0sendSerialNumber(int)\0"
-    "sendDescription(QString)\0sendBatchId(QString)\0"
-    "sendRecipeId(QString)\0sendProductId(QString)\0"
-    "sendProductType(QString)\0"
+    "sendFilteredWeight(double)\0"
+    "sendSerialNumber(int)\0sendDescription(QString)\0"
+    "sendBatchId(QString)\0sendRecipeId(QString)\0"
+    "sendProductId(QString)\0sendProductType(QString)\0"
     "sendConfidence(QString)\0sendLength(QString)\0"
     "sendDestinationGate(QString)\0plotData(int)\0"
     "productWeight(int)\0requestNewRecipe(QString)\0"
@@ -91,6 +92,7 @@ static const char qt_meta_stringdata_MyScale[] = {
     "gate01_Closed(bool)\0gate02_Closed(bool)\0"
     "gate03_Closed(bool)\0gate04_Closed(bool)\0"
     "gate05_Closed(bool)\0gate06_Closed(bool)\0"
+    "changeGateStateWithButtonPress(int)\0"
 };
 
 void MyScale::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
@@ -100,7 +102,7 @@ void MyScale::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, voi
         MyScale *_t = static_cast<MyScale *>(_o);
         switch (_id) {
         case 0: _t->continuousModbusWeight((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 1: _t->sendFilteredWeight((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 1: _t->sendFilteredWeight((*reinterpret_cast< double(*)>(_a[1]))); break;
         case 2: _t->sendSerialNumber((*reinterpret_cast< int(*)>(_a[1]))); break;
         case 3: _t->sendDescription((*reinterpret_cast< QString(*)>(_a[1]))); break;
         case 4: _t->sendBatchId((*reinterpret_cast< QString(*)>(_a[1]))); break;
@@ -133,6 +135,7 @@ void MyScale::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, voi
         case 31: _t->gate04_Closed((*reinterpret_cast< bool(*)>(_a[1]))); break;
         case 32: _t->gate05_Closed((*reinterpret_cast< bool(*)>(_a[1]))); break;
         case 33: _t->gate06_Closed((*reinterpret_cast< bool(*)>(_a[1]))); break;
+        case 34: _t->changeGateStateWithButtonPress((*reinterpret_cast< int(*)>(_a[1]))); break;
         default: ;
         }
     }
@@ -170,9 +173,9 @@ int MyScale::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 34)
+        if (_id < 35)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 34;
+        _id -= 35;
     }
     return _id;
 }
@@ -185,7 +188,7 @@ void MyScale::continuousModbusWeight(int _t1)
 }
 
 // SIGNAL 1
-void MyScale::sendFilteredWeight(int _t1)
+void MyScale::sendFilteredWeight(double _t1)
 {
     void *_a[] = { 0, const_cast<void*>(reinterpret_cast<const void*>(&_t1)) };
     QMetaObject::activate(this, &staticMetaObject, 1, _a);

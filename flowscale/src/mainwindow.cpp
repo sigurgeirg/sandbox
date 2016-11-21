@@ -53,12 +53,12 @@ MainWindow::MainWindow(QWidget *parent) :
         connect(scale, SIGNAL(sendProductId(QString)),          this,   SLOT(displayProductId(QString)));
         connect(scale, SIGNAL(sendProductType(QString)),        this,   SLOT(displayProductType(QString)));
         connect(scale, SIGNAL(sendSerialNumber(int)),           this,   SLOT(displaySerialNumber(int)));
-        connect(scale, SIGNAL(sendFilteredWeight(int)),         this,   SLOT(displayFilteredWeight(int)));
+        connect(scale, SIGNAL(sendFilteredWeight(double)),      this,   SLOT(displayFilteredWeight(double)));
         connect(scale, SIGNAL(sendConfidence(QString)),         this,   SLOT(displayConfidence(QString)));
         connect(scale, SIGNAL(sendLength(QString)),             this,   SLOT(displayLength(QString)));
         connect(scale, SIGNAL(sendDestinationGate(QString)),    this,   SLOT(displayDestinationGate(QString)));
-        connect(scale, SIGNAL(BufferCount(int,QString)),        this,   SLOT(displayBufferCount(int,QString)));
-        connect(scale, SIGNAL(BufferWeight(int,QString)),       this,   SLOT(displayBufferWeight(int,QString)));
+        connect(scale, SIGNAL(bufferCount(int,QString)),        this,   SLOT(displayBufferCount(int,QString)));
+        connect(scale, SIGNAL(bufferWeight(int,QString)),       this,   SLOT(displayBufferWeight(int,QString)));
 
         // Arm control & Enable/Disable gates by checkboxes or by count/weight.
         connect(scale, SIGNAL(enableGate(int, bool)),           this,   SLOT(enableGate(int, bool)));
@@ -303,7 +303,7 @@ void MainWindow::displaySerialNumber(int serialNumber)
     ui->lblElementId->setText(QString::number(serialNumber));
 }
 
-void MainWindow::displayFilteredWeight(int filteredWeight)
+void MainWindow::displayFilteredWeight(double filteredWeight)
 {
     ui->lblProductWeight->setText(QString::number(filteredWeight));
     ui->lblProductWeight_2->setText(QString::number(filteredWeight));
@@ -780,4 +780,9 @@ void MainWindow::on_btnCloseBatch_clicked()
     emit gate04_Closed(false);
     emit gate05_Closed(false);
     emit gate06_Closed(false);
+}
+
+void MainWindow::on_chkDebugWriteToFile_clicked(bool checked)
+{
+    scale->debug = checked;
 }
