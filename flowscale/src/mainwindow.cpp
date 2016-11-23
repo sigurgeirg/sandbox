@@ -443,7 +443,7 @@ void MainWindow::on_btnCalibrateWEIGHT_clicked()
 
 void MainWindow::on_btnAPPLY_clicked()
 {
-    //scale->storeCalibrationWEIGHT();
+    scale->storeCalibrationWEIGHT();
 }
 
 //void MainWindow::on_btnSemiAutoZERO_clicked()

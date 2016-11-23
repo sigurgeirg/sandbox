@@ -9,16 +9,24 @@ MyScale::MyScale(QObject *parent) :
     dio = new MyDio(this);
     dio->start();
 
-    modbusConnected = false;
-    mbCommand[0] = 0;
-    commandRegister = 5;
-    statusRegister = 6;
-    sampleWeightForCalibrationL = 37;
+    // List of usable registers in weighing module:
+    // >====================================================
+    commandRegister = 5;                // Register: 40006
+    statusRegister = 6;                 // Register: 40007
+    sampleWeightForCalibrationL = 37;   // Register: 40038
+    // ====================================================<
+
+    // Commands to send to weighing module command register:
+    // >====================================================
     netDisplay = 7;
     semiAutomaticZero = 8;
     grossDisplay = 9;
-    zeroSettingForCalibration = 50;
+    zeroSettingForCalibration = 100;
     sampleWeightStorage = 101;
+    // ====================================================<
+
+    modbusConnected = false;
+    mbCommand[0] = 0;
 
     readFromRegister = statusRegister;
     weightGROSSorNET[0] = netDisplay; // Default NET weight
@@ -46,6 +54,7 @@ MyScale::MyScale(QObject *parent) :
     pulsesPerBeltRound = 0.0;
     pulseResolution = 0.0;
     lengthOfEachBeltPeriod = 0.0;
+
 
     // System settings variables
     calibrationWeight               = QString::fromStdString(settings->calibrationWeight.c_str()).toInt();
@@ -597,10 +606,6 @@ void MyScale::calibrateWEIGHT() {
     writeToRegister = sampleWeightForCalibrationL;
     mbCommand[0] = calibrationWeight;
     //writeToModbus();
-
-//    writeToRegister = commandRegister;
-//    mbCommand[0] = sampleWeightStorage;
-//    writeToModbus();
 }
 
 
