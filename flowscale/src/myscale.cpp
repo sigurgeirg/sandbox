@@ -114,7 +114,7 @@ MyScale::MyScale(QObject *parent) :
     bufferByCount  = 2;
     bufferByWeightOrByCount = bufferByWeight;
 
-    for (int i = 1; i <= numberOfGates; i++)
+    for (int i = 0; i <= numberOfGates; i++)
     {
         gate_available[i] = i;
         gateBufferProcessedCount[i] = 0;           // [pcs]
@@ -152,7 +152,7 @@ MyScale::~MyScale()
 
 void MyScale::writeBufferDataToFile() {
 
-    for (int i = 1; i <= numberOfGates; i++)
+    for (int i = 0; i <= numberOfGates; i++)
     {
         gateBufferProcessedCountTotalizer[i] = gateBufferProcessedCountTotalizer[i] + gateBufferProcessedCount[i];
         gateBufferProcessedWeightTotalizer[i] = gateBufferProcessedWeightTotalizer[i] + gateBufferProcessedWeight[i];
@@ -163,7 +163,7 @@ void MyScale::writeBufferDataToFile() {
     // FIXME: BatchID should maybe be created in program based on timedate instead of constant name from recipe ...
     //        ... because each recipe can be used again and again.
     // /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    for (int i = 1; i <= numberOfGates; i++) {
+    for (int i = 0; i <= numberOfGates; i++) {
         if (gateBufferProcessedCountTotalizer[i] > 0) { newDataReady = newDataReady + 1; }
     }
 
@@ -172,24 +172,24 @@ void MyScale::writeBufferDataToFile() {
         struct tm * timeinfo;
         time (&rawtime);
         timeinfo = localtime(&rawtime);
-        std::strftime(batchClosedWhen,80,"%y%m%d%H%M", timeinfo);
+        std::strftime(batchClosedWhen,80,"%y%m%d-%H%M", timeinfo);
 
 
         //filebatch.open("batch_xxx.csv", std::ofstream::out | std::ofstream::trunc); // trunc changed to app, trunc clears the file while app appends it
-        filebatch.open("production.csv", std::ofstream::out | std::ofstream::app); // trunc changed to app, trunc clears the file while app appends it
+        filebatch.open("production/production.csv", std::ofstream::out | std::ofstream::app); // trunc changed to app, trunc clears the file while app appends it
 
         if (filebatch.is_open()) {
             filebatch << ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> " << std::endl;
             filebatch << "" << std::endl;
-            filebatch << "Recipe activated at date-time: " << batchID << std::endl;
-            filebatch << "Batch closed at date-time: " << batchClosedWhen << std::endl;
+            filebatch << "Recipe activated at yymmdd-HHMM: " << batchID << std::endl;
+            filebatch << "Batch closed at yymmdd-HHMM: " << batchClosedWhen << std::endl;
             filebatch << "Recipe name: " << recipeID << std::endl;
             filebatch << "=================================== " << std::endl;
 
             filebatch << "" << std::endl;
             filebatch << "gateBufferProcessedCountTotalizer:  " << std::endl;
             filebatch << "=================================== " << std::endl;
-            for (int i = 1; i <= numberOfGates; i++) {
+            for (int i = 0; i <= numberOfGates; i++) {
                 if (gateBufferProcessedCountTotalizer[i] > 0) {
                     filebatch << "gateBufferProcessedCountTotalizer[" << i << "] : " << gateBufferProcessedCountTotalizer[i] << std::endl;
     //                qDebug() << "gateBufferProcessedCountTotalizer[" << i << "] : " << gateBufferProcessedCountTotalizer[i];
@@ -199,7 +199,7 @@ void MyScale::writeBufferDataToFile() {
             filebatch << "" << std::endl;
             filebatch << "gateBufferProcessedWeightTotalizer: " << std::endl;
             filebatch << "=================================== " << std::endl;
-            for (int i = 1; i <= numberOfGates; i++) {
+            for (int i = 0; i <= numberOfGates; i++) {
                 if (gateBufferProcessedWeightTotalizer[i] > 0) {
                     filebatch << "gateBufferProcessedWeightTotalizer[" << i << "] : " << (gateBufferProcessedWeightTotalizer[i]/1000) << std::endl;
     //                qDebug() << "gateBufferProcessedWeightTotalizer[" << i << "] : " << (gateBufferProcessedWeightTotalizer[i]/1000);
@@ -213,7 +213,7 @@ void MyScale::writeBufferDataToFile() {
     }
 
     // FIXME: Clear recipe variables
-    for (int i = 1; i <= numberOfGates; i++) {
+    for (int i = 0; i <= numberOfGates; i++) {
         gateBufferProcessedCount[i] = 0;
         gateBufferProcessedWeight[i] = 0.0;
         gateBufferProcessedCountTotalizer[i] = 0;
@@ -243,7 +243,7 @@ void MyScale::updateRecipe(QString selectedRecipe) {
     struct tm * timeinfo;
     time (&rawtime);
     timeinfo = localtime(&rawtime);
-    std::strftime(buffer,80,"%y%m%d%H%M", timeinfo);
+    std::strftime(buffer,80,"%y%m%d-%H%M", timeinfo);
     batchID = buffer;
 
 
