@@ -111,7 +111,6 @@ private slots:
     void on_chkWriteToLoadcell_toggled(bool checked);
     void on_btnCalibrateZERO_clicked();
     void on_btnCalibrateWEIGHT_clicked();
-    void on_btnAPPLY_clicked();
     //void on_btnSemiAutoZERO_clicked();
     //void on_btnGrossWeight_clicked();
     //void on_btnNetWeight_clicked();

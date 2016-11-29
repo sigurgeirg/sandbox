@@ -13,6 +13,7 @@ MyScale::MyScale(QObject *parent) :
     // >====================================================
     commandRegister = 5;                // Register: 40006
     statusRegister = 6;                 // Register: 40007
+    sampleWeightForCalibrationH = 36;   // Register: 40037
     sampleWeightForCalibrationL = 37;   // Register: 40038
     // ====================================================<
 
@@ -596,24 +597,24 @@ void MyScale::toggleWriteToLoadcell(bool checked) {
 void MyScale::calibrateZERO() {
 
     writeToRegister = commandRegister;
-    mbCommand[0] = zeroSettingForCalibration;
-    //writeToModbus();
+    mbCommand[0] = zeroSettingForCalibration; // 100
+    writeToModbus();
 }
 
 
 void MyScale::calibrateWEIGHT() {
 
+    writeToRegister = sampleWeightForCalibrationH;
+    mbCommand[0] = 0;
+    writeToModbus();
+
     writeToRegister = sampleWeightForCalibrationL;
     mbCommand[0] = calibrationWeight;
-    //writeToModbus();
-}
-
-
-void MyScale::storeCalibrationWEIGHT() {
+    writeToModbus();
 
     writeToRegister = commandRegister;
-    mbCommand[0] = sampleWeightStorage;
-    //writeToModbus();
+    mbCommand[0] = sampleWeightStorage; // 101
+    writeToModbus();
 }
 
 
@@ -645,21 +646,9 @@ void MyScale::writeToModbus() {
     if (modbusConnected == true) {
         if(writeToLoadcell == true) {
 
-            if(mbCommand[0] != 0)
+            if(mbCommand[0])
             {
                 modbus_write_registers(ctx, writeToRegister, 1, mbCommand);
-                //qDebug() << "mbCommand: " << mbCommand[0];
-
-                if(mbCommand[0] == grossDisplay)
-                {
-                    weightGROSSorNET[0] = grossDisplay;
-                }
-
-                else if(mbCommand[0] == netDisplay)
-                {
-                    weightGROSSorNET[0] = netDisplay;
-                }
-
                 mbCommand[0] = 0;
             }
         }
@@ -1369,26 +1358,6 @@ void MyScale::run() {
                 weightProcessing(sign*data[4]);
                 emit continuousModbusWeight(sign*data[4]);
                 //qDebug() << " WeightNetto: " << sign*data[4];
-            }
-        }
-        else
-        {
-            if(mbCommand[0] != 0)
-            {
-                modbus_write_registers(ctx, writeToRegister, 1, mbCommand);
-                //qDebug() << "mbCommand: " << mbCommand[0];
-
-                if(mbCommand[0] == grossDisplay)
-                {
-                    weightGROSSorNET[0] = grossDisplay;
-                }
-
-                else if(mbCommand[0] == netDisplay)
-                {
-                    weightGROSSorNET[0] = netDisplay;
-                }
-
-                mbCommand[0] = 0;
             }
         }
     }

@@ -92,6 +92,14 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->frameState->setStyleSheet("background-color: red");
     ui->btnNetWeightConnect->setStyleSheet("background-color: #15d015; color: white");
     ui->btnDisconnect->setStyleSheet("background-color: red; color: white");
+    ui->chkWriteToLoadcell->setStyleSheet("QCheckBox::indicator { width:25px; height: 25px; }");
+    ui->chkDebugWriteToFile->setStyleSheet("QCheckBox::indicator { width:25px; height: 25px; }");
+    ui->cbxGate1->setStyleSheet("QCheckBox::indicator { width:25px; height: 25px; }");
+    ui->cbxGate2->setStyleSheet("QCheckBox::indicator { width:25px; height: 25px; }");
+    ui->cbxGate3->setStyleSheet("QCheckBox::indicator { width:25px; height: 25px; }");
+    ui->cbxGate4->setStyleSheet("QCheckBox::indicator { width:25px; height: 25px; }");
+    ui->cbxGate5->setStyleSheet("QCheckBox::indicator { width:25px; height: 25px; }");
+    ui->cbxGate6->setStyleSheet("QCheckBox::indicator { width:25px; height: 25px; }");
 }
 
 MainWindow::~MainWindow()
@@ -439,11 +447,6 @@ void MainWindow::on_btnCalibrateZERO_clicked()
 void MainWindow::on_btnCalibrateWEIGHT_clicked()
 {
     scale->calibrateWEIGHT();
-}
-
-void MainWindow::on_btnAPPLY_clicked()
-{
-    scale->storeCalibrationWEIGHT();
 }
 
 //void MainWindow::on_btnSemiAutoZERO_clicked()
