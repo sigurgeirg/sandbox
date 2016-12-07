@@ -8,6 +8,7 @@ MyScale::MyScale(QObject *parent) :
     recipe = new Recipe(this);
     dio = new MyDio(this);
     dio->start();
+    mbCommand = new uint16_t[2];
 
     // List of usable registers in weighing module:
     // >====================================================
@@ -28,6 +29,7 @@ MyScale::MyScale(QObject *parent) :
 
     modbusConnected = false;
     mbCommand[0] = 0;
+    mbCommand[1] = 0;
 
     readFromRegister = statusRegister;
     weightGROSSorNET[0] = netDisplay; // Default NET weight
@@ -159,11 +161,6 @@ void MyScale::writeBufferDataToFile() {
         gateBufferProcessedWeightTotalizer[i] = gateBufferProcessedWeightTotalizer[i] + gateBufferProcessedWeight[i];
     }
 
-    // /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // FIXME: Create unique batchID "batch_ddmmyyhhmm.csv"
-    // FIXME: BatchID should maybe be created in program based on timedate instead of constant name from recipe ...
-    //        ... because each recipe can be used again and again.
-    // /////////////////////////////////////////////////////////////////////////////////////////////////////////////
     for (int i = 0; i <= numberOfGates; i++) {
         if (gateBufferProcessedCountTotalizer[i] > 0) { newDataReady = newDataReady + 1; }
     }
@@ -173,8 +170,8 @@ void MyScale::writeBufferDataToFile() {
         struct tm * timeinfo;
         time (&rawtime);
         timeinfo = localtime(&rawtime);
-        std::strftime(batchClosedWhen,80,"%y%m%d-%H%M", timeinfo);
-
+        std::strftime(batchCloseTimeStamp,80,"%y%m%d-%H%M", timeinfo);
+        batchClosedWhen = batchCloseTimeStamp;
 
         //filebatch.open("batch_xxx.csv", std::ofstream::out | std::ofstream::trunc); // trunc changed to app, trunc clears the file while app appends it
         filebatch.open("production/production.csv", std::ofstream::out | std::ofstream::app); // trunc changed to app, trunc clears the file while app appends it
@@ -182,7 +179,7 @@ void MyScale::writeBufferDataToFile() {
         if (filebatch.is_open()) {
             filebatch << ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> " << std::endl;
             filebatch << "" << std::endl;
-            filebatch << "Recipe activated at yymmdd-HHMM: " << batchID << std::endl;
+            filebatch << "Recipe activated at yymmdd-HHMM: " << recipeActivatedWhen << std::endl;
             filebatch << "Batch closed at yymmdd-HHMM: " << batchClosedWhen << std::endl;
             filebatch << "Recipe name: " << recipeID << std::endl;
             filebatch << "=================================== " << std::endl;
@@ -211,6 +208,33 @@ void MyScale::writeBufferDataToFile() {
         }
         filebatch.close();
         newDataReady = 0;
+
+
+        // Subscribe to mosquitto message from linux terminal:
+        //mosquitto_sub -h 10.130.1.218 -v -t scale/#
+        emit sendMQTT(QString::fromStdString(recipeActivatedWhen.c_str()), "scale/recipeActivatedWhen");
+        emit sendMQTT(QString::fromStdString(batchClosedWhen.c_str()), "scale/batchClosedWhen");
+        emit sendMQTT(QString::fromStdString(recipeID.c_str()), "scale/recipeID");
+        emit sendMQTT(QString::fromStdString(productID.c_str()), "scale/productID");
+        emit sendMQTT(QString::fromStdString(productType.c_str()), "scale/productType");
+
+        for (int i = 0; i <= numberOfGates; i++) {
+            if (gateBufferProcessedCountTotalizer[i] > 0) {
+
+                bufferTotalCount = "scale/gateBufferCount_0";
+                gateBufferTotalCount = (bufferTotalCount.append(QString::number(i).toStdString())).c_str();
+                emit sendMQTT(QString::number(gateBufferProcessedCountTotalizer[i]), gateBufferTotalCount);
+            }
+        }
+
+        for (int i = 0; i <= numberOfGates; i++) {
+            if (gateBufferProcessedWeightTotalizer[i] > 0) {
+
+                bufferTotalWeight = "scale/gateBufferWeight_0";
+                gateBufferTotalWeight = (bufferTotalWeight.append(QString::number(i).toStdString())).c_str();
+                emit sendMQTT(QString::number(gateBufferProcessedWeightTotalizer[i]/1000), gateBufferTotalWeight);
+            }
+        }
     }
 
     // FIXME: Clear recipe variables
@@ -234,7 +258,6 @@ void MyScale::updateRecipe(QString selectedRecipe) {
     // Recipe variables
     productDescription              = recipe->description;
     recipeID                        = recipe->recipeID;
-    //batchID                         = recipe->batchID;
     productID                       = recipe->productID;
     productType                     = recipe->productType;
     minProductLength                = QString::fromStdString(recipe->minProductLength.c_str()).toInt();
@@ -244,8 +267,8 @@ void MyScale::updateRecipe(QString selectedRecipe) {
     struct tm * timeinfo;
     time (&rawtime);
     timeinfo = localtime(&rawtime);
-    std::strftime(buffer,80,"%y%m%d-%H%M", timeinfo);
-    batchID = buffer;
+    std::strftime(recipeActivationTimeStamp,80,"%y%m%d-%H%M", timeinfo);
+    recipeActivatedWhen = recipeActivationTimeStamp;
 
 
     for (int r = 1; r <= numberOfWeightRangesForGrading; r++) {
@@ -262,7 +285,7 @@ void MyScale::updateRecipe(QString selectedRecipe) {
     }
 
 
-    emit sendBatchId(QString::fromStdString(batchID.c_str()));
+    emit sendBatchId(QString::fromStdString(recipeActivatedWhen.c_str()));
     emit sendRecipeId(QString::fromStdString(recipeID.c_str()));
     emit sendProductId(QString::fromStdString(productID.c_str()));
     emit sendProductType(QString::fromStdString(productType.c_str()));
@@ -555,7 +578,8 @@ void MyScale::connectToSlaveDevice() {
                 //qDebug() << "Connection successful " << modbus_connect(ctx);
                 modbusConnected = true;
                 //qDebug() << "ModBus is Connected";
-                start();
+
+                netWeight();
             }
     } catch(...) {
             //
@@ -588,14 +612,19 @@ void MyScale::disconnectFromSlaveDevice() {
 void MyScale::toggleWriteToLoadcell(bool checked) {
 
     if(checked == true)
-        writeToLoadcell = true;
+    {
+        grossWeight();
+    }
     else
-        writeToLoadcell = false;
+    {
+        netWeight();
+    }
 }
 
 
 void MyScale::calibrateZERO() {
 
+    writeToLoadcell = true;
     writeToRegister = commandRegister;
     mbCommand[0] = zeroSettingForCalibration; // 100
     writeToModbus();
@@ -604,14 +633,17 @@ void MyScale::calibrateZERO() {
 
 void MyScale::calibrateWEIGHT() {
 
+    writeToLoadcell = true;
     writeToRegister = sampleWeightForCalibrationH;
     mbCommand[0] = 0;
     writeToModbus();
 
+    writeToLoadcell = true;
     writeToRegister = sampleWeightForCalibrationL;
     mbCommand[0] = calibrationWeight;
     writeToModbus();
 
+    writeToLoadcell = true;
     writeToRegister = commandRegister;
     mbCommand[0] = sampleWeightStorage; // 101
     writeToModbus();
@@ -620,6 +652,7 @@ void MyScale::calibrateWEIGHT() {
 
 void MyScale::semiAutoZERO() {
 
+    writeToLoadcell = true;
     writeToRegister = commandRegister;
     mbCommand[0] = semiAutomaticZero;
     //writeToModbus();
@@ -628,29 +661,38 @@ void MyScale::semiAutoZERO() {
 
 void MyScale::grossWeight() {
 
+    qDebug() << "Entering GrossWeight";
+    writeToLoadcell = true;
     writeToRegister = commandRegister;
-    mbCommand[0] = grossDisplay;
-    //writeToModbus();
+    mbCommand[0] = grossDisplay;    // 9
+    writeToModbus();
 }
 
 
 void MyScale::netWeight() {
 
+    qDebug() << "Entering NetWeight";
+    writeToLoadcell = true;
     writeToRegister = commandRegister;
-    mbCommand[0] = netDisplay;
-    //writeToModbus();
+    mbCommand[0] = netDisplay;  // 7
+    writeToModbus();
 }
 
 void MyScale::writeToModbus() {
+
+    int num = 1;
 
     if (modbusConnected == true) {
         if(writeToLoadcell == true) {
 
             if(mbCommand[0])
             {
-                modbus_write_registers(ctx, writeToRegister, 1, mbCommand);
+                int rc = modbus_write_registers(ctx, writeToRegister, num, mbCommand);
+                qDebug() << "rc: " << rc;
                 mbCommand[0] = 0;
             }
+
+            writeToLoadcell = false;
         }
     }
 }
@@ -702,7 +744,7 @@ void MyScale::enteringProductSensorSignal()
 
     proData.description[tempID] = productDescription;
     proData.recipeId[tempID] = recipeID;
-    proData.batchId[tempID] = batchID;
+    proData.batchId[tempID] = recipeActivatedWhen;
     proData.productId[tempID] = productID;
     proData.productType[tempID] = productType;
     proData.serialId[tempID] = productCounter;

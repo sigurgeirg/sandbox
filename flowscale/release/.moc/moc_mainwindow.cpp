@@ -56,40 +56,40 @@ static const uint qt_meta_data_MainWindow[] = {
      451,   11,   11,   11, 0x08,
      475,   11,   11,   11, 0x08,
      499,   11,   11,   11, 0x08,
-     532,   11,   11,   11, 0x08,
-     566,   11,   11,   11, 0x08,
-     607,  602,   11,   11, 0x08,
-     642,  602,   11,   11, 0x08,
-     679,  245,   11,   11, 0x08,
-     705,  245,   11,   11, 0x08,
-     731,  245,   11,   11, 0x08,
-     757,  245,   11,   11, 0x08,
-     783,  245,   11,   11, 0x08,
-     809,  245,   11,   11, 0x08,
-     835,   11,   11,   11, 0x08,
-     862,  245,   11,   11, 0x08,
-     899,   11,   11,   11, 0x0a,
-     920,   11,   11,   11, 0x0a,
-     955,   11,   11,   11, 0x0a,
-     973,   11,   11,   11, 0x0a,
-    1000,   11,   11,   11, 0x0a,
-    1028,   11,   11,   11, 0x0a,
-    1052,   11,   11,   11, 0x0a,
-    1077,   11,   11,   11, 0x0a,
-    1103,   11,   11,   11, 0x0a,
-    1131,   11,   11,   11, 0x0a,
-    1156,   11,   11,   11, 0x0a,
-    1186,   11,   11,   11, 0x0a,
-    1213,   11,   11,   11, 0x0a,
-    1236,   11,   11,   11, 0x0a,
-    1268,   11,   11,   11, 0x0a,
-    1293,   11,   11,   11, 0x0a,
-    1321,   11,   11,   11, 0x0a,
-    1343,   11,   11,   11, 0x0a,
-    1361,   11,   11,   11, 0x0a,
-    1386,  423,   11,   11, 0x0a,
-    1407,  423,   11,   11, 0x0a,
-    1439,  423,   11,   11, 0x0a,
+     523,   11,   11,   11, 0x08,
+     557,   11,   11,   11, 0x08,
+     598,  593,   11,   11, 0x08,
+     633,  593,   11,   11, 0x08,
+     670,  245,   11,   11, 0x08,
+     696,  245,   11,   11, 0x08,
+     722,  245,   11,   11, 0x08,
+     748,  245,   11,   11, 0x08,
+     774,  245,   11,   11, 0x08,
+     800,  245,   11,   11, 0x08,
+     826,   11,   11,   11, 0x08,
+     853,  245,   11,   11, 0x08,
+     890,   11,   11,   11, 0x0a,
+     911,   11,   11,   11, 0x0a,
+     946,   11,   11,   11, 0x0a,
+     964,   11,   11,   11, 0x0a,
+     991,   11,   11,   11, 0x0a,
+    1019,   11,   11,   11, 0x0a,
+    1043,   11,   11,   11, 0x0a,
+    1068,   11,   11,   11, 0x0a,
+    1094,   11,   11,   11, 0x0a,
+    1122,   11,   11,   11, 0x0a,
+    1147,   11,   11,   11, 0x0a,
+    1177,   11,   11,   11, 0x0a,
+    1204,   11,   11,   11, 0x0a,
+    1227,   11,   11,   11, 0x0a,
+    1259,   11,   11,   11, 0x0a,
+    1284,   11,   11,   11, 0x0a,
+    1312,   11,   11,   11, 0x0a,
+    1334,   11,   11,   11, 0x0a,
+    1352,   11,   11,   11, 0x0a,
+    1377,  423,   11,   11, 0x0a,
+    1398,  423,   11,   11, 0x0a,
+    1430,  423,   11,   11, 0x0a,
 
        0        // eod
 };
@@ -108,7 +108,7 @@ static const char qt_meta_stringdata_MainWindow[] = {
     "on_ymin_clicked()\0on_ymax_clicked()\0"
     ",\0activateGateArm(int,bool)\0"
     "on_btnReverse_clicked()\0on_btnForward_clicked()\0"
-    "on_btnNetWeightConnect_clicked()\0"
+    "on_btnConnect_clicked()\0"
     "on_btnRefreshRecipeList_clicked()\0"
     "on_btnRefreshSettingsList_clicked()\0"
     "arg1\0on_cbRecipeMenu_activated(QString)\0"
@@ -171,7 +171,7 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         case 20: _t->activateGateArm((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< bool(*)>(_a[2]))); break;
         case 21: _t->on_btnReverse_clicked(); break;
         case 22: _t->on_btnForward_clicked(); break;
-        case 23: _t->on_btnNetWeightConnect_clicked(); break;
+        case 23: _t->on_btnConnect_clicked(); break;
         case 24: _t->on_btnRefreshRecipeList_clicked(); break;
         case 25: _t->on_btnRefreshSettingsList_clicked(); break;
         case 26: _t->on_cbRecipeMenu_activated((*reinterpret_cast< const QString(*)>(_a[1]))); break;

@@ -7,12 +7,13 @@
 http://m.blog.csdn.net/blog/a468903507/9242263
 */
 
-#include <mosquittopp.h>
+#ifndef BROKERPUB_H_
+#define BROKERPUB_H_
+
+#include <../../usr/include/mosquittopp.h>
 #include <iostream>
 #include <stdint.h>
 
-#ifndef BROKERPUB_H_
-#define BROKERPUB_H_
 
 class BrokerPub : public mosqpp::mosquittopp {
 

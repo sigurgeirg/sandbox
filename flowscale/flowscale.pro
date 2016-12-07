@@ -13,7 +13,8 @@ TARGET = flowscale
 INCLUDEPATH += ./inc ./src ./forms ./images
 
 # Input
-HEADERS +=  inc/constants.h \
+HEADERS +=  ../QCustomPlot/qcustomplot.h \
+            inc/constants.h \
             inc/mainwindow.h \
             inc/keypad.h \
             inc/mydio.h \
@@ -21,12 +22,12 @@ HEADERS +=  inc/constants.h \
             inc/mymessages.h \
             inc/brokerpub.h \
             inc/clientsub.h \
-            ../QCustomPlot/qcustomplot.h \
             inc/settings.h \
             inc/recipe.h
 
 
-SOURCES +=  src/main.cpp \
+SOURCES +=  ../QCustomPlot/qcustomplot.cpp \
+            src/main.cpp \
             src/mainwindow.cpp \
             src/keypad.cpp \
             src/mydio.cpp \
@@ -34,7 +35,6 @@ SOURCES +=  src/main.cpp \
             src/mymessages.cpp \
             src/brokerpub.cpp \
             src/clientsub.cpp \
-            ../QCustomPlot/qcustomplot.cpp \
             src/settings.cpp \
             src/recipe.cpp
 

@@ -54,6 +54,12 @@ public:
     int *statusRegisterBinary(uint16_t number[]);
     std::ofstream filezero;
     std::ofstream filebatch;
+    std::string bufferTotalCount;
+    std::string bufferTotalWeight;
+
+    const char *gateBufferTotalCount;
+    const char *gateBufferTotalWeight;
+
     std::string recipeArray[100][5];
 
     int zeroUnfilteredArray[numberOfBeltRounds][samplesPerBeltRound];
@@ -88,7 +94,7 @@ private:
     int setslave;
     bool modbusConnected;   // Flag that allows while loop to scan through incoming data
     bool writeToLoadcell;   // Flag that only allows one way communication via modbus, to prevent data collision
-    uint16_t mbCommand[2];  // Command on specific int format for LoadCell amplifier
+    uint16_t *mbCommand;  // Command on specific int format for LoadCell amplifier
     int commandRegister;    // Register 5 (40006)
     int statusRegister;     // Register 6 (40007)
     int sampleWeightForCalibrationH;    // Register 36 (40037)
@@ -104,8 +110,10 @@ private:
     int weightGROSSorNET[1];// Indicates whether selected weight is sampleWeightForCalibrationLGROSS or NET weight.
 
     time_t rawtime;
-    char buffer[80];
-    char batchClosedWhen[80];
+    char recipeActivationTimeStamp[80];
+    char batchCloseTimeStamp[80];
+    std::string batchClosedWhen;
+    std::string recipeActivatedWhen;
 
     int newDataReady;
 
@@ -170,7 +178,7 @@ private:
     std::string recipeID;
     std::string productID;
     std::string productType;
-    std::string batchID;
+
     int serialStartsAt;
     int minProductLength;
     int maxProductLength;

@@ -5,6 +5,7 @@
 #include "brokerpub.h"
 #include <string>
 #include <sstream>
+#include <stdint.h>
 #include <QThread>
 #include <QDebug>
 

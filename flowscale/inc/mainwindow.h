@@ -132,7 +132,7 @@ private slots:
     void on_btnReverse_clicked();
     void on_btnForward_clicked();
 
-    void on_btnNetWeightConnect_clicked();
+    void on_btnConnect_clicked();
     void on_btnRefreshRecipeList_clicked();
     void on_btnRefreshSettingsList_clicked();
     void on_cbRecipeMenu_activated(const QString &arg1);
@@ -148,6 +148,7 @@ private slots:
     void on_btnCloseBatch_clicked();
 
     void on_chkDebugWriteToFile_clicked(bool checked);
+
 
 public slots:
     void conveyorBeltSignal();

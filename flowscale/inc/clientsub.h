@@ -15,7 +15,7 @@ This code is taken from Rene Lösch:
 #ifndef CLIENTSUB_H_
 #define CLIENTSUB_H_
 
-#include <mosquittopp.h>
+#include <../../usr/include/mosquittopp.h>
 #include <iostream>
 #include <stdint.h>
 

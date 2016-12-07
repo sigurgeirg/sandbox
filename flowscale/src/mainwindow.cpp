@@ -73,7 +73,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
         // Product Data Over Mosquitto transmission:
-        //connect(scale, SIGNAL(sendMQTT(QString,const char*)),   mosq, SLOT(sendMessage(QString,const char*)));
+        connect(scale, SIGNAL(sendMQTT(QString,const char*)),   mosq, SLOT(sendMessage(QString,const char*)));
 
         // Current product values sent to Display:
         connect(scale, SIGNAL(continuousModbusWeight(int)),     this,  SLOT(displayReceivedWeight(int)));
@@ -90,7 +90,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->tabWidget->setStyleSheet("QTabBar::tab { height: 50px; }");
     ui->frameState->setStyleSheet("background-color: red");
-    ui->btnNetWeightConnect->setStyleSheet("background-color: #15d015; color: white");
+    ui->btnConnect->setStyleSheet("background-color: #15d015; color: white");
     ui->btnDisconnect->setStyleSheet("background-color: red; color: white");
     ui->chkWriteToLoadcell->setStyleSheet("QCheckBox::indicator { width:25px; height: 25px; }");
     ui->chkDebugWriteToFile->setStyleSheet("QCheckBox::indicator { width:25px; height: 25px; }");
@@ -402,26 +402,17 @@ void MainWindow::displayInputValue(unsigned long)
 //    scale->start();
 //}
 
-void MainWindow::on_btnNetWeightConnect_clicked()
+
+void MainWindow::on_btnConnect_clicked()
 {
-    // Switch to netto weight and write to loadCell controller:
-    scale->netWeight();
-    scale->toggleWriteToLoadcell(true);
 
-    // Connect over modbus and start processes:
+    // Connect over modbus
     scale->connectToSlaveDevice();
-    scale->start();
-
     usleep(20*1000);
 
-    // Disconnect from modbus and stop processes:
+    // Disconnect from modbus:
     scale->disconnectFromSlaveDevice();
-    scale->exit();
-
     usleep(20*1000);
-
-    // From now on, only read from loadCell controller:
-    scale->toggleWriteToLoadcell(false);
 
     // Connect over modbus and start processes again:
     scale->connectToSlaveDevice();

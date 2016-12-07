@@ -67,7 +67,7 @@ public:
     QFrame *destinationFrame;
     QLabel *lblDestinationGate;
     QLabel *lblDestination;
-    QPushButton *btnNetWeightConnect;
+    QPushButton *btnConnect;
     QPushButton *btnDisconnect;
     QWidget *tab_2;
     QFrame *destinationFrame_2;
@@ -290,11 +290,7 @@ public:
         lblBatchID = new QLabel(batchFrame);
         lblBatchID->setObjectName(QString::fromUtf8("lblBatchID"));
         lblBatchID->setGeometry(QRect(10, 30, 91, 31));
-        QFont font4;
-        font4.setPointSize(12);
-        font4.setBold(true);
-        font4.setWeight(75);
-        lblBatchID->setFont(font4);
+        lblBatchID->setFont(font2);
         lblBatchID->setStyleSheet(QString::fromUtf8("color: rgb(255, 255, 255);"));
         lblBatch = new QLabel(batchFrame);
         lblBatch->setObjectName(QString::fromUtf8("lblBatch"));
@@ -322,6 +318,10 @@ public:
         lblProductID = new QLabel(productIDFrame);
         lblProductID->setObjectName(QString::fromUtf8("lblProductID"));
         lblProductID->setGeometry(QRect(10, 30, 91, 31));
+        QFont font4;
+        font4.setPointSize(12);
+        font4.setBold(true);
+        font4.setWeight(75);
         lblProductID->setFont(font4);
         lblProductID->setStyleSheet(QString::fromUtf8("color: rgb(255, 255, 255);"));
         lblproduct = new QLabel(productIDFrame);
@@ -383,9 +383,9 @@ public:
         lblDestination = new QLabel(destinationFrame);
         lblDestination->setObjectName(QString::fromUtf8("lblDestination"));
         lblDestination->setGeometry(QRect(10, 0, 81, 21));
-        btnNetWeightConnect = new QPushButton(tab);
-        btnNetWeightConnect->setObjectName(QString::fromUtf8("btnNetWeightConnect"));
-        btnNetWeightConnect->setGeometry(QRect(10, 270, 111, 71));
+        btnConnect = new QPushButton(tab);
+        btnConnect->setObjectName(QString::fromUtf8("btnConnect"));
+        btnConnect->setGeometry(QRect(10, 270, 111, 71));
         QPalette palette1;
         QBrush brush1(QColor(0, 0, 0, 255));
         brush1.setStyle(Qt::SolidPattern);
@@ -457,8 +457,8 @@ public:
         palette1.setBrush(QPalette::Disabled, QPalette::AlternateBase, brush2);
         palette1.setBrush(QPalette::Disabled, QPalette::ToolTipBase, brush9);
         palette1.setBrush(QPalette::Disabled, QPalette::ToolTipText, brush1);
-        btnNetWeightConnect->setPalette(palette1);
-        btnNetWeightConnect->setFont(font4);
+        btnConnect->setPalette(palette1);
+        btnConnect->setFont(font4);
         btnDisconnect = new QPushButton(tab);
         btnDisconnect->setObjectName(QString::fromUtf8("btnDisconnect"));
         btnDisconnect->setGeometry(QRect(130, 270, 111, 71));
@@ -539,7 +539,7 @@ public:
         lblBatchID_2 = new QLabel(batchFrame_2);
         lblBatchID_2->setObjectName(QString::fromUtf8("lblBatchID_2"));
         lblBatchID_2->setGeometry(QRect(10, 30, 91, 31));
-        lblBatchID_2->setFont(font4);
+        lblBatchID_2->setFont(font2);
         lblBatchID_2->setStyleSheet(QString::fromUtf8("color: rgb(255, 255, 255);"));
         lblBatchID_2->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
         lblBatch_2 = new QLabel(batchFrame_2);
@@ -1207,7 +1207,7 @@ public:
 
         retranslateUi(MainWindow);
 
-        tabWidget->setCurrentIndex(1);
+        tabWidget->setCurrentIndex(0);
 
 
         QMetaObject::connectSlotsByName(MainWindow);
@@ -1236,7 +1236,7 @@ public:
         lblConfidence->setText(QApplication::translate("MainWindow", "confidence", 0, QApplication::UnicodeUTF8));
         lblDestinationGate->setText(QApplication::translate("MainWindow", "gate", 0, QApplication::UnicodeUTF8));
         lblDestination->setText(QApplication::translate("MainWindow", "destination", 0, QApplication::UnicodeUTF8));
-        btnNetWeightConnect->setText(QApplication::translate("MainWindow", "Connect", 0, QApplication::UnicodeUTF8));
+        btnConnect->setText(QApplication::translate("MainWindow", "Connect", 0, QApplication::UnicodeUTF8));
         btnDisconnect->setText(QApplication::translate("MainWindow", "Disconnect", 0, QApplication::UnicodeUTF8));
         tabWidget->setTabText(tabWidget->indexOf(tab), QApplication::translate("MainWindow", "FlowScale", 0, QApplication::UnicodeUTF8));
         lblDestinationGate_2->setText(QApplication::translate("MainWindow", "0", 0, QApplication::UnicodeUTF8));

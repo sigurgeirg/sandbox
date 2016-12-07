@@ -170,7 +170,7 @@
       <enum>QTabWidget::Rounded</enum>
      </property>
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <property name="iconSize">
       <size>
@@ -382,7 +382,7 @@
         </property>
         <property name="font">
          <font>
-          <pointsize>12</pointsize>
+          <pointsize>9</pointsize>
           <weight>75</weight>
           <bold>true</bold>
          </font>
@@ -738,7 +738,7 @@
         </property>
        </widget>
       </widget>
-      <widget class="QPushButton" name="btnNetWeightConnect">
+      <widget class="QPushButton" name="btnConnect">
        <property name="geometry">
         <rect>
          <x>10</x>
@@ -1573,7 +1573,7 @@
         </property>
         <property name="font">
          <font>
-          <pointsize>12</pointsize>
+          <pointsize>9</pointsize>
           <weight>75</weight>
           <bold>true</bold>
          </font>
