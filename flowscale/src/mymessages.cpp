@@ -27,7 +27,7 @@ void MyMessages::sendMessage(QString message, const char *destination) {
 
     mosqpp::lib_init();
     BrokerPub *mqttb = new BrokerPub("flow");
-    rc = mqttb->connect("10.130.1.218");
+    rc = mqttb->connect("127.0.0.1");
 
 
 

@@ -3,7 +3,7 @@
 ######################################################################
 
 QT	+= core gui
-LIBS	+= -ldio -lmodbus -lmosquittopp
+LIBS	+= -ldio -lmosquittopp -lmodbus
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 

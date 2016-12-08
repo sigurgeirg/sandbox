@@ -210,7 +210,7 @@ void MyScale::writeBufferDataToFile() {
 
 
         // Subscribe to mosquitto message from linux terminal:
-        //mosquitto_sub -h 10.130.1.218 -v -t scale/#
+        //mosquitto_sub -h 127.0.0.1 -v -t scale/#
         emit sendMQTT(QString::fromStdString(recipeActivatedWhen.c_str()), "scale/recipeActivatedWhen");
         emit sendMQTT(QString::fromStdString(batchClosedWhen.c_str()), "scale/batchClosedWhen");
         emit sendMQTT(QString::fromStdString(recipeID.c_str()), "scale/recipeID");
@@ -551,7 +551,10 @@ void MyScale::connectToSlaveDevice() {
 
     try {
             ctx = modbus_new_rtu("/dev/ttyUSB0", 38400, 'N', 8, 1);
+            usleep(20*1000);
+
             setslave = modbus_set_slave(ctx, 0x01);
+            usleep(20*1000);
 
             if (ctx == NULL) {
                 qDebug() << "Unable to create the libmodbus context";
@@ -577,9 +580,8 @@ void MyScale::connectToSlaveDevice() {
                 //qDebug() << "Connection successful " << modbus_connect(ctx);
                 modbusConnected = true;
                 //qDebug() << "ModBus is Connected";
-
-                start();
             }
+
     } catch(...) {
             //
     }
@@ -613,9 +615,11 @@ void MyScale::toggleWriteToLoadcell(bool checked) {
     if(checked == true)
     {
         writeToLoadcell = true;
+        grossWeight();
     }
     else
     {
+        netWeight();
         writeToLoadcell = false;
     }
 }
@@ -623,27 +627,35 @@ void MyScale::toggleWriteToLoadcell(bool checked) {
 
 void MyScale::calibrateZERO() {
 
-    writeToLoadcell = true;
-    writeToRegister = commandRegister;
-    mbCommand[0] = zeroSettingForCalibration; // 100
-    writeToModbus();
+    if (modbusConnected == true) {
+        if(writeToLoadcell == true) {
+
+            writeToRegister = commandRegister;
+            mbCommand[0] = zeroSettingForCalibration; // 100
+            writeToModbus();
+        }
+    }
 }
 
 
 void MyScale::calibrateWEIGHT() {
 
+    if (modbusConnected == true) {
+        if(writeToLoadcell == true) {
 
-    writeToRegister = sampleWeightForCalibrationH;
-    mbCommand[0] = 0;
-    writeToModbus();
+            writeToRegister = sampleWeightForCalibrationH;
+            mbCommand[0] = 0;
+            writeToModbus();
 
-    writeToRegister = sampleWeightForCalibrationL;
-    mbCommand[0] = calibrationWeight;
-    writeToModbus();
+            writeToRegister = sampleWeightForCalibrationL;
+            mbCommand[0] = calibrationWeight;
+            writeToModbus();
 
-    writeToRegister = commandRegister;
-    mbCommand[0] = sampleWeightStorage; // 101
-    writeToModbus();
+            writeToRegister = commandRegister;
+            mbCommand[0] = sampleWeightStorage; // 101
+            writeToModbus();
+        }
+    }
 }
 
 
@@ -657,8 +669,8 @@ void MyScale::semiAutoZERO() {
 
 void MyScale::grossWeight() {
 
-    qDebug() << "Entering GrossWeight";
-
+    //qDebug() << "Entering GrossWeight";
+    writeToLoadcell = true;
     writeToRegister = commandRegister;
     mbCommand[0] = grossDisplay;    // 9
     writeToModbus();
@@ -667,7 +679,7 @@ void MyScale::grossWeight() {
 
 void MyScale::netWeight() {
 
-    qDebug() << "Entering NetWeight";
+    //qDebug() << "Entering NetWeight";
     writeToLoadcell = true;
     writeToRegister = commandRegister;
     mbCommand[0] = netDisplay;  // 7
@@ -677,6 +689,7 @@ void MyScale::netWeight() {
 
 void MyScale::writeToModbus() {
 
+    usleep(20*1000);
 
     if (modbusConnected == true) {
         if(writeToLoadcell == true) {
@@ -684,7 +697,7 @@ void MyScale::writeToModbus() {
             if(mbCommand[0])
             {
                 int rc = modbus_write_registers(ctx, writeToRegister, 1, mbCommand);
-                qDebug() << "rc: " << rc;
+                //qDebug() << "Modbus response: " << rc;
                 mbCommand[0] = 0;
             }
 

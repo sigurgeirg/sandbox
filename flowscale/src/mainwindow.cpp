@@ -405,26 +405,6 @@ void MainWindow::displayInputValue(unsigned long)
 
 void MainWindow::on_btnConnect_clicked()
 {
-    // Switch to netto weight and write to loadCell controller:
-    scale->netWeight();
-    scale->toggleWriteToLoadcell(true);
-
-    // Connect over modbus and start processes:
-    scale->connectToSlaveDevice();
-    scale->start();
-
-    usleep(20*1000);
-
-    // Disconnect from modbus and stop processes:
-    scale->disconnectFromSlaveDevice();
-    scale->exit();
-
-    usleep(20*1000);
-
-    // From now on, only read from loadCell controller:
-    scale->toggleWriteToLoadcell(false);
-
-    // Connect over modbus and start processes again:
     scale->connectToSlaveDevice();
     scale->start();
 }
