@@ -8,7 +8,7 @@ MyScale::MyScale(QObject *parent) :
     recipe = new Recipe(this);
     dio = new MyDio(this);
     dio->start();
-    mbCommand = new uint16_t[2];
+
 
     // List of usable registers in weighing module:
     // >====================================================
@@ -29,7 +29,6 @@ MyScale::MyScale(QObject *parent) :
 
     modbusConnected = false;
     mbCommand[0] = 0;
-    mbCommand[1] = 0;
 
     readFromRegister = statusRegister;
     weightGROSSorNET[0] = netDisplay; // Default NET weight
@@ -579,7 +578,7 @@ void MyScale::connectToSlaveDevice() {
                 modbusConnected = true;
                 //qDebug() << "ModBus is Connected";
 
-                netWeight();
+                start();
             }
     } catch(...) {
             //
@@ -613,11 +612,11 @@ void MyScale::toggleWriteToLoadcell(bool checked) {
 
     if(checked == true)
     {
-        grossWeight();
+        writeToLoadcell = true;
     }
     else
     {
-        netWeight();
+        writeToLoadcell = false;
     }
 }
 
@@ -633,17 +632,15 @@ void MyScale::calibrateZERO() {
 
 void MyScale::calibrateWEIGHT() {
 
-    writeToLoadcell = true;
+
     writeToRegister = sampleWeightForCalibrationH;
     mbCommand[0] = 0;
     writeToModbus();
 
-    writeToLoadcell = true;
     writeToRegister = sampleWeightForCalibrationL;
     mbCommand[0] = calibrationWeight;
     writeToModbus();
 
-    writeToLoadcell = true;
     writeToRegister = commandRegister;
     mbCommand[0] = sampleWeightStorage; // 101
     writeToModbus();
@@ -652,7 +649,6 @@ void MyScale::calibrateWEIGHT() {
 
 void MyScale::semiAutoZERO() {
 
-    writeToLoadcell = true;
     writeToRegister = commandRegister;
     mbCommand[0] = semiAutomaticZero;
     //writeToModbus();
@@ -662,7 +658,7 @@ void MyScale::semiAutoZERO() {
 void MyScale::grossWeight() {
 
     qDebug() << "Entering GrossWeight";
-    writeToLoadcell = true;
+
     writeToRegister = commandRegister;
     mbCommand[0] = grossDisplay;    // 9
     writeToModbus();
@@ -676,23 +672,22 @@ void MyScale::netWeight() {
     writeToRegister = commandRegister;
     mbCommand[0] = netDisplay;  // 7
     writeToModbus();
+    writeToLoadcell = false;
 }
 
 void MyScale::writeToModbus() {
 
-    int num = 1;
 
     if (modbusConnected == true) {
         if(writeToLoadcell == true) {
 
             if(mbCommand[0])
             {
-                int rc = modbus_write_registers(ctx, writeToRegister, num, mbCommand);
+                int rc = modbus_write_registers(ctx, writeToRegister, 1, mbCommand);
                 qDebug() << "rc: " << rc;
                 mbCommand[0] = 0;
             }
 
-            writeToLoadcell = false;
         }
     }
 }

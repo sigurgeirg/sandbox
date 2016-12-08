@@ -98,10 +98,10 @@
 
 
 
-//#define peek8(adr) PEEK8((unsigned long)&Dio::syscon8[(adr)])
-//#define poke8(adr, val) POKE8((unsigned long)&Dio::syscon8[(adr)],(val))
-#define peek8(adr) 	PEEK8(adr)
-#define poke8(adr, val) POKE8(adr,val)
+#define peek8(adr) PEEK8((unsigned long)&Dio::syscon8[(adr)])
+#define poke8(adr, val) POKE8((unsigned long)&Dio::syscon8[(adr)],(val))
+
+//static volatile unsigned char *syscon8;
 
 
 /*
@@ -169,7 +169,7 @@ extern  DIO_DO DOTbl[DIO_MAX_DO];
 class Dio {
         private:
         	int devmem;
-		//static volatile unsigned char *syscon8;
+		static volatile unsigned char *syscon8;
 
         public:
         	Dio();

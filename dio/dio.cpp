@@ -39,7 +39,7 @@ unsigned long Dio::Addr_DIn[] 	= {0x108, 0x109, 0x10a, 0x10b};
 unsigned char Dio::Value_DOut[] = {0x00, 0x00, 0x00, 0x00};
 unsigned char Dio::Value_DIn[] 	= {0xFF, 0xFF, 0xFF, 0xFF};
 
-//volatile unsigned char *Dio::syscon8;
+volatile unsigned char *Dio::syscon8;
 
 
 /*
@@ -49,9 +49,9 @@ unsigned char Dio::Value_DIn[] 	= {0xFF, 0xFF, 0xFF, 0xFF};
 */
 Dio::Dio() {
 	// Map the Syscon core
-	//devmem = open("/dev/mem", O_RDWR|O_SYNC);
-	//assert(devmem != -1);
-	//syscon8  = (unsigned char *)  mmap(0, 4096, PROT_READ | PROT_WRITE, MAP_SHARED, devmem, 0x81008000);
+	devmem = open("/dev/mem", O_RDWR|O_SYNC);
+	assert(devmem != -1);
+	syscon8  = (unsigned char *)  mmap(0, 4096, PROT_READ | PROT_WRITE, MAP_SHARED, devmem, 0x81008000);
 }
 
 Dio::~Dio() {
@@ -74,13 +74,13 @@ inline
 unsigned char Dio::PEEK8(unsigned long addr) {
         unsigned char ret;
 
-	for (int i=0; i<4; i++) {
-		if (addr == Addr_DIn[i]) {
-			ret = Value_DIn[i];
-		}
-	}
-
-	return ret;
+        asm volatile (
+                "ldrb %0, [ %1 ]\n"
+                : "=r" (ret)
+                : "r" (addr)
+                : "memory"
+        );
+        return ret;
 }
 
 
@@ -98,17 +98,12 @@ unsigned char Dio::PEEK8(unsigned long addr) {
 */
 inline
 void Dio::POKE8(unsigned long addr, unsigned char dat) {
-
-	const char* address;
-	address = reinterpret_cast<const char*>(addr);
-	const char* data;
-	data = reinterpret_cast<const char*>(dat);
-
-	for (int i=0; i<4; i++) {
-		if (addr == Addr_DOut[i]) {
-			Value_DOut[i] = dat;
-		}
-	}
+        asm volatile (
+                "strb %1, [ %0 ]\n"
+                :
+                : "r" (addr), "r" (dat)
+                : "memory"
+        );
 }
 
 
@@ -940,7 +935,12 @@ int main()
 	bool p;
 
 
+        io.DICfgMode(0,DI_MODE_TOGGLE_HIGH_GOING);
+        io.DICfgMode(1,DI_MODE_TOGGLE_HIGH_GOING);
         io.DICfgMode(2,DI_MODE_TOGGLE_HIGH_GOING);
+        io.DICfgMode(3,DI_MODE_TOGGLE_HIGH_GOING);
+        io.DICfgMode(4,DI_MODE_TOGGLE_HIGH_GOING);
+
         io.DOCfgMode(2, DO_MODE_DIRECT, 0);
 
 

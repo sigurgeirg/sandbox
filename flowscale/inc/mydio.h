@@ -2,7 +2,7 @@
 #define MYDIO_H
 
 #include "constants.h"
-#include <dio.h>
+#include <../../usr/include/dio.h>
 #include <iostream>
 #include <QThread>
 #include <QDebug>

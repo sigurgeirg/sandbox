@@ -94,7 +94,7 @@ private:
     int setslave;
     bool modbusConnected;   // Flag that allows while loop to scan through incoming data
     bool writeToLoadcell;   // Flag that only allows one way communication via modbus, to prevent data collision
-    uint16_t *mbCommand;  // Command on specific int format for LoadCell amplifier
+    uint16_t mbCommand[2];  // Command on specific int format for LoadCell amplifier
     int commandRegister;    // Register 5 (40006)
     int statusRegister;     // Register 6 (40007)
     int sampleWeightForCalibrationH;    // Register 36 (40037)
