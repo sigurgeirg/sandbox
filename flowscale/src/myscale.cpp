@@ -580,6 +580,8 @@ void MyScale::connectToSlaveDevice() {
                 //qDebug() << "Connection successful " << modbus_connect(ctx);
                 modbusConnected = true;
                 //qDebug() << "ModBus is Connected";
+				
+				netWeight();
             }
 
     } catch(...) {
