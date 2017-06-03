@@ -292,11 +292,13 @@ void MainWindow::displayBatchId(QString batchId)
 void MainWindow::displayRecipeId(QString recipeId)
 {
     ui->lblRecipeID->setText(recipeId);
+    ui->lblRecipeID_2->setText(recipeId);
 }
 
 void MainWindow::displayProductId(QString productId)
 {
     ui->lblProductID->setText(productId);
+    ui->lblProductID_2->setText(productId);
 }
 
 void MainWindow::displayProductType(QString productType)
